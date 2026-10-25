@@ -52,7 +52,7 @@ flowchart TD
   E2 --> P2["PO Verificar existência de item duplicado na base de dados"] --> C3["CMD Verificar se novo item é duplicata de item já registrado"]
   C3 -.-> E3["EV Cadastro de item rejeitado por SKU duplicado"]
   E1 --> F2["segue para a Fase 2: PO Efetuar a vinculação"]
-  E2 --> F2b["segue para a Fase 2: CMD Vincular item à OS"]
+  E2 --> F2b["segue para a Fase 2: PO Efetuar a vinculação"]
 
   M1["CMD Adicionar peças ou insumos ao estoque"] --> M2["EV Estoque atualizado"] --> M3["CMD Preenchimento de dados dos itens"] --> M4["EV Entrada manual de itens registrada"]
   M4 --> M5["PO Atualizar quantidade do saldo físico do estoque"] --> M6["CMD Atualiza itens no estoque"] --> M7["EV Saldo físico do item atualizado"]
@@ -95,7 +95,7 @@ Os passos 7 e 8 repetem os passos 2 e 3: o mesmo cadastro de item novo é alcan�
 ```mermaid
 flowchart TD
   E1["EV Itens da OS solicitados ou atualizados (fase 1)"] --> P1["PO Efetuar a vinculação dos itens que foram solicitados pelo funcionário à OS"]
-  E0["EV Cadastro de novo item no estoque (fase 1)"] --> C1
+  E0["EV Cadastro de novo item no estoque (fase 1)"] --> P1
   P1 --> C1["CMD Vincular item à OS"] --> E2["EV Item vinculado a OS"]
   E2 -.-> P2["PO Remover o vínculo dos itens que removidos pelo funcionário"] -.-> C2["CMD Desvincular item da OS"] -.-> E3["EV Vínculo do item com OS removido"]
   E2 --> N["segue para a Fase 3: PO Verificar o saldo físico..."]
@@ -124,18 +124,19 @@ Esta é a fase mais densa. Ela tem uma linha principal (verificar saldo e devolv
 
 ```mermaid
 flowchart TD
+  E0["EV Item vinculado a OS (fase 2)"] --> P1
+  E1["EV Vínculo do item com OS removido (fase 2)"] --> P1
   P1["PO Verificar o saldo físico dos itens subtraindo o saldo de itens reservados para verificar a disponibilidade"] --> C1["CMD Verificar a disponibilidade dos itens vinculados à OS"]
-  C1 --> E1["EV Disponibilidade de itens da OS consultada"]
-  E1 --> P2["PO Recuperar o preço de venda registrado no sistema para envio"] --> C2["CMD Enviar o preço de venda dos itens ao orçamento"]
-  C2 --> E2["EV Preço de venda dos itens vinculados à OS retornado ao orçamento"]
-  E2 --> F["segue para a Fase 4: notificações de orçamento"]
-  C0["EV Item vinculado a OS (fase 2)"] --> P1
+  C1 --> E2["EV Disponibilidade de itens da OS consultada"]
+  E2 --> P2["PO Recuperar o preço de venda registrado no sistema para envio"] --> C2["CMD Enviar o preço de venda dos itens ao orçamento"]
+  C2 --> E3["EV Preço de venda dos itens vinculados à OS retornado ao orçamento"]
+  E3 --> F["segue para a Fase 4: notificações de orçamento"]
 
   classDef cmd fill:#bfe0ff,stroke:#2b78c2,color:#000
   classDef ev fill:#ffd9a0,stroke:#c77d00,color:#000
   classDef po fill:#dcc8ff,stroke:#7b4fd1,color:#000
   class C1,C2 cmd
-  class C0,E1,E2 ev
+  class E0,E1,E2,E3 ev
   class P1,P2 po
 ```
 
@@ -193,10 +194,10 @@ flowchart TD
   M0["ML Lista de insumos vinculados à OS"] --> C1
   C1 --> E1["EV Insumos com integridade comprometida identificados"]
   E1 --> P1["PO Marcar os insumos que estão comprometidos para descarte posterior"]
-  E1 --> C2["CMD Atualizar insumos como marcados para descarte"] --> E2["EV Insumos comprometidos marcados para descarte"]
+  P1 --> C2["CMD Atualizar insumos como marcados para descarte"] --> E2["EV Insumos comprometidos marcados para descarte"]
   E2 --> C3["CMD Descartar insumos que foram marcados para descarte"] --> E3["EV Insumos comprometidos descartados"]
   E3 --> P2["PO Subtrair do saldo físico dos itens a quantidade de itens que foram descartados"]
-  E3 --> C4["CMD Descartar insumos que foram marcados para descarte (2ª ocorrência)"] --> E4["EV Saldo físico dos insumos atualizado"]
+  P2 --> C4["CMD Descartar insumos que foram marcados para descarte (2ª ocorrência)"] --> E4["EV Saldo físico dos insumos atualizado"]
 
   classDef cmd fill:#bfe0ff,stroke:#2b78c2,color:#000
   classDef ev fill:#ffd9a0,stroke:#c77d00,color:#000
@@ -327,10 +328,11 @@ flowchart TD
   P0["PO Receber notificação da OS"] --> C2
   C2 --> E2["EV OS atualizada para finalizada"]
   E2 --> P1["PO Atualizar quantidade do saldo físico do estoque"] --> C3["CMD Atualiza itens no estoque"] --> E3["EV Saldo físico do item atualizado"]
-  E3 --> C4["CMD Receber notificação de atualização da OS para entregue"] --> E4["EV OS atualizada para entregue"]
+  P3 --> C4["CMD Receber notificação de atualização da OS para entregue"] --> E4["EV OS atualizada para entregue"]
   S2["SE Sistema de gestão de ordens de serviço"] --> C4
   E3 --> P2["PO Identificação de estoque abaixo do mínimo esperado"] --> C5["CMD Enviar notificação para atualização de estoque"] --> E5["EV Funcionário notificado sobre a necessidade de atualizar o estoque"]
-  E5 --> P3["PO Receber notificação da OS"] --> C4
+  E3 --> P3
+  E5 --> P3["PO Receber notificação da OS"]
 
   classDef cmd fill:#bfe0ff,stroke:#2b78c2,color:#000
   classDef ev fill:#ffd9a0,stroke:#c77d00,color:#000
@@ -391,7 +393,6 @@ Começa no evento "OS atualizada para em execução" (seta vermelha curta para b
 ```mermaid
 flowchart TD
   E0["EV OS atualizada para em execução"] -.-> C1["CMD Registrar ocorrência de peça defeituosa"]
-  P0["PO Receber notificação da OS"] --> C1
   C1 --> E1["EV Peça defeituosa identificada"]
   E1 --> C2["CMD Solicitar garantia junto ao fornecedor"] --> E2["EV Acionamento da garantia aceito pelo fornecedor"]
   S["SE Sistema do fornecedor de itens"] --> C2
