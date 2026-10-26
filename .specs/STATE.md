@@ -45,10 +45,10 @@
 ## Handoff
 
 - **Feature**: nenhuma iniciada; ver `.specs/ROADMAP.md`
-- **Phase / Task**: Specify concluído para os 8 escopos; próximo é Design de `fundacao-plataforma`
+- **Phase / Task**: Specify, Design e Tasks concluídos para os 8 escopos (Draft); próximo é Execute de `fundacao-plataforma` T1
 - **Completed**: none
 - **In-progress** (file:line): none
-- **Next step**: Atualizar Decisões do MVP em `docs/ddd/linguagem-ubiqua.md` conforme AD-003/AD-004 e iniciar `fundacao-plataforma`.
+- **Next step**: Aprovar tasks, atualizar Decisões do MVP em `docs/ddd/linguagem-ubiqua.md` (AD-003/AD-004) e executar `fundacao-plataforma`.
 - **Blockers**: none
 - **Uncommitted files**: `.specs/`
 - **Branch**: feat/documentacao-inicial

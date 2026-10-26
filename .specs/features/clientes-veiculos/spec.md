@@ -79,7 +79,7 @@ A oficina perde o histórico de clientes e veículos. O MVP exige CRUD de client
 1. WHEN o funcionário cadastra veículo para cliente existente com placa no padrão antigo (ABC-1234) ou Mercosul (ABC1D23) THEN o sistema SHALL persistir a placa normalizada e responder 201.
 2. IF a placa não segue nenhum dos dois padrões THEN o sistema SHALL responder 422.
 3. IF já existe veículo com a mesma placa normalizada THEN o sistema SHALL responder 409.
-4. IF o ano está fora de 1900 até ano corrente + 1 THEN o sistema SHALL responder 400.
+4. IF o ano está fora de 1900 até ano corrente + 1 THEN o sistema SHALL responder 422.
 5. WHEN o funcionário atualiza marca, modelo ou ano THEN o sistema SHALL persistir mantendo placa e cliente.
 6. WHEN o funcionário lista os veículos de um cliente THEN o sistema SHALL retornar só os veículos dele.
 7. IF o funcionário remove veículo referenciado por OS THEN o sistema SHALL responder 409.
@@ -92,11 +92,11 @@ A oficina perde o histórico de clientes e veículos. O MVP exige CRUD de client
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| CLI-01 | P1: CRUD de clientes | - | Pending |
-| CLI-02 | P1: Identificação do cliente | - | Pending |
-| CLI-03 | P1: CRUD de veículos | - | Pending |
+| CLI-01 | P1: CRUD de clientes | Tasks | In Tasks |
+| CLI-02 | P1: Identificação do cliente | Tasks | In Tasks |
+| CLI-03 | P1: CRUD de veículos | Tasks | In Tasks |
 
-**Coverage:** 3 total, 0 mapped tasks, 3 unmapped ⚠️
+**Coverage:** 3 total, 3 mapped tasks, 0 unmapped
 
 ---
 

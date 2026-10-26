@@ -17,7 +17,9 @@ Cada escopo é uma feature em `.specs/features/<escopo>/spec.md`. Design e tasks
 | 7 | [execucao-servicos](features/execucao-servicos/spec.md) | Status Em execução → Finalizada → Entregue | 6 | Small |
 | 8 | [acompanhamento-os](features/acompanhamento-os/spec.md) | Consulta do cliente via API, listagem, detalhamento, tempo médio de execução | 5 | Medium |
 
-Ordem: 1 → (2, 3, 4) → 5 → 6 → 7; o 8 começa após o 5.
+Ordem: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (2, 3 e 4 nessa ordem por causa da numeração das migrations V1-V3).
+
+Design: `fundacao-plataforma/design.md` (padrões de todos os escopos) e `abertura-os-orcamento/design.md` (agregado OS, usado por 5-8). Escopos 2, 3 e 4 são CRUD e não têm design próprio.
 
 ## Matriz de cobertura dos obrigatórios
 

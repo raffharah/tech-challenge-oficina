@@ -54,9 +54,9 @@ O MVP exige CRUD de serviços, e o orçamento automático soma o valor dos servi
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| SRV-01 | P1: CRUD de serviços | - | Pending |
+| SRV-01 | P1: CRUD de serviços | Tasks | In Tasks |
 
-**Coverage:** 1 total, 0 mapped tasks, 1 unmapped ⚠️
+**Coverage:** 1 total, 1 mapped tasks, 0 unmapped
 
 ---
 

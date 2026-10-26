@@ -67,6 +67,7 @@ Atendimento e orçamento são feitos em anotações. O MVP exige criar a OS a pa
 3. WHILE a OS está EM_DIAGNOSTICO, WHEN o mecânico remove componente THEN o sistema SHALL retirá-lo da OS.
 4. IF o serviço ou item não existe THEN o sistema SHALL responder 422.
 5. IF a OS não está EM_DIAGNOSTICO THEN o sistema SHALL rejeitar inclusão e remoção com 422.
+6. IF o serviço já está na OS THEN o sistema SHALL responder 422 sem duplicá-lo.
 
 **Independent Test**: Incluir troca de óleo + 4 litros de óleo; incluir em OS fora de diagnóstico (422).
 
@@ -108,12 +109,12 @@ Atendimento e orçamento são feitos em anotações. O MVP exige criar a OS a pa
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| OS-01 | P1: Abrir OS | - | Pending |
-| OS-02 | P1: Incluir serviços, peças e insumos | - | Pending |
-| OS-03 | P1: Gerar orçamento | - | Pending |
-| OS-04 | P1: Regras de transição | - | Pending |
+| OS-01 | P1: Abrir OS | Tasks | In Tasks |
+| OS-02 | P1: Incluir serviços, peças e insumos | Tasks | In Tasks |
+| OS-03 | P1: Gerar orçamento | Tasks | In Tasks |
+| OS-04 | P1: Regras de transição | Tasks | In Tasks |
 
-**Coverage:** 4 total, 0 mapped tasks, 4 unmapped ⚠️
+**Coverage:** 4 total, 4 mapped tasks, 0 unmapped
 
 ---
 

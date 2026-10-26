@@ -66,10 +66,10 @@ Os status Finalizada e Entregue são obrigatórios. Com a OS Em execução, o me
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| EXE-01 | P1: Finalizar OS | - | Pending |
-| EXE-02 | P1: Entregar veículo | - | Pending |
+| EXE-01 | P1: Finalizar OS | Tasks | In Tasks |
+| EXE-02 | P1: Entregar veículo | Tasks | In Tasks |
 
-**Coverage:** 2 total, 0 mapped tasks, 2 unmapped ⚠️
+**Coverage:** 2 total, 2 mapped tasks, 0 unmapped
 
 ---
 

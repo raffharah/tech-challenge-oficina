@@ -89,11 +89,11 @@ A oficina falha no controle de peças e insumos. O MVP exige CRUD de peças e in
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| EST-01 | P1: CRUD de itens | - | Pending |
-| EST-02 | P1: Entrada de estoque | - | Pending |
-| EST-03 | P1: Baixa de estoque | - | Pending |
+| EST-01 | P1: CRUD de itens | Tasks | In Tasks |
+| EST-02 | P1: Entrada de estoque | Tasks | In Tasks |
+| EST-03 | P1: Baixa de estoque | Tasks | In Tasks |
 
-**Coverage:** 3 total, 0 mapped tasks, 3 unmapped ⚠️
+**Coverage:** 3 total, 3 mapped tasks, 0 unmapped
 
 ---
 

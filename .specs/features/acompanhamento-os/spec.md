@@ -83,11 +83,11 @@ Clientes e funcionários não acompanham o status dos serviços. O MVP exige con
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| ACO-01 | P1: Consulta do cliente | - | Pending |
-| ACO-02 | P1: Listagem e detalhamento | - | Pending |
-| ACO-03 | P1: Tempo médio de execução | - | Pending |
+| ACO-01 | P1: Consulta do cliente | Tasks | In Tasks |
+| ACO-02 | P1: Listagem e detalhamento | Tasks | In Tasks |
+| ACO-03 | P1: Tempo médio de execução | Tasks | In Tasks |
 
-**Coverage:** 3 total, 0 mapped tasks, 3 unmapped ⚠️
+**Coverage:** 3 total, 3 mapped tasks, 0 unmapped
 
 ---
 

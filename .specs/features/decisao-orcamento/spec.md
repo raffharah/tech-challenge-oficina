@@ -67,10 +67,10 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| ORC-01 | P1: Aprovar orçamento | - | Pending |
-| ORC-02 | P1: Rejeitar orçamento | - | Pending |
+| ORC-01 | P1: Aprovar orçamento | Tasks | In Tasks |
+| ORC-02 | P1: Rejeitar orçamento | Tasks | In Tasks |
 
-**Coverage:** 2 total, 0 mapped tasks, 2 unmapped ⚠️
+**Coverage:** 2 total, 2 mapped tasks, 0 unmapped
 
 ---
 
