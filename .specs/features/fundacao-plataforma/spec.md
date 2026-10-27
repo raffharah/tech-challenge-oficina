@@ -23,9 +23,9 @@ O repositório só tem `pom.xml` e pacotes vazios. Os requisitos técnicos obrig
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Credencial de demonstração | Um funcionário em memória lido de propriedades (senha com hash BCrypt), documentado no README | README exige credenciais de demonstração; sem tabela para um usuário | n |
-| Validade do JWT | 60 minutos | Sem requisito; valor comum | n |
-| Mapeamento de erros | 400 validação de request; 401 autenticação; 404 inexistente; 409 duplicidade ou recurso em uso; 422 `DomainException` | Contrato único para todos os escopos | n |
+| Credencial de demonstração | Um funcionário em memória lido de propriedades (senha com hash BCrypt), documentado no README | README exige credenciais de demonstração; sem tabela para um usuário | y |
+| Validade do JWT | 60 minutos | Sem requisito; valor comum | y |
+| Mapeamento de erros | 400 validação de request; 401 autenticação; 404 inexistente; 409 duplicidade ou recurso em uso; 422 `DomainException` | Contrato único para todos os escopos | y |
 
 **Open questions:** none - all resolved or logged above.
 

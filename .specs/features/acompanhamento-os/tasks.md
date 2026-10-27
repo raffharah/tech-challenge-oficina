@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/abertura-os-orcamento/design.md` (agregado OS, endpoints, risco do tempo médio)
-**Status**: Draft
+**Status**: Reviewed
 
 ---
 

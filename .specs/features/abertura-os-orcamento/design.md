@@ -1,7 +1,7 @@
 # Ordem de Serviço Design
 
 **Spec**: `.specs/features/abertura-os-orcamento/spec.md`
-**Status**: Draft
+**Status**: Reviewed
 
 Design do agregado `OrdemServico`, compartilhado pelos escopos `abertura-os-orcamento`, `decisao-orcamento`, `execucao-servicos` e `acompanhamento-os` (que não têm design próprio). Segue os padrões de `.specs/features/fundacao-plataforma/design.md` e as decisões AD-001 a AD-005.
 
