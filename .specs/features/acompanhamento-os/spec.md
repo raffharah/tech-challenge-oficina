@@ -23,9 +23,9 @@ Clientes e funcionários não acompanham o status dos serviços. O MVP exige con
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Acesso do cliente | `/cliente` sem JWT; exige número da OS e CPF/CNPJ do titular | AD-001 | n |
-| Disponibilização do orçamento | A consulta do cliente retorna componentes e total | Atende "envio ou disponibilização" sem e-mail | n |
-| Ordenação da listagem | Data de abertura decrescente, paginada | Padrão neutro | n |
+| Acesso do cliente | `/cliente` sem JWT; exige número da OS e CPF/CNPJ do titular | AD-001 | y |
+| Disponibilização do orçamento | A consulta do cliente retorna componentes e total | Atende "envio ou disponibilização" sem e-mail | y |
+| Ordenação da listagem | Data de abertura decrescente, paginada | Padrão neutro | y |
 
 **Open questions:** none - all resolved or logged above.
 

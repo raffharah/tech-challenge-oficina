@@ -22,8 +22,8 @@ O MVP exige CRUD de serviços, e o orçamento automático soma o valor dos servi
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Dados do serviço | Nome (único) e valor padrão > 0 | Mínimo para o orçamento | n |
-| Remoção | Serviço referenciado por OS não é removido (409) | Preserva histórico | n |
+| Dados do serviço | Nome (único) e valor padrão > 0 | Mínimo para o orçamento | y |
+| Remoção | Serviço referenciado por OS não é removido (409) | Preserva histórico | y |
 
 **Open questions:** none - all resolved or logged above.
 

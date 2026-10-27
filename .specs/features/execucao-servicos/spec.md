@@ -23,8 +23,8 @@ Os status Finalizada e Entregue são obrigatórios. Com a OS Em execução, o me
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Finalização | Comando do mecânico finaliza a OS inteira | Sem controle por serviço (AD-005) | n |
-| Entrega | Comando do funcionário, sem pré-condição de pagamento | Pagamento fora do MVP | n |
+| Finalização | Comando do mecânico finaliza a OS inteira | Sem controle por serviço (AD-005) | y |
+| Entrega | Comando do funcionário, sem pré-condição de pagamento | Pagamento fora do MVP | y |
 
 **Open questions:** none - all resolved or logged above.
 

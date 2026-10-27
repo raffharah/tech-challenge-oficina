@@ -24,10 +24,10 @@ A oficina falha no controle de peças e insumos. O MVP exige CRUD de peças e in
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Dados do item | SKU (único), nome, tipo PECA ou INSUMO, preço de venda > 0, saldo inicial ≥ 0 | Glossário; requisito cita peças e insumos | n |
-| Quantidade | Inteiro positivo | Unidade de medida fora do MVP | n |
-| Saldo editável | Só por entrada e baixa; não é digitado na atualização do item | Controle de estoque auditável | n |
-| Remoção | Item referenciado por OS não é removido (409) | Preserva histórico | n |
+| Dados do item | SKU (único), nome, tipo PECA ou INSUMO, preço de venda > 0, saldo inicial ≥ 0 | Glossário; requisito cita peças e insumos | y |
+| Quantidade | Inteiro positivo | Unidade de medida fora do MVP | y |
+| Saldo editável | Só por entrada e baixa; não é digitado na atualização do item | Controle de estoque auditável | y |
+| Remoção | Item referenciado por OS não é removido (409) | Preserva histórico | y |
 
 **Open questions:** none - all resolved or logged above.
 

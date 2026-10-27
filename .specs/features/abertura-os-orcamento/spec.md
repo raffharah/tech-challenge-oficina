@@ -25,11 +25,11 @@ Atendimento e orçamento são feitos em anotações. O MVP exige criar a OS a pa
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Dados da abertura | CPF/CNPJ e placa | Mínimo para identificar cliente e veículo | n |
-| Recebida → Em diagnóstico | Automática na abertura; histórico registra as duas transições | Política do Event Storming; "alteração automática dos status" | n |
-| Preço do componente | Copiado na inclusão (valor padrão do serviço, preço de venda do item) | Mudança de catálogo não altera OS em andamento | n |
-| Mesmo item incluído duas vezes | Quantidades somadas | Evita linhas duplicadas | n |
-| Status CANCELADA | Existe só para orçamento rejeitado | Rejeição precisa de estado final (ORC-02) | n |
+| Dados da abertura | CPF/CNPJ e placa | Mínimo para identificar cliente e veículo | y |
+| Recebida → Em diagnóstico | Automática na abertura; histórico registra as duas transições | Política do Event Storming; "alteração automática dos status" | y |
+| Preço do componente | Copiado na inclusão (valor padrão do serviço, preço de venda do item) | Mudança de catálogo não altera OS em andamento | y |
+| Mesmo item incluído duas vezes | Quantidades somadas | Evita linhas duplicadas | y |
+| Status CANCELADA | Existe só para orçamento rejeitado | Rejeição precisa de estado final (ORC-02) | y |
 
 **Open questions:** none - all resolved or logged above.
 

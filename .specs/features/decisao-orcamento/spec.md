@@ -24,7 +24,7 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
 | Canal da resposta | Endpoints `/cliente` sem JWT para aprovar e rejeitar | AD-001, decisão do usuário | y |
-| Falta de estoque na aprovação | Nada é baixado, OS continua AGUARDANDO_APROVACAO, resposta 422 com os itens faltantes; aprovação pode ser repetida após entrada | AD-004 | n |
+| Falta de estoque na aprovação | Nada é baixado, OS continua AGUARDANDO_APROVACAO, resposta 422 com os itens faltantes; aprovação pode ser repetida após entrada | AD-004 | y |
 
 **Open questions:** none - all resolved or logged above.
 
