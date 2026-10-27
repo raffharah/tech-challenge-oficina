@@ -1,7 +1,7 @@
 # Fundação da Plataforma Design
 
 **Spec**: `.specs/features/fundacao-plataforma/spec.md`
-**Status**: Draft
+**Status**: Reviewed
 
 Este design fixa os padrões que todos os escopos seguem. Escopos CRUD (`clientes-veiculos`, `catalogo-servicos`, `estoque-itens`) não têm design próprio: aplicam este documento. O agregado da OS está em `.specs/features/abertura-os-orcamento/design.md`.
 
