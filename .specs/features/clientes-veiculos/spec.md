@@ -24,7 +24,7 @@ A oficina perde o histórico de clientes e veículos. O MVP exige CRUD de client
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
 | Dados do cliente | Nome e CPF/CNPJ | Mínimo para identificar | y |
-| Normalização do CPF/CNPJ | Letras maiúsculas, somente caracteres alfanuméricos; entrada aceita pontuação de máscara. CPF: 11 números. CNPJ alfanumérico: 14 caracteres: posições 1–8 alfanuméricas, posições 9–12 numéricas, posições 13–14 dígitos verificadores. CNPJ puramente numérico continua aceito. | CPF/CNPJ tradicional normalizado no sistema para unicidade; CNPJ alfanumérico deve seguir o padrão nacional. | y |
+| Normalização do CPF/CNPJ | Letras maiúsculas, somente caracteres alfanuméricos; entrada aceita pontuação de máscara. CPF: 11 números. CNPJ alfanumérico: 14 caracteres: posições 1–12 alfanuméricas (raiz e ordem), posições 13–14 dígitos verificadores numéricos. CNPJ puramente numérico continua aceito. | CPF/CNPJ tradicional normalizado no sistema para unicidade; CNPJ alfanumérico deve seguir o padrão nacional. | y |
 | Ano do veículo | 1900 até ano corrente + 1 | Ano-modelo pode ser o próximo | y |
 | Remoção | Cliente com veículos e veículo com OS não são removidos (409) | Preserva histórico | y |
 
@@ -94,9 +94,9 @@ A oficina perde o histórico de clientes e veículos. O MVP exige CRUD de client
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| CLI-01 | P1: CRUD de clientes | Tasks | In Tasks |
-| CLI-02 | P1: Identificação do cliente | Tasks | In Tasks |
-| CLI-03 | P1: CRUD de veículos | Tasks | In Tasks |
+| CLI-01 | P1: CRUD de clientes | Tasks | Verified |
+| CLI-02 | P1: Identificação do cliente | Tasks | Verified |
+| CLI-03 | P1: CRUD de veículos | Tasks | Verified |
 
 **Coverage:** 3 total, 3 mapped tasks, 0 unmapped
 
