@@ -8,8 +8,13 @@ import br.com.fiap.oficina.application.cliente.ConsultarClientes;
 import br.com.fiap.oficina.application.cliente.ConsultarVeiculos;
 import br.com.fiap.oficina.application.cliente.RemoverCliente;
 import br.com.fiap.oficina.application.cliente.RemoverVeiculo;
+import br.com.fiap.oficina.application.ordemservico.AtualizarServico;
+import br.com.fiap.oficina.application.ordemservico.CadastrarServico;
+import br.com.fiap.oficina.application.ordemservico.ConsultarServicos;
+import br.com.fiap.oficina.application.ordemservico.RemoverServico;
 import br.com.fiap.oficina.domain.cliente.ClienteRepository;
 import br.com.fiap.oficina.domain.cliente.VeiculoRepository;
+import br.com.fiap.oficina.domain.ordemservico.ServicoRepository;
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,5 +65,25 @@ public class BeanConfig {
     @Bean
     RemoverVeiculo removerVeiculo(VeiculoRepository veiculos) {
         return new RemoverVeiculo(veiculos);
+    }
+
+    @Bean
+    CadastrarServico cadastrarServico(ServicoRepository servicos) {
+        return new CadastrarServico(servicos);
+    }
+
+    @Bean
+    AtualizarServico atualizarServico(ServicoRepository servicos) {
+        return new AtualizarServico(servicos);
+    }
+
+    @Bean
+    ConsultarServicos consultarServicos(ServicoRepository servicos) {
+        return new ConsultarServicos(servicos);
+    }
+
+    @Bean
+    RemoverServico removerServico(ServicoRepository servicos) {
+        return new RemoverServico(servicos);
     }
 }
