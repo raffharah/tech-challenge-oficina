@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-oficina}
+      POSTGRES_USER: ${DB_USER:-oficina}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-oficina}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-oficina} -d ${DB_NAME:-oficina}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-oficina}
+      DB_USER: ${DB_USER:-oficina}
+      DB_PASSWORD: ${DB_PASSWORD:-oficina}
+      JWT_SEGREDO: ${JWT_SEGREDO:-segredo-local-apenas-para-demonstracao-0123456789}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:

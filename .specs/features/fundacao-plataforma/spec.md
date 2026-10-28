@@ -116,11 +116,11 @@ O repositório só tem `pom.xml` e pacotes vazios. Os requisitos técnicos obrig
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| FUND-01 | P1: Execução local | Tasks | In Tasks |
-| FUND-02 | P1: Autenticação JWT | Tasks | In Tasks |
-| FUND-03 | P1: Erros padronizados | Tasks | In Tasks |
-| FUND-04 | P1: Guardrails | Tasks | In Tasks |
-| FUND-05 | P2: OpenAPI | Tasks | In Tasks |
+| FUND-01 | P1: Execução local | Tasks | Implemented |
+| FUND-02 | P1: Autenticação JWT | Tasks | Implemented |
+| FUND-03 | P1: Erros padronizados | Tasks | Implemented |
+| FUND-04 | P1: Guardrails | Tasks | Implemented |
+| FUND-05 | P2: OpenAPI | Tasks | Implemented |
 
 **Coverage:** 5 total, 5 mapped tasks, 0 unmapped
 

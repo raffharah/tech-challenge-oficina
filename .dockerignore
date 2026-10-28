@@ -1,0 +1,8 @@
+target/
+.git/
+.idea/
+.specs/
+.claude/
+.serena/
+.headroom/
+docs/

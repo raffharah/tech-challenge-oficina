@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/fundacao-plataforma/design.md`
-**Status**: Reviewed
+**Status**: Implemented
 
 ---
 
@@ -74,9 +74,9 @@ T7 → T8 → T9
 - Skill: `find-docs` (Testcontainers `@ServiceConnection` no Spring Boot 4)
 
 **Done when**:
-- [ ] `OficinaApplicationIT` sobe o contexto com PostgreSQL do Testcontainers e Flyway aplicado
-- [ ] `OficinaApplicationIT` executa em `./mvnw verify` (confirma failsafe ativo)
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OficinaApplicationIT` sobe o contexto com PostgreSQL do Testcontainers e Flyway aplicado
+- [x] `OficinaApplicationIT` executa em `./mvnw verify` (confirma failsafe ativo)
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -96,8 +96,8 @@ T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `docker build .` conclui sem erro
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `docker build .` conclui sem erro
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -117,8 +117,8 @@ T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `docker compose up -d` e `curl -f localhost:8080/swagger-ui.html` retornam sucesso (FUND-01.1)
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `docker compose up -d` e `curl -f localhost:8080/swagger-ui.html` retornam sucesso (FUND-01.1)
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -138,9 +138,9 @@ T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] Uma regra por AC FUND-04.1 e FUND-04.2, mais a regra de isolamento de contextos de `AGENTS.md`
-- [ ] Classe temporária violando cada regra faz o teste falhar (removida antes do commit)
-- [ ] Gate check passes: `./mvnw test`
+- [x] Uma regra por AC FUND-04.1 e FUND-04.2, mais a regra de isolamento de contextos de `AGENTS.md`
+- [x] Classe temporária violando cada regra faz o teste falhar (removida antes do commit)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: arch
 **Gate**: quick
@@ -160,8 +160,8 @@ T7 → T8 → T9
 - Skill: `find-docs` (JaCoCo check rules)
 
 **Done when**:
-- [ ] Classe temporária sem teste em `domain/cliente` faz `./mvnw verify` falhar no `jacoco:check` (removida antes do commit)
-- [ ] Gate check passes: `./mvnw verify`
+- [x] Classe temporária sem teste em `domain/cliente` faz `./mvnw verify` falhar no `jacoco:check` (removida antes do commit)
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -181,8 +181,8 @@ T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `ErroHandlerIT` com controller de teste (`src/test`) cobre 400 com `campos`, 404, 409 (`ConflitoException` e `DataIntegrityViolationException`), 422 com `detalhes` e 500 sem stack trace
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ErroHandlerIT` com controller de teste (`src/test`) cobre 400 com `campos`, 404, 409 (`ConflitoException` e `DataIntegrityViolationException`), 422 com `detalhes` e 500 sem stack trace
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -202,9 +202,9 @@ T7 → T8 → T9
 - Skill: `find-docs` (Spring Security 7 resource server com chave simétrica)
 
 **Done when**:
-- [ ] `SecurityConfigIT`: rota administrativa sem token → 401; token com assinatura inválida → 401; token expirado → 401 (FUND-02.3); `/cliente/**` e `/v3/api-docs` sem token → não 401 (FUND-02.4)
-- [ ] `ErroHandlerIT` (T6) continua verde, autenticado com `jwt()`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `SecurityConfigIT`: rota administrativa sem token → 401; token com assinatura inválida → 401; token expirado → 401 (FUND-02.3); `/cliente/**` e `/v3/api-docs` sem token → não 401 (FUND-02.4)
+- [x] `ErroHandlerIT` (T6) continua verde, autenticado com `jwt()`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -224,8 +224,8 @@ T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `AutenticacaoIT`: credencial válida → 200 com token aceito em rota administrativa e `exp` = emissão + 60 min (FUND-02.1); credencial inválida → 401 sem token (FUND-02.2)
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `AutenticacaoIT`: credencial válida → 200 com token aceito em rota administrativa e `exp` = emissão + 60 min (FUND-02.1); credencial inválida → 401 sem token (FUND-02.2)
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -245,8 +245,8 @@ T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `OpenApiIT`: `GET /v3/api-docs` → 200 com `components.securitySchemes.bearer`; `GET /swagger-ui.html` → 200 sem token
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OpenApiIT`: `GET /v3/api-docs` → 200 com `components.securitySchemes.bearer`; `GET /swagger-ui.html` → 200 sem token
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
