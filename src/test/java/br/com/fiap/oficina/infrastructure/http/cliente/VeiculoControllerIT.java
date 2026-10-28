@@ -36,7 +36,7 @@ class VeiculoControllerIT {
 
     @BeforeEach
     void prepararBanco() throws Exception {
-        jdbc.execute("truncate table veiculo, cliente restart identity");
+        jdbc.execute("truncate table veiculo, cliente restart identity cascade");
         clienteId = cadastrarCliente("Maria", "52998224725");
     }
 

@@ -31,7 +31,7 @@ class ClienteRepositoryImplIT {
 
     @BeforeEach
     void limparBanco() {
-        jdbc.execute("truncate table veiculo, cliente restart identity");
+        jdbc.execute("truncate table veiculo, cliente restart identity cascade");
     }
 
 

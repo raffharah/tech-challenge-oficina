@@ -33,7 +33,7 @@ class ServicoControllerIT {
 
     @BeforeEach
     void limparBanco() {
-        jdbc.execute("truncate table servico restart identity");
+        jdbc.execute("truncate table servico restart identity cascade");
     }
 
     private String servico(String nome, String valorPadrao) {

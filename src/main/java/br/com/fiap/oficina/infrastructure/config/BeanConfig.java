@@ -13,13 +13,22 @@ import br.com.fiap.oficina.application.estoque.CadastrarItem;
 import br.com.fiap.oficina.application.estoque.ConsultarItens;
 import br.com.fiap.oficina.application.estoque.RegistrarEntrada;
 import br.com.fiap.oficina.application.estoque.RemoverItem;
+import br.com.fiap.oficina.application.ordemservico.AbrirOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.AtualizarServico;
 import br.com.fiap.oficina.application.ordemservico.CadastrarServico;
+import br.com.fiap.oficina.application.ordemservico.ConcluirDiagnostico;
 import br.com.fiap.oficina.application.ordemservico.ConsultarServicos;
+import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.RemoverItemDaOrdem;
+import br.com.fiap.oficina.application.ordemservico.RemoverServicoDaOrdem;
 import br.com.fiap.oficina.application.ordemservico.RemoverServico;
 import br.com.fiap.oficina.domain.cliente.ClienteRepository;
 import br.com.fiap.oficina.domain.cliente.VeiculoRepository;
 import br.com.fiap.oficina.domain.estoque.ItemEstoqueRepository;
+import br.com.fiap.oficina.domain.ordemservico.CadastroDeVeiculos;
+import br.com.fiap.oficina.domain.ordemservico.EstoqueDeItens;
+import br.com.fiap.oficina.domain.ordemservico.OrdemServicoRepository;
 import br.com.fiap.oficina.domain.ordemservico.ServicoRepository;
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
@@ -116,5 +125,35 @@ public class BeanConfig {
     @Bean
     RegistrarEntrada registrarEntrada(ItemEstoqueRepository itens) {
         return new RegistrarEntrada(itens);
+    }
+
+    @Bean
+    AbrirOrdemServico abrirOrdemServico(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos, Clock clock) {
+        return new AbrirOrdemServico(ordens, veiculos, clock);
+    }
+
+    @Bean
+    IncluirServicoNaOrdem incluirServicoNaOrdem(OrdemServicoRepository ordens, ServicoRepository servicos) {
+        return new IncluirServicoNaOrdem(ordens, servicos);
+    }
+
+    @Bean
+    RemoverServicoDaOrdem removerServicoDaOrdem(OrdemServicoRepository ordens) {
+        return new RemoverServicoDaOrdem(ordens);
+    }
+
+    @Bean
+    IncluirItemNaOrdem incluirItemNaOrdem(OrdemServicoRepository ordens, EstoqueDeItens estoque) {
+        return new IncluirItemNaOrdem(ordens, estoque);
+    }
+
+    @Bean
+    RemoverItemDaOrdem removerItemDaOrdem(OrdemServicoRepository ordens) {
+        return new RemoverItemDaOrdem(ordens);
+    }
+
+    @Bean
+    ConcluirDiagnostico concluirDiagnostico(OrdemServicoRepository ordens, Clock clock) {
+        return new ConcluirDiagnostico(ordens, clock);
     }
 }
