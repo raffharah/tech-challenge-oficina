@@ -73,8 +73,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `CpfCnpjTest`: CPF e CNPJ válidos com e sem máscara; dígito verificador errado; todos dígitos iguais; tamanho inválido
-- [ ] Gate check passes: `./mvnw test`
+- [x] `CpfCnpjTest`: CPF e CNPJ válidos com e sem máscara; dígito verificador errado; todos dígitos iguais; tamanho inválido
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -94,8 +94,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `PlacaTest`: `abc-1234` → `ABC1234`; `ABC1D23` válida; `AB12345`, `ABCD123`, vazio rejeitados
-- [ ] Gate check passes: `./mvnw test`
+- [x] `PlacaTest`: `abc-1234` → `ABC1234`; `ABC1D23` válida; `AB12345`, `ABCD123`, vazio rejeitados
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -115,8 +115,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `ClienteTest`: nome vazio rejeitado; `renomear` mantém CpfCnpj (CLI-01.4)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ClienteTest`: nome vazio rejeitado; `renomear` mantém CpfCnpj (CLI-01.4)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -136,8 +136,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `VeiculoTest`: ano 1899 e ano corrente + 2 rejeitados; 1900 e ano corrente + 1 aceitos (CLI-03.4); `atualizar` mantém placa e cliente (CLI-03.5)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `VeiculoTest`: ano 1899 e ano corrente + 2 rejeitados; 1900 e ano corrente + 1 aceitos (CLI-03.4); `atualizar` mantém placa e cliente (CLI-03.5)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -157,8 +157,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `CadastrarClienteTest` com `ClienteRepositoryEmMemoria`: sucesso (CLI-01.1), inválido (CLI-01.2), duplicado com máscara diferente (CLI-01.3)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `CadastrarClienteTest` com `ClienteRepositoryEmMemoria`: sucesso (CLI-01.1), inválido (CLI-01.2), duplicado com máscara diferente (CLI-01.3)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -178,8 +178,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `AtualizarClienteTest`: nome alterado e CpfCnpj mantido (CLI-01.4); id inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AtualizarClienteTest`: nome alterado e CpfCnpj mantido (CLI-01.4); id inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -199,8 +199,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConsultarClientesTest`: busca com e sem máscara (CLI-02.1); inexistente → 404 (CLI-02.2); listagem paginada (CLI-01.5)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ConsultarClientesTest`: busca com e sem máscara (CLI-02.1); inexistente → 404 (CLI-02.2); listagem paginada (CLI-01.5)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -220,8 +220,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `RemoverClienteTest`: sem veículos removido; com veículo → 409 (CLI-01.6); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RemoverClienteTest`: sem veículos removido; com veículo → 409 (CLI-01.6); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -241,8 +241,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `CadastrarVeiculoTest` com `VeiculoRepositoryEmMemoria` e `Clock` fixo: sucesso normalizado (CLI-03.1), placa inválida (CLI-03.2), repetida (CLI-03.3), ano fora (CLI-03.4), cliente inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `CadastrarVeiculoTest` com `VeiculoRepositoryEmMemoria` e `Clock` fixo: sucesso normalizado (CLI-03.1), placa inválida (CLI-03.2), repetida (CLI-03.3), ano fora (CLI-03.4), cliente inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -262,8 +262,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `AtualizarVeiculoTest`: campos alterados, placa e cliente mantidos (CLI-03.5); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AtualizarVeiculoTest`: campos alterados, placa e cliente mantidos (CLI-03.5); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -283,8 +283,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConsultarVeiculosTest`: `abc-1234` encontra `ABC1234`; listagem só do cliente (CLI-03.6); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ConsultarVeiculosTest`: `abc-1234` encontra `ABC1234`; listagem só do cliente (CLI-03.6); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -304,8 +304,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `RemoverVeiculoTest`: removido; inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RemoverVeiculoTest`: removido; inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -325,8 +325,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] Flyway aplica em `OficinaApplicationIT`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] Flyway aplica em `OficinaApplicationIT`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -346,8 +346,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `ClienteRepositoryImplIT`: salvar/buscar por id e CPF/CNPJ, listar paginado, remover; CPF/CNPJ duplicado viola constraint
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ClienteRepositoryImplIT`: salvar/buscar por id e CPF/CNPJ, listar paginado, remover; CPF/CNPJ duplicado viola constraint
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -367,8 +367,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `VeiculoRepositoryImplIT`: buscar por placa, listar por cliente, existe por cliente, remover
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `VeiculoRepositoryImplIT`: buscar por placa, listar por cliente, existe por cliente, remover
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -388,8 +388,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `ClienteControllerIT` (com JWT): 201, 422, 409, atualização, listagem, busca por CPF/CNPJ com máscara, 404, remoção com veículo → 409, sem token → 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ClienteControllerIT` (com JWT): 201, 422, 409, atualização, listagem, busca por CPF/CNPJ com máscara, 404, remoção com veículo → 409, sem token → 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -409,8 +409,8 @@ T13 → T14 → T15 → T16 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `VeiculoControllerIT` (com JWT): 201 normalizado, placa inválida 422, repetida 409, ano fora 422, atualização, listagem por cliente, 404, sem token 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `VeiculoControllerIT` (com JWT): 201 normalizado, placa inválida 422, repetida 409, ano fora 422, atualização, listagem por cliente, 404, sem token 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
