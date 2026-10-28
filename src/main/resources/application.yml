@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: oficina-mecanica
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/oficina}
+    username: ${DB_USER:oficina}
+    password: ${DB_PASSWORD:oficina}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+oficina:
+  jwt:
+    # Padrão apenas para execução local; sobrescreva com JWT_SEGREDO (mínimo 32 bytes)
+    segredo: ${JWT_SEGREDO:segredo-local-apenas-para-demonstracao-0123456789}
+  usuario:
+    nome: ${OFICINA_USUARIO:funcionario}
+    # BCrypt da senha de demonstração "oficina123"; sobrescreva com OFICINA_SENHA_HASH
+    senha-hash: ${OFICINA_SENHA_HASH:{bcrypt}$2a$10$oUmJY8K0.vFuhGBjh5c1O.3.uSlSYeE8GOpk.aSHb794/kP96o/bm}
