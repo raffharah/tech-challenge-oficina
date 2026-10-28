@@ -8,12 +8,18 @@ import br.com.fiap.oficina.application.cliente.ConsultarClientes;
 import br.com.fiap.oficina.application.cliente.ConsultarVeiculos;
 import br.com.fiap.oficina.application.cliente.RemoverCliente;
 import br.com.fiap.oficina.application.cliente.RemoverVeiculo;
+import br.com.fiap.oficina.application.estoque.AtualizarItem;
+import br.com.fiap.oficina.application.estoque.CadastrarItem;
+import br.com.fiap.oficina.application.estoque.ConsultarItens;
+import br.com.fiap.oficina.application.estoque.RegistrarEntrada;
+import br.com.fiap.oficina.application.estoque.RemoverItem;
 import br.com.fiap.oficina.application.ordemservico.AtualizarServico;
 import br.com.fiap.oficina.application.ordemservico.CadastrarServico;
 import br.com.fiap.oficina.application.ordemservico.ConsultarServicos;
 import br.com.fiap.oficina.application.ordemservico.RemoverServico;
 import br.com.fiap.oficina.domain.cliente.ClienteRepository;
 import br.com.fiap.oficina.domain.cliente.VeiculoRepository;
+import br.com.fiap.oficina.domain.estoque.ItemEstoqueRepository;
 import br.com.fiap.oficina.domain.ordemservico.ServicoRepository;
 import java.time.Clock;
 import org.springframework.context.annotation.Bean;
@@ -85,5 +91,30 @@ public class BeanConfig {
     @Bean
     RemoverServico removerServico(ServicoRepository servicos) {
         return new RemoverServico(servicos);
+    }
+
+    @Bean
+    CadastrarItem cadastrarItem(ItemEstoqueRepository itens) {
+        return new CadastrarItem(itens);
+    }
+
+    @Bean
+    AtualizarItem atualizarItem(ItemEstoqueRepository itens) {
+        return new AtualizarItem(itens);
+    }
+
+    @Bean
+    ConsultarItens consultarItens(ItemEstoqueRepository itens) {
+        return new ConsultarItens(itens);
+    }
+
+    @Bean
+    RemoverItem removerItem(ItemEstoqueRepository itens) {
+        return new RemoverItem(itens);
+    }
+
+    @Bean
+    RegistrarEntrada registrarEntrada(ItemEstoqueRepository itens) {
+        return new RegistrarEntrada(itens);
     }
 }
