@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class ConcluirDiagnosticoTest {
@@ -27,7 +28,7 @@ class ConcluirDiagnosticoTest {
         Long servicoId = new CadastrarServico(servicos)
                 .executar(new CadastrarServicoDTO("Troca de oleo", new BigDecimal("100.00"))).id();
         new IncluirServicoNaOrdem(ordens, servicos).executar(ordemId, servicoId);
-        new IncluirItemNaOrdem(ordens, id -> new ItemCotado(id, "OLE-1", "Oleo", new BigDecimal("35.50")))
+        new IncluirItemNaOrdem(ordens, new EstoqueDeItensEmMemoria(Map.of(10L, new ItemCotado(10L, "OLE-1", "Oleo", new BigDecimal("35.50")))))
                 .executar(ordemId, 10L, 2);
 
         OrdemServicoDTO dto = concluir.executar(ordemId);
