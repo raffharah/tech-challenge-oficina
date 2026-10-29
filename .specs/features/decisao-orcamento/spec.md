@@ -6,7 +6,7 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 
 ## Goals
 
-- [ ] Aprovação e rejeição registradas pela resposta simulada do cliente.
+- [x] Aprovação e rejeição registradas pela resposta simulada do cliente.
 
 ## Out of Scope
 
@@ -67,8 +67,8 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| ORC-01 | P1: Aprovar orçamento | Tasks | In Tasks |
-| ORC-02 | P1: Rejeitar orçamento | Tasks | In Tasks |
+| ORC-01 | P1: Aprovar orçamento | Tasks | Verified |
+| ORC-02 | P1: Rejeitar orçamento | Tasks | Verified |
 
 **Coverage:** 2 total, 2 mapped tasks, 0 unmapped
 
@@ -76,4 +76,4 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 
 ## Success Criteria
 
-- [ ] Integração cobre aprovação com saldo, aprovação sem saldo e rejeição.
+- [x] Integração cobre aprovação com saldo, aprovação sem saldo e rejeição.

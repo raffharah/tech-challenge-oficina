@@ -64,8 +64,8 @@ T4 → T5
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoTest`: aprovação e rejeição registram histórico; ambas fora de AGUARDANDO_APROVACAO → `DomainException` (ORC-01.3); OS CANCELADA rejeita inclusão, conclusão e aprovação (ORC-02.2)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrdemServicoTest`: aprovação e rejeição registram histórico; ambas fora de AGUARDANDO_APROVACAO → `DomainException` (ORC-01.3); OS CANCELADA rejeita inclusão, conclusão e aprovação (ORC-02.2)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -85,8 +85,8 @@ T4 → T5
 - Skill: NONE
 
 **Done when**:
-- [ ] `AprovarOrcamentoTest`: com saldo → baixa chamada e EM_EXECUCAO (ORC-01.1); porta lança falta → status AGUARDANDO_APROVACAO e OS não salva (ORC-01.2); OS em outro status → 422 sem chamar a porta (ORC-01.3); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AprovarOrcamentoTest`: com saldo → baixa chamada e EM_EXECUCAO (ORC-01.1); porta lança falta → status AGUARDANDO_APROVACAO e OS não salva (ORC-01.2); OS em outro status → 422 sem chamar a porta (ORC-01.3); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -106,8 +106,8 @@ T4 → T5
 - Skill: NONE
 
 **Done when**:
-- [ ] `RejeitarOrcamentoTest`: CANCELADA (ORC-02.1); fora de AGUARDANDO_APROVACAO → 422; inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RejeitarOrcamentoTest`: CANCELADA (ORC-02.1); fora de AGUARDANDO_APROVACAO → 422; inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -127,8 +127,8 @@ T4 → T5
 - Skill: NONE
 
 **Done when**:
-- [ ] `EstoqueDeItensImplIT`: baixa reduz saldo físico; falta lança `DomainException` com `detalhes` e saldo inalterado
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `EstoqueDeItensImplIT`: baixa reduz saldo físico; falta lança `DomainException` com `detalhes` e saldo inalterado
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -148,8 +148,8 @@ T4 → T5
 - Skill: NONE
 
 **Done when**:
-- [ ] `DecisaoOrcamentoIT` (sem token): aprovação com saldo → EM_EXECUCAO e saldo baixado; sem saldo → 422 com itens em `detalhes`, OS AGUARDANDO_APROVACAO e nenhum saldo alterado; rejeição → CANCELADA e inclusão posterior 422; status inválido 422; inexistente 404
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `DecisaoOrcamentoIT` (sem token): aprovação com saldo → EM_EXECUCAO e saldo baixado; sem saldo → 422 com itens em `detalhes`, OS AGUARDANDO_APROVACAO e nenhum saldo alterado; rejeição → CANCELADA e inclusão posterior 422; status inválido 422; inexistente 404
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
