@@ -58,8 +58,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoTest`: finalização e entrega registram data/hora no histórico (EXE-01.1, EXE-02.1); fora do status exigido → `DomainException` (EXE-01.2, EXE-02.2)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrdemServicoTest`: finalização e entrega registram data/hora no histórico (EXE-01.1, EXE-02.1); fora do status exigido → `DomainException` (EXE-01.2, EXE-02.2)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -79,8 +79,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `FinalizarOrdemServicoTest`: FINALIZADA com data do `Clock` fixo (EXE-01.1); EM_DIAGNOSTICO → 422 (EXE-01.2); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `FinalizarOrdemServicoTest`: FINALIZADA com data do `Clock` fixo (EXE-01.1); EM_DIAGNOSTICO → 422 (EXE-01.2); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -100,8 +100,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `EntregarVeiculoTest`: ENTREGUE (EXE-02.1); EM_EXECUCAO → 422 (EXE-02.2); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `EntregarVeiculoTest`: ENTREGUE (EXE-02.1); EM_EXECUCAO → 422 (EXE-02.2); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -121,8 +121,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `ExecucaoEntregaIT` (com JWT): fluxo abertura → orçamento → aprovação → finalização → entrega termina ENTREGUE; finalizar OS em diagnóstico 422; entregar OS em execução 422; sem token 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ExecucaoEntregaIT` (com JWT): fluxo abertura → orçamento → aprovação → finalização → entrega termina ENTREGUE; finalizar OS em diagnóstico 422; entregar OS em execução 422; sem token 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full

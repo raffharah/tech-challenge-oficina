@@ -6,7 +6,7 @@ Os status Finalizada e Entregue são obrigatórios. Com a OS Em execução, o me
 
 ## Goals
 
-- [ ] OS percorre Em execução → Finalizada → Entregue com data/hora no histórico (base do tempo médio, AD-005).
+- [x] OS percorre Em execução → Finalizada → Entregue com data/hora no histórico (base do tempo médio, AD-005).
 
 ## Out of Scope
 
@@ -66,8 +66,8 @@ Os status Finalizada e Entregue são obrigatórios. Com a OS Em execução, o me
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| EXE-01 | P1: Finalizar OS | Tasks | In Tasks |
-| EXE-02 | P1: Entregar veículo | Tasks | In Tasks |
+| EXE-01 | P1: Finalizar OS | Tasks | Verified |
+| EXE-02 | P1: Entregar veículo | Tasks | Verified |
 
 **Coverage:** 2 total, 2 mapped tasks, 0 unmapped
 
@@ -75,4 +75,4 @@ Os status Finalizada e Entregue são obrigatórios. Com a OS Em execução, o me
 
 ## Success Criteria
 
-- [ ] Fluxo completo abertura → entrega demonstrável pelo Swagger.
+- [x] Fluxo completo abertura → entrega demonstrável pelo Swagger.
