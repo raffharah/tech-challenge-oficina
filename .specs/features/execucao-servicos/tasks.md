@@ -121,8 +121,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `ExecucaoEntregaIT` (com JWT): fluxo abertura → orçamento → aprovação → finalização → entrega termina ENTREGUE; finalizar OS em diagnóstico 422; entregar OS em execução 422; sem token 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ExecucaoEntregaIT` (com JWT): fluxo abertura → orçamento → aprovação → finalização → entrega termina ENTREGUE; finalizar OS em diagnóstico 422; entregar OS em execução 422; sem token 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full

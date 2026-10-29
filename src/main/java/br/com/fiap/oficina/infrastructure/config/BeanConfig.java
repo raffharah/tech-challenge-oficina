@@ -20,6 +20,8 @@ import br.com.fiap.oficina.application.ordemservico.AtualizarServico;
 import br.com.fiap.oficina.application.ordemservico.CadastrarServico;
 import br.com.fiap.oficina.application.ordemservico.ConcluirDiagnostico;
 import br.com.fiap.oficina.application.ordemservico.ConsultarServicos;
+import br.com.fiap.oficina.application.ordemservico.EntregarVeiculo;
+import br.com.fiap.oficina.application.ordemservico.FinalizarOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.RejeitarOrcamento;
@@ -173,5 +175,15 @@ public class BeanConfig {
     @Bean
     RejeitarOrcamento rejeitarOrcamento(OrdemServicoRepository ordens, Clock clock) {
         return new RejeitarOrcamento(ordens, clock);
+    }
+
+    @Bean
+    FinalizarOrdemServico finalizarOrdemServico(OrdemServicoRepository ordens, Clock clock) {
+        return new FinalizarOrdemServico(ordens, clock);
+    }
+
+    @Bean
+    EntregarVeiculo entregarVeiculo(OrdemServicoRepository ordens, Clock clock) {
+        return new EntregarVeiculo(ordens, clock);
     }
 }

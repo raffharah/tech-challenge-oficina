@@ -3,6 +3,8 @@ package br.com.fiap.oficina.infrastructure.http.ordemservico;
 import br.com.fiap.oficina.application.ordemservico.AbrirOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.AbrirOrdemServicoDTO;
 import br.com.fiap.oficina.application.ordemservico.ConcluirDiagnostico;
+import br.com.fiap.oficina.application.ordemservico.EntregarVeiculo;
+import br.com.fiap.oficina.application.ordemservico.FinalizarOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.OrdemServicoDTO;
@@ -31,16 +33,20 @@ public class OrdemServicoController {
     private final IncluirItemNaOrdem incluirItem;
     private final RemoverItemDaOrdem removerItem;
     private final ConcluirDiagnostico concluirDiagnostico;
+    private final FinalizarOrdemServico finalizar;
+    private final EntregarVeiculo entregar;
 
     public OrdemServicoController(AbrirOrdemServico abrir, IncluirServicoNaOrdem incluirServico,
             RemoverServicoDaOrdem removerServico, IncluirItemNaOrdem incluirItem, RemoverItemDaOrdem removerItem,
-            ConcluirDiagnostico concluirDiagnostico) {
+            ConcluirDiagnostico concluirDiagnostico, FinalizarOrdemServico finalizar, EntregarVeiculo entregar) {
         this.abrir = abrir;
         this.incluirServico = incluirServico;
         this.removerServico = removerServico;
         this.incluirItem = incluirItem;
         this.removerItem = removerItem;
         this.concluirDiagnostico = concluirDiagnostico;
+        this.finalizar = finalizar;
+        this.entregar = entregar;
     }
 
     @PostMapping
@@ -82,5 +88,17 @@ public class OrdemServicoController {
     @Transactional
     OrdemServicoDTO concluirDiagnostico(@PathVariable Long id) {
         return concluirDiagnostico.executar(id);
+    }
+
+    @PostMapping("/{id}/finalizacao")
+    @Transactional
+    OrdemServicoDTO finalizar(@PathVariable Long id) {
+        return finalizar.executar(id);
+    }
+
+    @PostMapping("/{id}/entrega")
+    @Transactional
+    OrdemServicoDTO entregar(@PathVariable Long id) {
+        return entregar.executar(id);
     }
 }
