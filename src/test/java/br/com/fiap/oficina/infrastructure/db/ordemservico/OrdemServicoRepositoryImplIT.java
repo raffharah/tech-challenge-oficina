@@ -105,4 +105,41 @@ class OrdemServicoRepositoryImplIT {
         assertThatThrownBy(() -> jdbc.update("delete from item_estoque where id = 1"))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
+
+    @Test
+    void listaPaginadoPorAberturaDecrescente() {
+        VeiculoIdentificado veiculo = new VeiculoIdentificado(1L, "52998224725", "ABC1D23");
+        ordens.salvar(OrdemServico.abrir(veiculo, ABERTURA));
+        ordens.salvar(OrdemServico.abrir(veiculo, ABERTURA.plusSeconds(3600)));
+        ordens.salvar(OrdemServico.abrir(veiculo, ABERTURA.plusSeconds(7200)));
+
+        var primeira = ordens.listar(0, 2);
+        var segunda = ordens.listar(1, 2);
+
+        assertThat(primeira.total()).isEqualTo(3);
+        assertThat(primeira.itens()).extracting(OrdemServico::getId).containsExactly(3L, 2L);
+        assertThat(segunda.itens()).extracting(OrdemServico::getId).containsExactly(1L);
+    }
+
+    @Test
+    void listarFinalizadasIgnoraOutrosStatus() {
+        OrdemServico emExecucao = ordemCompleta();
+        emExecucao.aprovar(CONCLUSAO.plusSeconds(60));
+        OrdemServico finalizada = ordemCompleta();
+        finalizada.aprovar(CONCLUSAO.plusSeconds(60));
+        finalizada.finalizar(CONCLUSAO.plusSeconds(3660));
+        OrdemServico entregue = ordemCompleta();
+        entregue.aprovar(CONCLUSAO.plusSeconds(60));
+        entregue.finalizar(CONCLUSAO.plusSeconds(7260));
+        entregue.entregar(CONCLUSAO.plusSeconds(8000));
+        ordens.salvar(ordemCompleta());
+        ordens.salvar(emExecucao);
+        ordens.salvar(finalizada);
+        ordens.salvar(entregue);
+
+        var lidas = ordens.listarFinalizadas();
+
+        assertThat(lidas).extracting(OrdemServico::getStatus)
+                .containsExactlyInAnyOrder(StatusOrdemServico.FINALIZADA, StatusOrdemServico.ENTREGUE);
+    }
 }

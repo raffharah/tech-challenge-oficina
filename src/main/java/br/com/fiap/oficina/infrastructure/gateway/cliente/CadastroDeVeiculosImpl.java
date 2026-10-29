@@ -23,6 +23,11 @@ public class CadastroDeVeiculosImpl implements CadastroDeVeiculos {
     }
 
     @Override
+    public String normalizarCpfCnpj(String cpfCnpj) {
+        return new CpfCnpj(cpfCnpj).valor();
+    }
+
+    @Override
     public VeiculoIdentificado identificar(String cpfCnpj, String placa) {
         String cpfCnpjNormalizado = new CpfCnpj(cpfCnpj).valor();
         String placaNormalizada = new Placa(placa).valor();

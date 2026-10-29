@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import br.com.fiap.oficina.domain.DomainException;
 import br.com.fiap.oficina.domain.NaoEncontradoException;
 import br.com.fiap.oficina.domain.ordemservico.StatusOrdemServico;
+import br.com.fiap.oficina.domain.ordemservico.CadastroDeVeiculos;
 import br.com.fiap.oficina.domain.ordemservico.VeiculoIdentificado;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.function.BiFunction;
 import org.junit.jupiter.api.Test;
 
 class AbrirOrdemServicoTest {
@@ -22,7 +24,7 @@ class AbrirOrdemServicoTest {
     @Test
     void salvaOrdemEmDiagnostico() {
         AbrirOrdemServico abrir = new AbrirOrdemServico(ordens,
-                (cpfCnpj, placa) -> new VeiculoIdentificado(7L, "52998224725", "ABC1D23"), clock);
+                cadastro((cpfCnpj, placa) -> new VeiculoIdentificado(7L, "52998224725", "ABC1D23")), clock);
 
         OrdemServicoDTO dto = abrir.executar(new AbrirOrdemServicoDTO("529.982.247-25", "abc-1d23"));
 
@@ -38,9 +40,9 @@ class AbrirOrdemServicoTest {
 
     @Test
     void dadosInvalidosOuDonoDiferenteLancamDomainExceptionSemSalvar() {
-        AbrirOrdemServico abrir = new AbrirOrdemServico(ordens, (cpfCnpj, placa) -> {
+        AbrirOrdemServico abrir = new AbrirOrdemServico(ordens, cadastro((cpfCnpj, placa) -> {
             throw new DomainException("CPF_CNPJ_INVALIDO", "CPF/CNPJ invalido");
-        }, clock);
+        }), clock);
 
         assertThatThrownBy(() -> abrir.executar(new AbrirOrdemServicoDTO("1", "X")))
                 .isInstanceOf(DomainException.class).hasMessage("CPF/CNPJ invalido");
@@ -49,12 +51,26 @@ class AbrirOrdemServicoTest {
 
     @Test
     void clienteOuVeiculoInexistenteLancaNaoEncontradoSemSalvar() {
-        AbrirOrdemServico abrir = new AbrirOrdemServico(ordens, (cpfCnpj, placa) -> {
+        AbrirOrdemServico abrir = new AbrirOrdemServico(ordens, cadastro((cpfCnpj, placa) -> {
             throw new NaoEncontradoException("CLIENTE_NAO_ENCONTRADO", "Cliente nao encontrado");
-        }, clock);
+        }), clock);
 
         assertThatThrownBy(() -> abrir.executar(new AbrirOrdemServicoDTO("52998224725", "ABC1D23")))
                 .isInstanceOf(NaoEncontradoException.class);
         assertThat(ordens.quantidade()).isZero();
+    }
+
+    private static CadastroDeVeiculos cadastro(BiFunction<String, String, VeiculoIdentificado> identificar) {
+        return new CadastroDeVeiculos() {
+            @Override
+            public VeiculoIdentificado identificar(String cpfCnpj, String placa) {
+                return identificar.apply(cpfCnpj, placa);
+            }
+
+            @Override
+            public String normalizarCpfCnpj(String cpfCnpj) {
+                return cpfCnpj;
+            }
+        };
     }
 }
