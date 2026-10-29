@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/abertura-os-orcamento/design.md` (agregado OS, endpoints, risco do tempo médio)
-**Status**: Reviewed
+**Status**: Implemented
 
 ---
 
@@ -65,8 +65,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoTest`: OS finalizada 60 min após aprovação → 60 min; OS não finalizada → vazio
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrdemServicoTest`: OS finalizada 60 min após aprovação → 60 min; OS não finalizada → vazio
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -86,8 +86,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConsultarAndamentoTest`: titular recebe status, histórico, componentes e total (ACO-01.1); outro CPF e OS inexistente → mesma mensagem 404 (ACO-01.2)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ConsultarAndamentoTest`: titular recebe status, histórico, componentes e total (ACO-01.1); outro CPF e OS inexistente → mesma mensagem 404 (ACO-01.2)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -107,8 +107,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `ListarOrdensServicoTest`: duas OS retornadas da mais nova para a mais antiga com os campos de ACO-02.1
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ListarOrdensServicoTest`: duas OS retornadas da mais nova para a mais antiga com os campos de ACO-02.1
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -128,8 +128,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `DetalharOrdemServicoTest`: CPF/CNPJ, placa, componentes, total e histórico (ACO-02.2); inexistente → 404 (ACO-02.3)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `DetalharOrdemServicoTest`: CPF/CNPJ, placa, componentes, total e histórico (ACO-02.2); inexistente → 404 (ACO-02.3)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -149,8 +149,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `CalcularTempoMedioExecucaoTest`: 60 e 120 min → média 90, quantidade 2 (ACO-03.1); nenhuma → quantidade 0 e média nula (ACO-03.2)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `CalcularTempoMedioExecucaoTest`: 60 e 120 min → média 90, quantidade 2 (ACO-03.1); nenhuma → quantidade 0 e média nula (ACO-03.2)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -170,8 +170,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoRepositoryImplIT`: ordem decrescente e paginação; `listarFinalizadas` ignora OS em outros status
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OrdemServicoRepositoryImplIT`: ordem decrescente e paginação; `listarFinalizadas` ignora OS em outros status
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -191,8 +191,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `CadastroDeVeiculosImplIT`: CPF mascarado → só dígitos; inválido → `DomainException`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `CadastroDeVeiculosImplIT`: CPF mascarado → só dígitos; inválido → `DomainException`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -212,8 +212,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `AcompanhamentoAdminIT` (com JWT): listagem ordenada; detalhe; 404; tempo médio com duas OS finalizadas em `Clock` controlado; sem OS → quantidade 0; sem token 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `AcompanhamentoAdminIT` (com JWT): listagem ordenada; detalhe; 404; tempo médio com duas OS finalizadas em `Clock` controlado; sem OS → quantidade 0; sem token 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -233,8 +233,8 @@ T6 → T7 → T8 → T9
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConsultaClienteIT` (sem token): titular com CPF mascarado → 200 com status, histórico, componentes e total; outro CPF e OS inexistente → 404 com corpo idêntico
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ConsultaClienteIT` (sem token): titular com CPF mascarado → 200 com status, histórico, componentes e total; outro CPF e OS inexistente → 404 com corpo idêntico
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
