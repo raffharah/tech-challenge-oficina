@@ -6,8 +6,8 @@ A oficina falha no controle de peças e insumos. O MVP exige CRUD de peças e in
 
 ## Goals
 
-- [ ] CRUD de itens (peça ou insumo) com preço de venda e saldo físico.
-- [ ] Porta usada pela OS: consultar preço e dar baixa tudo-ou-nada.
+- [x] CRUD de itens (peça ou insumo) com preço de venda e saldo físico.
+- [x] Porta usada pela OS: consultar preço e dar baixa tudo-ou-nada.
 
 ## Out of Scope
 
@@ -89,9 +89,9 @@ A oficina falha no controle de peças e insumos. O MVP exige CRUD de peças e in
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| EST-01 | P1: CRUD de itens | Tasks | In Tasks |
-| EST-02 | P1: Entrada de estoque | Tasks | In Tasks |
-| EST-03 | P1: Baixa de estoque | Tasks | In Tasks |
+| EST-01 | P1: CRUD de itens | Execute | Verified |
+| EST-02 | P1: Entrada de estoque | Execute | Verified |
+| EST-03 | P1: Baixa de estoque | Execute | Verified |
 
 **Coverage:** 3 total, 3 mapped tasks, 0 unmapped
 
@@ -99,4 +99,4 @@ A oficina falha no controle de peças e insumos. O MVP exige CRUD de peças e in
 
 ## Success Criteria
 
-- [ ] Duas aprovações concorrentes pelo último item: só uma baixa (teste de integração).
+- [x] Duas aprovações concorrentes pelo último item: só uma baixa (teste de integração).

@@ -65,8 +65,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `ItemEstoqueTest`: preço ≤ 0 e saldo inicial negativo rejeitados (EST-01.3); `atualizar` não muda saldo (EST-01.4); entrada soma e rejeita ≤ 0 (EST-02); baixa exata zera; baixa acima do saldo rejeitada sem alterar (EST-03.3)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ItemEstoqueTest`: preço ≤ 0 e saldo inicial negativo rejeitados (EST-01.3); `atualizar` não muda saldo (EST-01.4); entrada soma e rejeita ≤ 0 (EST-02); baixa exata zera; baixa acima do saldo rejeitada sem alterar (EST-03.3)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -86,8 +86,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `CadastrarItemTest` com `ItemEstoqueRepositoryEmMemoria`: sucesso com saldo físico = inicial (EST-01.1), SKU repetido (EST-01.2), preço inválido (EST-01.3)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `CadastrarItemTest` com `ItemEstoqueRepositoryEmMemoria`: sucesso com saldo físico = inicial (EST-01.1), SKU repetido (EST-01.2), preço inválido (EST-01.3)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -107,8 +107,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `AtualizarItemTest`: alteração sem mudar saldo (EST-01.4), inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AtualizarItemTest`: alteração sem mudar saldo (EST-01.4), inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -128,8 +128,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConsultarItensTest`: listagem e busca retornam tipo, preço e saldo (EST-01.5); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ConsultarItensTest`: listagem e busca retornam tipo, preço e saldo (EST-01.5); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -149,8 +149,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `RemoverItemTest`: removido; inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RemoverItemTest`: removido; inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -170,8 +170,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `RegistrarEntradaTest`: 10 + 5 = 15 (EST-02.1); quantidade 0 → 422 (EST-02.2); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RegistrarEntradaTest`: 10 + 5 = 15 (EST-02.1); quantidade 0 → 422 (EST-02.2); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -191,8 +191,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `BaixarItensTest`: todos com saldo baixados (EST-03.1); um faltante → nenhum saldo alterado e `detalhes` lista só o faltante (EST-03.2); item inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `BaixarItensTest`: todos com saldo baixados (EST-03.1); um faltante → nenhum saldo alterado e `detalhes` lista só o faltante (EST-03.2); item inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -212,8 +212,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] Flyway aplica em `OficinaApplicationIT`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] Flyway aplica em `OficinaApplicationIT`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -233,9 +233,9 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `ItemEstoqueRepositoryImplIT`: CRUD, `buscarPorIds`, SKU duplicado viola constraint
-- [ ] Duas transações concorrentes baixando o último item: uma confirma, a outra falha com `ObjectOptimisticLockingFailureException`; saldo final 0
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ItemEstoqueRepositoryImplIT`: CRUD, `buscarPorIds`, SKU duplicado viola constraint
+- [x] Duas transações concorrentes baixando o último item: uma confirma, a outra falha com `ObjectOptimisticLockingFailureException`; saldo final 0
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -255,8 +255,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `ItemEstoqueControllerIT` (com JWT): 201, SKU 409, preço 422, alteração, listagem, entrada soma saldo, entrada 0 → 422, 404, sem token 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ItemEstoqueControllerIT` (com JWT): 201, SKU 409, preço 422, alteração, listagem, entrada soma saldo, entrada 0 → 422, 404, sem token 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
