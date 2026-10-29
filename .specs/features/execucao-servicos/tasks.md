@@ -100,8 +100,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `EntregarVeiculoTest`: ENTREGUE (EXE-02.1); EM_EXECUCAO → 422 (EXE-02.2); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `EntregarVeiculoTest`: ENTREGUE (EXE-02.1); EM_EXECUCAO → 422 (EXE-02.2); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
