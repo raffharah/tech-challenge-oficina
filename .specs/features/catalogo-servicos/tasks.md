@@ -55,6 +55,7 @@ T6 → T7 → T8
 ### T1: Criar entidade Servico e ServicoRepository
 
 **What**: `Servico` (id, nome obrigatório, valor padrão > 0, `alterar`) e interface `ServicoRepository` (salvar, buscarPorId, existePorNome ignorando caixa, listar paginado, remover).
+**SPEC_DEVIATION**: `existePorNome` virou `buscarPorNome` (ignorando caixa). Reason: `AtualizarServico` precisa distinguir o próprio serviço de outro com o mesmo nome.
 **Where**: `src/main/java/br/com/fiap/oficina/domain/ordemservico/Servico.java`
 **Depends on**: None
 **Reuses**: `DomainException`, `Pagina`
@@ -65,8 +66,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] `ServicoTest`: valor 0 e negativo rejeitados (SRV-01.2); nome vazio rejeitado; `alterar` aplica as mesmas regras
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ServicoTest`: valor 0 e negativo rejeitados (SRV-01.2); nome vazio rejeitado; `alterar` aplica as mesmas regras
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -86,8 +87,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] `CadastrarServicoTest` com `ServicoRepositoryEmMemoria`: sucesso (SRV-01.1), valor inválido (SRV-01.2), nome repetido em outra caixa (SRV-01.3)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `CadastrarServicoTest` com `ServicoRepositoryEmMemoria`: sucesso (SRV-01.1), valor inválido (SRV-01.2), nome repetido em outra caixa (SRV-01.3)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -107,8 +108,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] `AtualizarServicoTest`: alteração (SRV-01.4), nome de outro serviço → 409, inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AtualizarServicoTest`: alteração (SRV-01.4), nome de outro serviço → 409, inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -128,8 +129,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConsultarServicosTest`: listagem paginada (SRV-01.5), inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ConsultarServicosTest`: listagem paginada (SRV-01.5), inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -149,8 +150,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] `RemoverServicoTest`: removido; inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RemoverServicoTest`: removido; inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -170,8 +171,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] Flyway aplica em `OficinaApplicationIT`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] Flyway aplica em `OficinaApplicationIT`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -191,8 +192,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] `ServicoRepositoryImplIT`: salvar, buscar, `existePorNome` ignorando caixa, listar, remover
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ServicoRepositoryImplIT`: salvar, buscar, `existePorNome` ignorando caixa, listar, remover
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -212,8 +213,8 @@ T6 → T7 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] `ServicoControllerIT` (com JWT): 201, 422, 409, alteração, listagem, 404, remoção, sem token 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ServicoControllerIT` (com JWT): 201, 422, 409, alteração, listagem, 404, remoção, sem token 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full

@@ -120,6 +120,7 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Fornecedor | Reposição, orçamento de fornecedor e garantia ficam fora do MVP. A entrada de estoque é manual. |
 | Prazo | Informado manualmente no orçamento. O atraso é verificado por rotina agendada diária. |
 | Aguardando aprovação | Não expira no MVP. |
+| Catálogo de serviços | Serviço tem nome único (sem diferenciar maiúsculas) e valor padrão maior que zero. A OS copia o valor padrão ao incluir o serviço; alterar o catálogo não muda OS existentes. Serviço referenciado por OS não é removido. |
 | Agregados do Estoque | Item de Estoque (saldo físico, saldo reservado, estoque mínimo, situação) e Reserva (itens reservados por OS). |
 | Agregados da OS | Ordem de Serviço (inclui orçamento, serviços e entrega do veículo; "Finaliza Serviço" é a etapa de entrega da OS). Cobrança e Faturamento: Pagamento (cobrança e registro do pagamento) e Nota Fiscal. |
 | Sistemas externos | E-mail, pagamento e nota fiscal são portas com implementação simulada. Cada chamada monta o payload real e devolve uma resposta simulada, ambos expostos pela API para acompanhar o processo. A implementação real (ex.: serviços AWS) substitui a simulada sem mudar o domínio. |

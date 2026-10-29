@@ -6,7 +6,7 @@ O MVP exige CRUD de serviços, e o orçamento automático soma o valor dos servi
 
 ## Goals
 
-- [ ] CRUD de serviços com valor padrão, usado pela OS.
+- [x] CRUD de serviços com valor padrão, usado pela OS.
 
 ## Out of Scope
 
@@ -54,7 +54,7 @@ O MVP exige CRUD de serviços, e o orçamento automático soma o valor dos servi
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| SRV-01 | P1: CRUD de serviços | Tasks | In Tasks |
+| SRV-01 | P1: CRUD de serviços | Execute | Verified |
 
 **Coverage:** 1 total, 1 mapped tasks, 0 unmapped
 
