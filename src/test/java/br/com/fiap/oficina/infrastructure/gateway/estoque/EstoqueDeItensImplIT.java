@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import br.com.fiap.oficina.domain.DomainException;
 import br.com.fiap.oficina.domain.ordemservico.EstoqueDeItens;
 import br.com.fiap.oficina.domain.ordemservico.ItemCotado;
+import br.com.fiap.oficina.domain.ordemservico.ItemDaOrdem;
+import java.util.List;
 import br.com.fiap.oficina.infrastructure.TestcontainersConfig;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,5 +46,26 @@ class EstoqueDeItensImplIT {
     @Test
     void itemInexistenteLancaDomainExceptionDe422() {
         assertThatThrownBy(() -> estoque.cotar(99L)).isExactlyInstanceOf(DomainException.class);
+    }
+
+    @Test
+    void baixaReduzSaldoFisico() {
+        estoque.baixar(List.of(new ItemDaOrdem(1L, "OLE-1", "Oleo 5W30", 4, new BigDecimal("35.50"))));
+
+        assertThat(saldoFisico()).isEqualTo(6);
+    }
+
+    @Test
+    void faltaLancaDomainExceptionComDetalhesESaldoInalterado() {
+        assertThatThrownBy(() -> estoque.baixar(
+                List.of(new ItemDaOrdem(1L, "OLE-1", "Oleo 5W30", 11, new BigDecimal("35.50")))))
+                .isExactlyInstanceOf(DomainException.class)
+                .satisfies(e -> assertThat(((DomainException) e).getDetalhes()).hasSize(1));
+
+        assertThat(saldoFisico()).isEqualTo(10);
+    }
+
+    private int saldoFisico() {
+        return jdbc.queryForObject("select saldo_fisico from item_estoque where id = 1", Integer.class);
     }
 }

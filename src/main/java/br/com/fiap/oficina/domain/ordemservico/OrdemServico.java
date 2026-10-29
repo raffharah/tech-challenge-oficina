@@ -90,6 +90,14 @@ public class OrdemServico {
         this.total = orcamento.total();
     }
 
+    public void aprovar(Instant agora) {
+        mudarPara(StatusOrdemServico.EM_EXECUCAO, agora);
+    }
+
+    public void rejeitar(Instant agora) {
+        mudarPara(StatusOrdemServico.CANCELADA, agora);
+    }
+
     private void mudarPara(StatusOrdemServico destino, Instant agora) {
         if (!status.podeIrPara(destino)) {
             throw new DomainException("TRANSICAO_INVALIDA", "Transicao de " + status + " para " + destino

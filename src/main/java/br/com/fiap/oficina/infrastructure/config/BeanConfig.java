@@ -9,17 +9,20 @@ import br.com.fiap.oficina.application.cliente.ConsultarVeiculos;
 import br.com.fiap.oficina.application.cliente.RemoverCliente;
 import br.com.fiap.oficina.application.cliente.RemoverVeiculo;
 import br.com.fiap.oficina.application.estoque.AtualizarItem;
+import br.com.fiap.oficina.application.estoque.BaixarItens;
 import br.com.fiap.oficina.application.estoque.CadastrarItem;
 import br.com.fiap.oficina.application.estoque.ConsultarItens;
 import br.com.fiap.oficina.application.estoque.RegistrarEntrada;
 import br.com.fiap.oficina.application.estoque.RemoverItem;
 import br.com.fiap.oficina.application.ordemservico.AbrirOrdemServico;
+import br.com.fiap.oficina.application.ordemservico.AprovarOrcamento;
 import br.com.fiap.oficina.application.ordemservico.AtualizarServico;
 import br.com.fiap.oficina.application.ordemservico.CadastrarServico;
 import br.com.fiap.oficina.application.ordemservico.ConcluirDiagnostico;
 import br.com.fiap.oficina.application.ordemservico.ConsultarServicos;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.RejeitarOrcamento;
 import br.com.fiap.oficina.application.ordemservico.RemoverItemDaOrdem;
 import br.com.fiap.oficina.application.ordemservico.RemoverServicoDaOrdem;
 import br.com.fiap.oficina.application.ordemservico.RemoverServico;
@@ -123,6 +126,11 @@ public class BeanConfig {
     }
 
     @Bean
+    BaixarItens baixarItens(ItemEstoqueRepository itens) {
+        return new BaixarItens(itens);
+    }
+
+    @Bean
     RegistrarEntrada registrarEntrada(ItemEstoqueRepository itens) {
         return new RegistrarEntrada(itens);
     }
@@ -155,5 +163,15 @@ public class BeanConfig {
     @Bean
     ConcluirDiagnostico concluirDiagnostico(OrdemServicoRepository ordens, Clock clock) {
         return new ConcluirDiagnostico(ordens, clock);
+    }
+
+    @Bean
+    AprovarOrcamento aprovarOrcamento(OrdemServicoRepository ordens, EstoqueDeItens estoque, Clock clock) {
+        return new AprovarOrcamento(ordens, estoque, clock);
+    }
+
+    @Bean
+    RejeitarOrcamento rejeitarOrcamento(OrdemServicoRepository ordens, Clock clock) {
+        return new RejeitarOrcamento(ordens, clock);
     }
 }

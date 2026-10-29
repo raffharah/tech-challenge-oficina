@@ -15,13 +15,7 @@ class IncluirItemNaOrdemTest {
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
     private final Map<Long, ItemCotado> catalogo = Map.of(
             10L, new ItemCotado(10L, "OLE-1", "Oleo 5W30", new BigDecimal("35.50")));
-    private final EstoqueDeItens estoque = itemId -> {
-        ItemCotado item = catalogo.get(itemId);
-        if (item == null) {
-            throw new DomainException("ITEM_NAO_ENCONTRADO", "Item nao encontrado");
-        }
-        return item;
-    };
+    private final EstoqueDeItens estoque = new EstoqueDeItensEmMemoria(catalogo);
     private final IncluirItemNaOrdem incluir = new IncluirItemNaOrdem(ordens, estoque);
 
     @Test

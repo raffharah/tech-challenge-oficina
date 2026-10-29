@@ -13,6 +13,8 @@ class OrdemServicoTest {
     private static final Instant ABERTURA = Instant.parse("2026-01-10T10:00:00Z");
     private static final Instant CONCLUSAO = Instant.parse("2026-01-10T12:00:00Z");
 
+    private static final Instant APROVACAO = Instant.parse("2026-01-11T09:00:00Z");
+
     private final VeiculoIdentificado veiculo = new VeiculoIdentificado(7L, "52998224725", "ABC1D23");
     private final Servico troca = new Servico(1L, "Troca de oleo", new BigDecimal("100.00"));
     private final ItemCotado oleo = new ItemCotado(10L, "OLE-1", "Oleo 5W30", new BigDecimal("35.50"));
@@ -148,5 +150,61 @@ class OrdemServicoTest {
 
         assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
         assertThat(ordem.getTotal()).isNull();
+    }
+
+    private OrdemServico aguardandoAprovacao() {
+        OrdemServico ordem = aberta();
+        ordem.incluirServico(troca);
+        ordem.incluirItem(oleo, 2);
+        ordem.concluirDiagnostico(CONCLUSAO);
+        return ordem;
+    }
+
+    @Test
+    void aprovarVaiParaEmExecucaoRegistrandoHistorico() {
+        OrdemServico ordem = aguardandoAprovacao();
+
+        ordem.aprovar(APROVACAO);
+
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.EM_EXECUCAO);
+        assertThat(ordem.getHistorico().get(3))
+                .isEqualTo(new MudancaDeStatus(StatusOrdemServico.EM_EXECUCAO, APROVACAO));
+    }
+
+    @Test
+    void rejeitarCancelaRegistrandoHistorico() {
+        OrdemServico ordem = aguardandoAprovacao();
+
+        ordem.rejeitar(APROVACAO);
+
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.CANCELADA);
+        assertThat(ordem.getHistorico().get(3))
+                .isEqualTo(new MudancaDeStatus(StatusOrdemServico.CANCELADA, APROVACAO));
+    }
+
+    @Test
+    void aprovarERejeitarForaDeAguardandoAprovacaoLancamDomainException() {
+        OrdemServico emDiagnostico = aberta();
+        OrdemServico emExecucao = aguardandoAprovacao();
+        emExecucao.aprovar(APROVACAO);
+
+        assertThatThrownBy(() -> emDiagnostico.aprovar(APROVACAO)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> emDiagnostico.rejeitar(APROVACAO)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> emExecucao.aprovar(APROVACAO)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> emExecucao.rejeitar(APROVACAO)).isInstanceOf(DomainException.class);
+        assertThat(emExecucao.getHistorico()).hasSize(4);
+    }
+
+    @Test
+    void ordemCanceladaRejeitaInclusaoConclusaoEAprovacao() {
+        OrdemServico ordem = aguardandoAprovacao();
+        ordem.rejeitar(APROVACAO);
+
+        assertThatThrownBy(() -> ordem.incluirServico(new Servico(2L, "Alinhamento", BigDecimal.TEN)))
+                .isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> ordem.incluirItem(oleo, 1)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> ordem.concluirDiagnostico(APROVACAO)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> ordem.aprovar(APROVACAO)).isInstanceOf(DomainException.class);
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.CANCELADA);
     }
 }

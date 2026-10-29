@@ -7,13 +7,14 @@ import br.com.fiap.oficina.domain.DomainException;
 import br.com.fiap.oficina.domain.ordemservico.ItemCotado;
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class RemoverItemDaOrdemTest {
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
     private final IncluirItemNaOrdem incluir = new IncluirItemNaOrdem(ordens,
-            itemId -> new ItemCotado(itemId, "OLE-1", "Oleo", new BigDecimal("35.50")));
+            new EstoqueDeItensEmMemoria(Map.of(10L, new ItemCotado(10L, "OLE-1", "Oleo", new BigDecimal("35.50")))));
     private final RemoverItemDaOrdem remover = new RemoverItemDaOrdem(ordens);
 
     @Test
