@@ -79,8 +79,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `FinalizarOrdemServicoTest`: FINALIZADA com data do `Clock` fixo (EXE-01.1); EM_DIAGNOSTICO → 422 (EXE-01.2); inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `FinalizarOrdemServicoTest`: FINALIZADA com data do `Clock` fixo (EXE-01.1); EM_DIAGNOSTICO → 422 (EXE-01.2); inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
