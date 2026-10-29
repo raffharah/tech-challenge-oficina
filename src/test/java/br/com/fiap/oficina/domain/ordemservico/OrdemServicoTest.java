@@ -14,6 +14,8 @@ class OrdemServicoTest {
     private static final Instant CONCLUSAO = Instant.parse("2026-01-10T12:00:00Z");
 
     private static final Instant APROVACAO = Instant.parse("2026-01-11T09:00:00Z");
+    private static final Instant FINALIZACAO = Instant.parse("2026-01-12T16:00:00Z");
+    private static final Instant ENTREGA = Instant.parse("2026-01-13T10:00:00Z");
 
     private final VeiculoIdentificado veiculo = new VeiculoIdentificado(7L, "52998224725", "ABC1D23");
     private final Servico troca = new Servico(1L, "Troca de oleo", new BigDecimal("100.00"));
@@ -193,6 +195,51 @@ class OrdemServicoTest {
         assertThatThrownBy(() -> emExecucao.aprovar(APROVACAO)).isInstanceOf(DomainException.class);
         assertThatThrownBy(() -> emExecucao.rejeitar(APROVACAO)).isInstanceOf(DomainException.class);
         assertThat(emExecucao.getHistorico()).hasSize(4);
+    }
+
+    private OrdemServico emExecucao() {
+        OrdemServico ordem = aguardandoAprovacao();
+        ordem.aprovar(APROVACAO);
+        return ordem;
+    }
+
+    @Test
+    void finalizarVaiParaFinalizadaRegistrandoHistorico() {
+        OrdemServico ordem = emExecucao();
+
+        ordem.finalizar(FINALIZACAO);
+
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.FINALIZADA);
+        assertThat(ordem.getHistorico().get(4))
+                .isEqualTo(new MudancaDeStatus(StatusOrdemServico.FINALIZADA, FINALIZACAO));
+    }
+
+    @Test
+    void finalizarForaDeEmExecucaoLancaDomainException() {
+        OrdemServico emDiagnostico = aberta();
+
+        assertThatThrownBy(() -> emDiagnostico.finalizar(FINALIZACAO)).isInstanceOf(DomainException.class);
+        assertThat(emDiagnostico.getStatus()).isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
+    }
+
+    @Test
+    void entregarVaiParaEntregueRegistrandoHistorico() {
+        OrdemServico ordem = emExecucao();
+        ordem.finalizar(FINALIZACAO);
+
+        ordem.entregar(ENTREGA);
+
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.ENTREGUE);
+        assertThat(ordem.getHistorico().get(5))
+                .isEqualTo(new MudancaDeStatus(StatusOrdemServico.ENTREGUE, ENTREGA));
+    }
+
+    @Test
+    void entregarForaDeFinalizadaLancaDomainException() {
+        OrdemServico ordem = emExecucao();
+
+        assertThatThrownBy(() -> ordem.entregar(ENTREGA)).isInstanceOf(DomainException.class);
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.EM_EXECUCAO);
     }
 
     @Test

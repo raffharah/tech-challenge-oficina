@@ -98,6 +98,14 @@ public class OrdemServico {
         mudarPara(StatusOrdemServico.CANCELADA, agora);
     }
 
+    public void finalizar(Instant agora) {
+        mudarPara(StatusOrdemServico.FINALIZADA, agora);
+    }
+
+    public void entregar(Instant agora) {
+        mudarPara(StatusOrdemServico.ENTREGUE, agora);
+    }
+
     private void mudarPara(StatusOrdemServico destino, Instant agora) {
         if (!status.podeIrPara(destino)) {
             throw new DomainException("TRANSICAO_INVALIDA", "Transicao de " + status + " para " + destino

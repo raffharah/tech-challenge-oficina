@@ -58,8 +58,8 @@ T1 → T2 → T3 → T4
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoTest`: finalização e entrega registram data/hora no histórico (EXE-01.1, EXE-02.1); fora do status exigido → `DomainException` (EXE-01.2, EXE-02.2)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrdemServicoTest`: finalização e entrega registram data/hora no histórico (EXE-01.1, EXE-02.1); fora do status exigido → `DomainException` (EXE-01.2, EXE-02.2)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
