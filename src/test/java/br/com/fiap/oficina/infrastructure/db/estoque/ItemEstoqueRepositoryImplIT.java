@@ -39,7 +39,7 @@ class ItemEstoqueRepositoryImplIT {
 
     @BeforeEach
     void limparBanco() {
-        jdbc.execute("truncate table item_estoque restart identity");
+        jdbc.execute("truncate table item_estoque restart identity cascade");
     }
 
     private ItemEstoque novo(String sku, int saldo) {

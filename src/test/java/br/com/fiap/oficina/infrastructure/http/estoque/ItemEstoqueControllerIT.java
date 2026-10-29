@@ -33,7 +33,7 @@ class ItemEstoqueControllerIT {
 
     @BeforeEach
     void limparBanco() {
-        jdbc.execute("truncate table item_estoque restart identity");
+        jdbc.execute("truncate table item_estoque restart identity cascade");
     }
 
     private String item(String sku, String nome, String tipo, String preco, int saldo) {

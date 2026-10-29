@@ -74,8 +74,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `StatusOrdemServicoTest` parametrizado com as 49 combinações: as 6 permitidas retornam `true`, as demais `false`
-- [ ] Gate check passes: `./mvnw test`
+- [x] `StatusOrdemServicoTest` parametrizado com as 49 combinações: as 6 permitidas retornam `true`, as demais `false`
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -95,8 +95,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrcamentoTest`: R$ 100,00 + 2 × R$ 35,50 = R$ 171,00 (OS-03.1); arredondamento HALF_EVEN em valor com 3 casas (OS-03.3); sem itens soma só serviços
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrcamentoTest`: R$ 100,00 + 2 × R$ 35,50 = R$ 171,00 (OS-03.1); arredondamento HALF_EVEN em valor com 3 casas (OS-03.3); sem itens soma só serviços
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -116,8 +116,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoTest`: abertura termina EM_DIAGNOSTICO com histórico [RECEBIDA, EM_DIAGNOSTICO] e data/hora (OS-01.1, OS-04.3); transição inválida lança `DomainException` sem alterar status (OS-04.2)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrdemServicoTest`: abertura termina EM_DIAGNOSTICO com histórico [RECEBIDA, EM_DIAGNOSTICO] e data/hora (OS-01.1, OS-04.3); transição inválida lança `DomainException` sem alterar status (OS-04.2)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -137,8 +137,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoTest`: serviço incluído com valor padrão (OS-02.1); item com preço cotado (OS-02.2); mesmo item soma quantidade; quantidade ≤ 0 rejeitada; remoção (OS-02.3); serviço repetido → `DomainException` (OS-02.6); qualquer comando fora de EM_DIAGNOSTICO → `DomainException` (OS-02.5)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrdemServicoTest`: serviço incluído com valor padrão (OS-02.1); item com preço cotado (OS-02.2); mesmo item soma quantidade; quantidade ≤ 0 rejeitada; remoção (OS-02.3); serviço repetido → `DomainException` (OS-02.6); qualquer comando fora de EM_DIAGNOSTICO → `DomainException` (OS-02.5)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -158,8 +158,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoTest`: total calculado e status AGUARDANDO_APROVACAO (OS-03.1); sem serviço → `DomainException` sem mudar status (OS-03.2)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `OrdemServicoTest`: total calculado e status AGUARDANDO_APROVACAO (OS-03.1); sem serviço → `DomainException` sem mudar status (OS-03.2)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -179,8 +179,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `AbrirOrdemServicoTest` com porta e repositório em memória: OS salva EM_DIAGNOSTICO (OS-01.1); porta lançando 422/404 propaga sem salvar (OS-01.2, OS-01.3, OS-01.4)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AbrirOrdemServicoTest` com porta e repositório em memória: OS salva EM_DIAGNOSTICO (OS-01.1); porta lançando 422/404 propaga sem salvar (OS-01.2, OS-01.3, OS-01.4)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -200,8 +200,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `IncluirServicoNaOrdemTest`: inclusão (OS-02.1), serviço inexistente → 422 (OS-02.4), OS inexistente → 404, repetido → 422 (OS-02.6)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `IncluirServicoNaOrdemTest`: inclusão (OS-02.1), serviço inexistente → 422 (OS-02.4), OS inexistente → 404, repetido → 422 (OS-02.6)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -221,8 +221,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `RemoverServicoDaOrdemTest`: removido (OS-02.3); OS fora de diagnóstico → 422 (OS-02.5)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RemoverServicoDaOrdemTest`: removido (OS-02.3); OS fora de diagnóstico → 422 (OS-02.5)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -242,8 +242,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `IncluirItemNaOrdemTest` com `EstoqueDeItensEmMemoria`: inclusão com preço cotado (OS-02.2); item inexistente → 422 (OS-02.4)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `IncluirItemNaOrdemTest` com `EstoqueDeItensEmMemoria`: inclusão com preço cotado (OS-02.2); item inexistente → 422 (OS-02.4)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -263,8 +263,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `RemoverItemDaOrdemTest`: removido (OS-02.3); fora de diagnóstico → 422 (OS-02.5)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RemoverItemDaOrdemTest`: removido (OS-02.3); fora de diagnóstico → 422 (OS-02.5)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -284,8 +284,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConcluirDiagnosticoTest`: total e AGUARDANDO_APROVACAO (OS-03.1); sem serviço → 422 (OS-03.2); OS inexistente → 404
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ConcluirDiagnosticoTest`: total e AGUARDANDO_APROVACAO (OS-03.1); sem serviço → 422 (OS-03.2); OS inexistente → 404
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -305,8 +305,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] Flyway aplica em `OficinaApplicationIT`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] Flyway aplica em `OficinaApplicationIT`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -326,9 +326,9 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoRepositoryImplIT`: salvar e recarregar OS com serviços, itens, total e histórico em ordem
-- [ ] Remover veículo, serviço ou item referenciado pela OS → `DataIntegrityViolationException` (CLI-03.7, SRV-01.6, EST-01.6)
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OrdemServicoRepositoryImplIT`: salvar e recarregar OS com serviços, itens, total e histórico em ordem
+- [x] Remover veículo, serviço ou item referenciado pela OS → `DataIntegrityViolationException` (CLI-03.7, SRV-01.6, EST-01.6)
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -348,8 +348,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `CadastroDeVeiculosImplIT`: identifica com CPF mascarado e placa minúscula; CPF inválido → 422; cliente/veículo inexistente → 404; veículo de outro cliente → 422
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `CadastroDeVeiculosImplIT`: identifica com CPF mascarado e placa minúscula; CPF inválido → 422; cliente/veículo inexistente → 404; veículo de outro cliente → 422
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -369,8 +369,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `EstoqueDeItensImplIT`: cotação retorna sku, nome e preço de venda; inexistente → `DomainException`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `EstoqueDeItensImplIT`: cotação retorna sku, nome e preço de venda; inexistente → `DomainException`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -390,8 +390,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoAberturaIT` (com JWT): 201 EM_DIAGNOSTICO; CPF/placa inválidos 422; inexistentes 404; veículo de outro cliente 422; sem token 401
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OrdemServicoAberturaIT` (com JWT): 201 EM_DIAGNOSTICO; CPF/placa inválidos 422; inexistentes 404; veículo de outro cliente 422; sem token 401
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -411,8 +411,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoComponentesIT`: inclusão e remoção de serviço e item; inexistentes 422; repetido 422; quantidade 0 → 400/422; fora de diagnóstico 422
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OrdemServicoComponentesIT`: inclusão e remoção de serviço e item; inexistentes 422; repetido 422; quantidade 0 → 400/422; fora de diagnóstico 422
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -432,8 +432,8 @@ T15 → T17
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoOrcamentoIT`: total R$ 171,00 e AGUARDANDO_APROVACAO; sem serviço 422; segunda conclusão 422
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OrdemServicoOrcamentoIT`: total R$ 171,00 e AGUARDANDO_APROVACAO; sem serviço 422; segunda conclusão 422
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full

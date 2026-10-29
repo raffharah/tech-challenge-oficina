@@ -109,10 +109,10 @@ Atendimento e orçamento são feitos em anotações. O MVP exige criar a OS a pa
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| OS-01 | P1: Abrir OS | Tasks | In Tasks |
-| OS-02 | P1: Incluir serviços, peças e insumos | Tasks | In Tasks |
-| OS-03 | P1: Gerar orçamento | Tasks | In Tasks |
-| OS-04 | P1: Regras de transição | Tasks | In Tasks |
+| OS-01 | P1: Abrir OS | Execute | Verified |
+| OS-02 | P1: Incluir serviços, peças e insumos | Execute | Verified |
+| OS-03 | P1: Gerar orçamento | Execute | Verified |
+| OS-04 | P1: Regras de transição | Execute | Verified |
 
 **Coverage:** 4 total, 4 mapped tasks, 0 unmapped
 
