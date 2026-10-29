@@ -2,10 +2,12 @@ package br.com.fiap.oficina.domain.ordemservico;
 
 import br.com.fiap.oficina.domain.DomainException;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class OrdemServico {
 
@@ -104,6 +106,19 @@ public class OrdemServico {
 
     public void entregar(Instant agora) {
         mudarPara(StatusOrdemServico.ENTREGUE, agora);
+    }
+
+    public Optional<Duration> tempoDeExecucao() {
+        Optional<Instant> inicio = quandoMudouPara(StatusOrdemServico.EM_EXECUCAO);
+        Optional<Instant> fim = quandoMudouPara(StatusOrdemServico.FINALIZADA);
+        if (inicio.isEmpty() || fim.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(Duration.between(inicio.get(), fim.get()));
+    }
+
+    private Optional<Instant> quandoMudouPara(StatusOrdemServico destino) {
+        return historico.stream().filter(m -> m.status() == destino).map(MudancaDeStatus::dataHora).findFirst();
     }
 
     private void mudarPara(StatusOrdemServico destino, Instant agora) {
