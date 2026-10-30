@@ -62,4 +62,15 @@ class CadastroDeVeiculosImplIT {
                 .isExactlyInstanceOf(DomainException.class).extracting("codigo")
                 .isEqualTo("VEICULO_DE_OUTRO_CLIENTE");
     }
+
+    @Test
+    void normalizaCpfMascaradoParaSoDigitos() {
+        assertThat(cadastro.normalizarCpfCnpj("529.982.247-25")).isEqualTo("52998224725");
+    }
+
+    @Test
+    void normalizarFormatoInvalidoLancaDomainException() {
+        assertThatThrownBy(() -> cadastro.normalizarCpfCnpj("123")).isExactlyInstanceOf(DomainException.class)
+                .extracting("codigo").isEqualTo("CPF_CNPJ_INVALIDO");
+    }
 }

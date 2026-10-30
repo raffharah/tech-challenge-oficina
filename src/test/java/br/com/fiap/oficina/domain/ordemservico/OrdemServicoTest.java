@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.fiap.oficina.domain.DomainException;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
@@ -253,5 +254,29 @@ class OrdemServicoTest {
         assertThatThrownBy(() -> ordem.concluirDiagnostico(APROVACAO)).isInstanceOf(DomainException.class);
         assertThatThrownBy(() -> ordem.aprovar(APROVACAO)).isInstanceOf(DomainException.class);
         assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.CANCELADA);
+    }
+
+    @Test
+    void tempoDeExecucaoEntreAprovacaoEFinalizacao() {
+        OrdemServico ordem = aguardandoAprovacao();
+        ordem.aprovar(APROVACAO);
+        ordem.finalizar(APROVACAO.plus(Duration.ofMinutes(60)));
+
+        assertThat(ordem.tempoDeExecucao()).contains(Duration.ofMinutes(60));
+    }
+
+    @Test
+    void tempoDeExecucaoPersisteAposEntrega() {
+        OrdemServico ordem = emExecucao();
+        ordem.finalizar(FINALIZACAO);
+        ordem.entregar(ENTREGA);
+
+        assertThat(ordem.tempoDeExecucao()).contains(Duration.between(APROVACAO, FINALIZACAO));
+    }
+
+    @Test
+    void tempoDeExecucaoVazioSeNaoFinalizada() {
+        assertThat(emExecucao().tempoDeExecucao()).isEmpty();
+        assertThat(aberta().tempoDeExecucao()).isEmpty();
     }
 }

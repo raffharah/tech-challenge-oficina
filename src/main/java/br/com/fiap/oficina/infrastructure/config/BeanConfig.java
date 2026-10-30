@@ -18,12 +18,16 @@ import br.com.fiap.oficina.application.ordemservico.AbrirOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.AprovarOrcamento;
 import br.com.fiap.oficina.application.ordemservico.AtualizarServico;
 import br.com.fiap.oficina.application.ordemservico.CadastrarServico;
+import br.com.fiap.oficina.application.ordemservico.CalcularTempoMedioExecucao;
 import br.com.fiap.oficina.application.ordemservico.ConcluirDiagnostico;
+import br.com.fiap.oficina.application.ordemservico.ConsultarAndamento;
 import br.com.fiap.oficina.application.ordemservico.ConsultarServicos;
+import br.com.fiap.oficina.application.ordemservico.DetalharOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.EntregarVeiculo;
 import br.com.fiap.oficina.application.ordemservico.FinalizarOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.ListarOrdensServico;
 import br.com.fiap.oficina.application.ordemservico.RejeitarOrcamento;
 import br.com.fiap.oficina.application.ordemservico.RemoverItemDaOrdem;
 import br.com.fiap.oficina.application.ordemservico.RemoverServicoDaOrdem;
@@ -185,5 +189,25 @@ public class BeanConfig {
     @Bean
     EntregarVeiculo entregarVeiculo(OrdemServicoRepository ordens, Clock clock) {
         return new EntregarVeiculo(ordens, clock);
+    }
+
+    @Bean
+    ConsultarAndamento consultarAndamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos) {
+        return new ConsultarAndamento(ordens, veiculos);
+    }
+
+    @Bean
+    ListarOrdensServico listarOrdensServico(OrdemServicoRepository ordens) {
+        return new ListarOrdensServico(ordens);
+    }
+
+    @Bean
+    DetalharOrdemServico detalharOrdemServico(OrdemServicoRepository ordens) {
+        return new DetalharOrdemServico(ordens);
+    }
+
+    @Bean
+    CalcularTempoMedioExecucao calcularTempoMedioExecucao(OrdemServicoRepository ordens) {
+        return new CalcularTempoMedioExecucao(ordens);
     }
 }

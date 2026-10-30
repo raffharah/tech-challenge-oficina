@@ -1,14 +1,20 @@
 package br.com.fiap.oficina.infrastructure.db.ordemservico;
 
+import br.com.fiap.oficina.domain.Pagina;
 import br.com.fiap.oficina.domain.ordemservico.ItemDaOrdem;
 import br.com.fiap.oficina.domain.ordemservico.MudancaDeStatus;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServicoRepository;
 import br.com.fiap.oficina.domain.ordemservico.ServicoDaOrdem;
+import br.com.fiap.oficina.domain.ordemservico.StatusOrdemServico;
 import br.com.fiap.oficina.infrastructure.db.ordemservico.OrdemServicoEntity.ItemEmbutido;
 import br.com.fiap.oficina.infrastructure.db.ordemservico.OrdemServicoEntity.MudancaDeStatusEntity;
 import br.com.fiap.oficina.infrastructure.db.ordemservico.OrdemServicoEntity.ServicoEmbutido;
+import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -39,6 +45,20 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
     @Override
     public Optional<OrdemServico> buscarPorId(Long id) {
         return jpa.findById(id).map(OrdemServicoRepositoryImpl::paraModelo);
+    }
+
+    @Override
+    public Pagina<OrdemServico> listar(int pagina, int tamanho) {
+        Page<OrdemServicoEntity> page = jpa.findAll(
+                PageRequest.of(pagina, tamanho, Sort.by(Sort.Order.desc("abertaEm"), Sort.Order.desc("id"))));
+        return new Pagina<>(page.map(OrdemServicoRepositoryImpl::paraModelo).getContent(), pagina, tamanho,
+                page.getTotalElements());
+    }
+
+    @Override
+    public List<OrdemServico> listarFinalizadas() {
+        return jpa.findByStatusIn(List.of(StatusOrdemServico.FINALIZADA, StatusOrdemServico.ENTREGUE)).stream()
+                .map(OrdemServicoRepositoryImpl::paraModelo).toList();
     }
 
     private static ServicoEmbutido paraEmbutido(ServicoDaOrdem servico) {

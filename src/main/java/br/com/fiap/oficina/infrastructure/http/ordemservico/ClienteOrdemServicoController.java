@@ -1,12 +1,15 @@
 package br.com.fiap.oficina.infrastructure.http.ordemservico;
 
 import br.com.fiap.oficina.application.ordemservico.AprovarOrcamento;
+import br.com.fiap.oficina.application.ordemservico.ConsultarAndamento;
 import br.com.fiap.oficina.application.ordemservico.OrdemServicoDTO;
 import br.com.fiap.oficina.application.ordemservico.RejeitarOrcamento;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,10 +18,13 @@ public class ClienteOrdemServicoController {
 
     private final AprovarOrcamento aprovar;
     private final RejeitarOrcamento rejeitar;
+    private final ConsultarAndamento consultar;
 
-    public ClienteOrdemServicoController(AprovarOrcamento aprovar, RejeitarOrcamento rejeitar) {
+    public ClienteOrdemServicoController(AprovarOrcamento aprovar, RejeitarOrcamento rejeitar,
+            ConsultarAndamento consultar) {
         this.aprovar = aprovar;
         this.rejeitar = rejeitar;
+        this.consultar = consultar;
     }
 
     @PostMapping("/{id}/aprovacao")
@@ -31,5 +37,11 @@ public class ClienteOrdemServicoController {
     @Transactional
     OrdemServicoDTO rejeitar(@PathVariable Long id) {
         return rejeitar.executar(id);
+    }
+
+    @GetMapping("/{id}")
+    @Transactional(readOnly = true)
+    OrdemServicoDTO consultar(@PathVariable Long id, @RequestParam String cpfCnpj) {
+        return consultar.executar(id, cpfCnpj);
     }
 }

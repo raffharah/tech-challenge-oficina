@@ -6,8 +6,8 @@ Clientes e funcionários não acompanham o status dos serviços. O MVP exige con
 
 ## Goals
 
-- [ ] Cliente consulta a própria OS, incluindo o orçamento a aprovar.
-- [ ] Funcionário lista e detalha OS e consulta o tempo médio.
+- [x] Cliente consulta a própria OS, incluindo o orçamento a aprovar.
+- [x] Funcionário lista e detalha OS e consulta o tempo médio.
 
 ## Out of Scope
 
@@ -83,9 +83,9 @@ Clientes e funcionários não acompanham o status dos serviços. O MVP exige con
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| ACO-01 | P1: Consulta do cliente | Tasks | In Tasks |
-| ACO-02 | P1: Listagem e detalhamento | Tasks | In Tasks |
-| ACO-03 | P1: Tempo médio de execução | Tasks | In Tasks |
+| ACO-01 | P1: Consulta do cliente | Tasks | Verified |
+| ACO-02 | P1: Listagem e detalhamento | Tasks | Verified |
+| ACO-03 | P1: Tempo médio de execução | Tasks | Verified |
 
 **Coverage:** 3 total, 3 mapped tasks, 0 unmapped
 
@@ -93,4 +93,4 @@ Clientes e funcionários não acompanham o status dos serviços. O MVP exige con
 
 ## Success Criteria
 
-- [ ] Cliente acompanha a OS da abertura à entrega só pela consulta.
+- [x] Cliente acompanha a OS da abertura à entrega só pela consulta.
