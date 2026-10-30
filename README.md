@@ -43,19 +43,47 @@ Tecnologias declaradas no projeto:
 - JUnit/Spring Boot Test, Testcontainers e ArchUnit;
 - JaCoCo para relatório e verificação de cobertura.
 
-Docker e Docker Compose fazem parte dos requisitos da entrega, mas ainda não há `Dockerfile` nem `docker-compose.yml` neste repositório.
-
 ## Pré-requisitos
 
-- JDK 21;
-- Docker em execução para os testes de integração com Testcontainers e, futuramente, para subir o PostgreSQL por Compose;
-- Acesso à internet na primeira execução do Maven Wrapper para baixar o Maven e as dependências.
+- Docker com Docker Compose v2 (suficiente para subir o ambiente completo);
+- JDK 21 apenas para executar fora do Docker ou rodar os testes;
+- Acesso à internet na primeira execução para baixar imagens, o Maven e as dependências.
 
-**Necessário detalhamento:** definir e documentar se a execução local exigirá PostgreSQL instalado ou se será fornecido por Docker Compose, além das versões mínimas de Docker/Docker Compose e das variáveis de ambiente necessárias.
+## Como executar com Docker Compose
 
-## Como executar
+```bash
+docker compose up --build
+```
 
-O Maven Wrapper está incluído no repositório. Quando a classe principal, a configuração da aplicação e o banco estiverem implementados, a execução local prevista é:
+O Compose sobe, nesta ordem:
+
+| Serviço | Imagem | Papel |
+| --- | --- | --- |
+| `postgres` | `postgres:16-alpine` | Banco de dados, com volume `postgres-data` |
+| `migration` | `flyway/flyway:12.4.0-alpine` | Aplica as migrations de `src/main/resources/db/migration` e encerra |
+| `seed` | `postgres:16-alpine` | Executa `docker/seed/seed.sql` (catálogo da oficina) e encerra |
+| `app` | build do `Dockerfile` | API na porta 8080, iniciada após o seed; o Flyway da aplicação fica desligado, pois o schema é do serviço `migration` |
+
+O seed é idempotente: ao subir de novo, itens e serviços já existentes não são alterados, preservando o saldo movimentado pelo uso. Para recriar o banco do zero, use `docker compose down -v`.
+
+Variáveis opcionais (com padrão para demonstração): `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_PORT` e `JWT_SEGREDO`.
+
+### Catálogo inicial
+
+O seed cadastra 16 itens de estoque (peças e insumos) e 4 serviços. O valor padrão do serviço corresponde à mão de obra; peças e insumos são incluídos na OS separadamente. O kit sugerido de cada serviço está abaixo e comentado em `docker/seed/seed.sql`:
+
+| Serviço | Mão de obra | Kit sugerido |
+| --- | --- | --- |
+| Troca de óleo do motor e filtro | R$ 90,00 | `INS-OLEO-5W30-1L` ×4, `PEC-FILTRO-OLEO-3/4UNF` ×1, `PEC-ARRUELA-BUJAO-M14` ×1 |
+| Substituição de pastilhas e fluido de freio dianteiro | R$ 180,00 | `PEC-PASTILHA-FREIO-DIANT` ×1, `INS-FLUIDO-FREIO-DOT4-500ML` ×1, `INS-LIMPA-FREIO-300ML` ×1 (discos `PEC-DISCO-FREIO-DIANT` ×2 se abaixo da espessura mínima) |
+| Substituição da correia dentada e bomba d'água | R$ 380,00 | `PEC-KIT-CORREIA-DENTADA` ×1, `PEC-BOMBA-DAGUA` ×1, `INS-ADITIVO-RADIADOR-1L` ×2 |
+| Revisão do sistema de ignição e admissão | R$ 150,00 | `PEC-VELA-IGNICAO-IRIDIO` ×4, `PEC-CABO-VELA-JOGO` ×1, `PEC-FILTRO-AR-MOTOR` ×1, `INS-LIMPA-TBI-300ML` ×1 |
+
+Também há insumos de uso geral: `INS-GRAXA-LITIO-500G` e `INS-DESENGRIPANTE-300ML`.
+
+## Como executar sem Docker
+
+Com um PostgreSQL acessível em `localhost:5432/oficina` (ou configurado via `DB_URL`, `DB_USER` e `DB_PASSWORD`), a aplicação aplica as migrations ao iniciar:
 
 ```bash
 ./mvnw spring-boot:run
@@ -67,9 +95,7 @@ No Windows, use:
 .\mvnw.cmd spring-boot:run
 ```
 
-Também é possível empacotar a aplicação com `./mvnw package` e executar o JAR gerado em `target/`.
-
-**Necessário detalhamento:** estes comandos ainda não são executáveis como aplicação: faltam a classe principal Spring Boot, os componentes da aplicação, `application.yml` (ou configuração equivalente), migrations e as configurações para conectar ao PostgreSQL. Não há Dockerfile nem Compose para iniciar o ambiente completo.
+Também é possível empacotar a aplicação com `./mvnw package` e executar o JAR gerado em `target/`. Nesse modo o seed não é aplicado; rode `docker/seed/seed.sql` com `psql` se quiser o catálogo inicial.
 
 ## Testes
 
