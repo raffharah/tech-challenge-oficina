@@ -2,51 +2,67 @@
 
 Back-end MVP para apoiar o atendimento e a execução de serviços de uma oficina mecânica, desenvolvido como Tech Challenge da Fase 1 do curso SOAT — Software Architecture, da FIAP.
 
-> **Estado deste esboço:** a documentação de requisitos, domínio e arquitetura está disponível em `docs/`, mas o código de aplicação ainda não foi implementado. No momento, `src/` contém apenas diretórios-placeholder (`.gitkeep`); portanto, os comandos de execução abaixo descrevem o uso previsto e ainda não iniciam uma API funcional. Complete os itens marcados com **Necessário detalhamento** quando as decisões e a implementação estiverem disponíveis.
-
 ## Objetivo
 
-Organizar o atendimento da oficina e o ciclo de vida das Ordens de Serviço (OS), reduzindo falhas no controle de clientes, veículos, serviços, peças e insumos. A solução deve permitir acompanhar o andamento do trabalho, gerar e obter aprovação de orçamentos e apoiar a gestão administrativa com validações e autenticação.
+Organizar o atendimento da oficina e o ciclo de vida das Ordens de Serviço (OS), reduzindo falhas no controle de clientes, veículos, serviços, peças e insumos. A solução permite acompanhar o andamento do trabalho, gerar e obter aprovação de orçamentos e apoiar a gestão administrativa com validações e autenticação.
 
 ## Solução
 
-A proposta é um back-end monolítico modular com API REST. O domínio está dividido em quatro contextos:
+Back-end monolítico modular com API REST. O MVP implementa três contextos do domínio:
 
-- **Gestão de Clientes e Veículos:** cadastro e identificação de clientes por CPF/CNPJ e veículos por placa.
-- **Gestão de Ordens de Serviço:** criação e acompanhamento da OS, diagnóstico, serviços, orçamento, aprovação, execução e entrega.
-- **Cobrança e Faturamento:** cobrança, registro de pagamento e emissão de Nota Fiscal.
-- **Gestão de Peças e Insumos:** cadastro de itens, entradas manuais, disponibilidade, reservas, consumo e descarte.
+- **Gestão de Clientes e Veículos (`cliente`):** cadastro de clientes identificados por CPF/CNPJ validado e de veículos identificados por placa (padrão antigo e Mercosul).
+- **Gestão de Ordens de Serviço (`ordemservico`):** catálogo de serviços, abertura da OS, inclusão de serviços, peças e insumos, orçamento automático, aprovação ou rejeição pelo cliente, execução, finalização, entrega, acompanhamento e tempo médio de execução.
+- **Gestão de Peças e Insumos (`estoque`):** cadastro de itens, entrada manual e baixa de saldo físico.
 
-O fluxo principal previsto para uma OS é: recebida → em diagnóstico → aguardando aprovação → em execução → finalizada → entregue. O domínio também documenta cancelamento, recusas e renegociação do orçamento, serviço adicional, atraso, cobrança vencida e devolução de peças recuperadas. Os sistemas externos de e-mail, pagamento e nota fiscal têm implementações simuladas previstas para o MVP. A reposição por fornecedor está fora do escopo do MVP; a entrada de estoque é manual.
+O contexto **Cobrança e Faturamento (`cobranca`)** está mapeado no DDD, mas fica fora do MVP (pacotes reservados, sem implementação). O escopo e as decisões que o recortam estão em [`.specs/ROADMAP.md`](.specs/ROADMAP.md) e [`.specs/STATE.md`](.specs/STATE.md).
+
+### Fluxo da Ordem de Serviço
+
+```text
+RECEBIDA → EM_DIAGNOSTICO → AGUARDANDO_APROVACAO → EM_EXECUCAO → FINALIZADA → ENTREGUE
+                                      └──────────→ CANCELADA (orçamento rejeitado)
+```
+
+| Ação | Endpoint | Status resultante |
+| --- | --- | --- |
+| Abrir OS com CPF/CNPJ e placa | `POST /ordens-servico` | `RECEBIDA` → `EM_DIAGNOSTICO` |
+| Incluir/remover serviços e itens | `POST`/`DELETE /ordens-servico/{id}/servicos` e `/itens` | `EM_DIAGNOSTICO` |
+| Gerar orçamento (serviços + itens) | `POST /ordens-servico/{id}/orcamento` | `AGUARDANDO_APROVACAO` |
+| Cliente aprova (baixa o estoque, tudo ou nada) | `POST /cliente/ordens-servico/{id}/aprovacao` | `EM_EXECUCAO` |
+| Cliente rejeita | `POST /cliente/ordens-servico/{id}/rejeicao` | `CANCELADA` |
+| Finalizar os serviços | `POST /ordens-servico/{id}/finalizacao` | `FINALIZADA` |
+| Entregar o veículo | `POST /ordens-servico/{id}/entrega` | `ENTREGUE` |
+
+As transições são validadas no agregado `OrdemServico`; qualquer transição fora dessa sequência responde `422 TRANSICAO_INVALIDA`. Na aprovação, se algum item não tiver saldo físico suficiente, nada é baixado, a OS permanece em `AGUARDANDO_APROVACAO` e a resposta `422 SALDO_INSUFICIENTE` lista os itens em falta.
 
 ## Arquitetura
 
-Monólito modular com DDD e Clean Architecture. Os contextos são organizados em pacotes por camada, com dependências direcionadas de `infrastructure` para `application` e de `application` para `domain`:
+Monólito modular com DDD e Clean Architecture. Um único deployable; os contextos ficam isolados por subpacote dentro de cada camada, e a dependência segue `infrastructure` → `application` → `domain`:
 
-- **`domain`:** entidades, objetos de valor, regras de negócio, exceções e interfaces/portas.
-- **`application`:** casos de uso, um por classe, que orquestram domínio e repositórios sem depender de Spring.
-- **`infrastructure`:** integração com tecnologias, API HTTP, persistência, gateways e configuração.
+- **`domain`:** Java puro. Entidades, objetos de valor (`CpfCnpj`, `Placa`), regras de negócio, exceções e interfaces (repositórios e portas).
+- **`application`:** Java puro. Um caso de uso por classe (`AbrirOrdemServico`, `AprovarOrcamento`, `BaixarItens`), com método `executar`, recebendo e devolvendo DTOs.
+- **`infrastructure`:** Spring e tecnologia. `http/` (controllers, requests validados, tratamento de erros), `db/` (entidades JPA e implementações dos repositórios), `gateway/` (implementações das portas entre contextos) e `config/` (beans, segurança e OpenAPI).
 
-Os contextos devem se comunicar por portas definidas no domínio. A aplicação está planejada para usar PostgreSQL e migrations versionadas. Consulte os diagramas C4 em [`docs/ddd/c4/`](docs/ddd/c4/) e os fluxos de negócio em [`docs/ddd/event-storming/`](docs/ddd/event-storming/).
+Um contexto usa outro apenas por uma porta declarada no próprio domínio: a OS consulta e baixa itens pela porta `EstoqueDeItens`, implementada em `infrastructure/gateway/estoque`. A transação abre no controller (`@Transactional`), de modo que aprovar o orçamento e baixar o estoque são atômicos. Essas regras são verificadas por testes ArchUnit ([`ArquiteturaTest`](src/test/java/br/com/fiap/oficina/ArquiteturaTest.java)).
+
+Diagramas C4 em [`docs/ddd/c4/`](docs/ddd/c4/) e fluxos de negócio em [`docs/ddd/event-storming/`](docs/ddd/event-storming/).
 
 ## Tecnologias
 
-Tecnologias declaradas no projeto:
-
-- Java 21;
-- Spring Boot 4.1.2;
+- Java 21 e Spring Boot 4.1.2;
 - Maven (com Maven Wrapper);
 - Spring MVC, Bean Validation e Spring Data JPA;
-- PostgreSQL e Flyway;
-- Spring Security OAuth2 Resource Server para autenticação/autorização com JWT;
-- Springdoc OpenAPI para documentação Swagger;
-- JUnit/Spring Boot Test, Testcontainers e ArchUnit;
-- JaCoCo para relatório e verificação de cobertura.
+- PostgreSQL 16 e Flyway;
+- Spring Security OAuth2 Resource Server (JWT);
+- Springdoc OpenAPI (Swagger UI);
+- JUnit 5, AssertJ, Spring Boot Test, Testcontainers e ArchUnit;
+- JaCoCo para cobertura;
+- Docker e Docker Compose.
 
 ## Pré-requisitos
 
 - Docker com Docker Compose v2 (suficiente para subir o ambiente completo);
-- JDK 21 apenas para executar fora do Docker ou rodar os testes;
+- JDK 21 para executar fora do Docker ou rodar os testes (os testes de integração também exigem Docker em execução);
 - Acesso à internet na primeira execução para baixar imagens, o Maven e as dependências.
 
 ## Como executar com Docker Compose
@@ -79,7 +95,7 @@ O seed cadastra 16 itens de estoque (peças e insumos) e 4 serviços. O valor pa
 | Substituição da correia dentada e bomba d'água | R$ 380,00 | `PEC-KIT-CORREIA-DENTADA` ×1, `PEC-BOMBA-DAGUA` ×1, `INS-ADITIVO-RADIADOR-1L` ×2 |
 | Revisão do sistema de ignição e admissão | R$ 150,00 | `PEC-VELA-IGNICAO-IRIDIO` ×4, `PEC-CABO-VELA-JOGO` ×1, `PEC-FILTRO-AR-MOTOR` ×1, `INS-LIMPA-TBI-300ML` ×1 |
 
-Também há insumos de uso geral: `INS-GRAXA-LITIO-500G` e `INS-DESENGRIPANTE-300ML`.
+Também há insumos de uso geral: `INS-GRAXA-LITIO-500G` e `INS-DESENGRIPANTE-300ML`. Clientes e veículos não fazem parte do seed e são cadastrados pela API.
 
 ## Como executar sem Docker
 
@@ -99,61 +115,105 @@ Também é possível empacotar a aplicação com `./mvnw package` e executar o J
 
 ## Testes
 
-Com os testes implementados, use:
-
 ```bash
-# Testes unitários e de arquitetura (quando implementados)
+# Unitários (*Test) e de arquitetura (ArchUnit)
 ./mvnw test
 
-# Verificações Maven e relatório de cobertura
+# Unitários + integração (*IT, Testcontainers) + verificação de cobertura
 ./mvnw verify
 ```
 
-Os testes unitários de domínio e aplicação devem ser rápidos e independentes de Spring e banco. Os testes de integração (`*IT`) estão planejados para usar Testcontainers e requerem Docker. O JaCoCo está configurado para gerar relatório em `target/site/jacoco/` e exigir cobertura mínima de 80% das linhas nos pacotes `domain` e `application`.
+| Tipo | Sufixo | Onde | Executa em |
+| --- | --- | --- | --- |
+| Unitário | `*Test` | `domain` e `application`, sem Spring nem banco (repositórios em memória) | `./mvnw test` |
+| Arquitetura | `*Test` | `ArquiteturaTest`, regras de camadas e isolamento de contextos | `./mvnw test` |
+| Integração | `*IT` | `infrastructure`, API + PostgreSQL real via Testcontainers | `./mvnw verify` |
 
-**Necessário detalhamento:** ainda não existem classes de teste; os diretórios de testes contêm apenas `.gitkeep`. O Failsafe está declarado no `pom.xml`, mas ainda não tem metas associadas às fases `integration-test` e `verify`; configurar esse vínculo para que `./mvnw verify` execute testes `*IT`. Registrar os resultados e a cobertura quando os fluxos forem implementados.
+Os testes de integração sobem um PostgreSQL com Testcontainers e exigem Docker em execução. O JaCoCo gera o relatório em `target/site/jacoco/index.html`, e `./mvnw verify` falha se algum pacote de `domain` ou `application` ficar abaixo de 80% de cobertura de linhas.
 
 ## API e autenticação
 
-A dependência Springdoc OpenAPI está declarada. Quando a API estiver implementada e em execução, os endereços padrão previstos são:
+Com a aplicação em execução:
 
-- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
-- Especificação OpenAPI: `http://localhost:8080/v3/api-docs`
+- Swagger UI: <http://localhost:8080/swagger-ui/index.html>
+- Especificação OpenAPI: <http://localhost:8080/v3/api-docs>
 
-As APIs administrativas deverão usar JWT. As dependências de segurança estão declaradas, mas a configuração de segurança, os endpoints protegidos e o fluxo de obtenção do token ainda não foram implementados.
+### Obter o token
 
-**Necessário detalhamento:** informar o procedimento para obter um token e quais operações exigem autenticação. Não há usuários nem credenciais de demonstração definidos; não inclua segredos reais neste README.
+As APIs administrativas exigem JWT. O usuário de demonstração é **`funcionario`**, senha **`oficina123`** (configuráveis por `OFICINA_USUARIO` e `OFICINA_SENHA_HASH`, este último um hash BCrypt). O token vale 60 minutos.
+
+```bash
+curl -X POST http://localhost:8080/autenticacao \
+  -H 'Content-Type: application/json' \
+  -d '{"usuario":"funcionario","senha":"oficina123"}'
+```
+
+Envie o token retornado no cabeçalho `Authorization: Bearer <token>`. No Swagger UI, chame `POST /autenticacao`, clique em **Authorize** e cole o token.
+
+> As credenciais e o segredo JWT padrão (`JWT_SEGREDO`) existem apenas para demonstração local. Em qualquer outro ambiente, sobrescreva-os por variáveis de ambiente.
+
+### Rotas
+
+| Acesso | Rotas |
+| --- | --- |
+| Público | `POST /autenticacao`, Swagger/OpenAPI |
+| Público (cliente da oficina) | `GET /cliente/ordens-servico/{id}?cpfCnpj=` (andamento da OS; exige o CPF/CNPJ do titular), `POST /cliente/ordens-servico/{id}/aprovacao`, `POST /cliente/ordens-servico/{id}/rejeicao` |
+| JWT | `/clientes`, `/veiculos`, `/servicos`, `/itens` (CRUD e entradas de estoque), `/ordens-servico` (abertura, componentes, orçamento, finalização, entrega, listagem, detalhamento e `GET /ordens-servico/tempo-medio-execucao`) |
+
+O cliente final não é autenticado no MVP (decisão AD-001 em [`.specs/STATE.md`](.specs/STATE.md)).
+
+### Erros
+
+Todas as respostas de erro seguem o formato `{"codigo", "mensagem", "campos", "detalhes"}`:
+
+| Status | Quando |
+| --- | --- |
+| 400 | Requisição inválida: campo obrigatório, JSON malformado, parâmetro de tipo inválido |
+| 401 | Token ausente ou inválido |
+| 404 | Recurso ou rota inexistente |
+| 405 / 415 | Método HTTP ou tipo de conteúdo não suportado |
+| 409 | Conflito: CPF/CNPJ, placa, SKU ou nome de serviço duplicado; remoção de registro em uso |
+| 422 | Regra de negócio: CPF/CNPJ ou placa inválidos, transição de status inválida, saldo insuficiente |
 
 ## Banco de dados
 
-O banco escolhido para a solução é o **PostgreSQL**, conforme a dependência JDBC, o driver, o suporte do Flyway e os diagramas C4 do projeto. É um banco relacional adequado ao modelo de entidades relacionadas (clientes, veículos, OS, itens e pagamentos), com constraints e transações para preservar integridade em operações como aprovar uma OS e reservar itens. O uso de migrations versionadas ajuda a manter a evolução do schema reproduzível entre ambientes.
+O banco escolhido é o **PostgreSQL 16**, pelos seguintes motivos:
 
-**Necessário detalhamento:** validar e registrar a justificativa arquitetural final, além de documentar nome do banco/schema, credenciais locais fornecidas por variáveis de ambiente e o comando de inicialização/migration.
+- **Modelo relacional:** cliente, veículo, OS, serviços e itens de estoque são entidades fortemente relacionadas; chaves estrangeiras impedem, por exemplo, remover um serviço ou item já usado em uma OS.
+- **Integridade no próprio banco:** índices únicos sem diferenciar maiúsculas (`lower(sku)`, `lower(nome)`), CPF/CNPJ e placa únicos e `check` de saldo físico não negativo e preços maiores que zero.
+- **Transações ACID:** a aprovação do orçamento altera a OS e baixa o estoque de vários itens na mesma transação, tudo ou nada. O item de estoque tem controle de concorrência otimista (`versao`), evitando baixas simultâneas inconsistentes.
+- **Evolução versionada:** o schema muda só por migrations Flyway (`src/main/resources/db/migration`), reproduzíveis em qualquer ambiente.
+- **Mesmo motor em testes e execução:** os testes de integração usam PostgreSQL real via Testcontainers.
+- **Maduro e open source**, com imagem oficial e suporte nativo do Spring Data JPA.
+
+O banco local se chama `oficina` (usuário e senha `oficina`), com schema `public`, todos configuráveis por variáveis de ambiente.
 
 ## Estrutura do projeto
 
 ```text
 .
+├── Dockerfile                       # build multi-stage (JDK 21 → JRE 21)
+├── docker-compose.yml               # postgres + migration + seed + app
+├── docker/seed/seed.sql             # catálogo inicial da oficina
 ├── docs/
-│   ├── fase1-tech-challenge.md
+│   ├── fase1-tech-challenge.md      # enunciado
 │   └── ddd/
 │       ├── linguagem-ubiqua.md
-│       ├── c4/
-│       └── event-storming/
+│       ├── c4/                      # modelos de contexto e de componentes
+│       └── event-storming/          # fluxo da OS e de peças e insumos
+├── .specs/                          # roadmap, decisões (STATE) e specs por feature
 ├── src/
-│   ├── main/
-│   │   ├── java/br/com/fiap/oficina/
-│   │   │   ├── domain/
-│   │   │   ├── application/
-│   │   │   └── infrastructure/
-│   │   └── resources/db/migration/
-│   └── test/java/br/com/fiap/oficina/
-├── mvnw
-├── mvnw.cmd
+│   ├── main/java/br/com/fiap/oficina/
+│   │   ├── domain/                  # cliente, ordemservico, estoque (cobranca reservado)
+│   │   ├── application/             # casos de uso por contexto
+│   │   └── infrastructure/          # http, db, gateway, config
+│   ├── main/resources/
+│   │   ├── application.yml
+│   │   └── db/migration/            # V1..V4
+│   └── test/java/br/com/fiap/oficina/   # espelha main; *Test unitários, *IT integração
+├── mvnw / mvnw.cmd
 └── pom.xml
 ```
-
-Os contextos (`cliente`, `ordemservico`, `cobranca` e `estoque`) devem aparecer dentro das camadas `domain`, `application` e `infrastructure`. Em `infrastructure`, a organização prevista inclui `http/`, `db/`, `gateway/` e `config/`. Os diretórios listados em `src/` existem, mas ainda não contêm implementação.
 
 ## Documentação DDD
 
@@ -162,7 +222,7 @@ Os contextos (`cliente`, `ordemservico`, `cobranca` e `estoque`) devem aparecer 
 - [Event Storming — fluxo de peças e insumos](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=2330-5454&t=wrvbbnXQTibMaU8n-1)
 - [Modelo C4](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=2405-7907&t=wrvbbnXQTibMaU8n-1)
 
-**Necessário detalhamento:** confirmar que os links externos estão acessíveis sem solicitação manual de permissão e correspondem à documentação exigida. As versões exportadas dos diagramas e os arquivos Markdown de DDD também estão disponíveis neste repositório, em [`docs/ddd/`](docs/ddd/).
+As versões exportadas dos diagramas e os arquivos Markdown de DDD estão em [`docs/ddd/`](docs/ddd/).
 
 ## Evidências da entrega
 
@@ -179,10 +239,7 @@ Os contextos (`cliente`, `ordemservico`, `cobranca` e `estoque`) devem aparecer 
 
 ### Entregáveis
 
-[Repositório no GitHub](https://github.com/raffharah/tech-challenge-oficina)
-
-Branch prevista: `main` — commit da versão avaliada: **Necessário detalhamento** (informar o hash final).
-
-**Necessário detalhamento:** confirmar branch e hash do commit da versão avaliada e adicionar o resultado ou link do relatório de análise de vulnerabilidades.
-
-**Necessário detalhamento:** adicionar o link público e clicável para o vídeo da entrega no YouTube. O vídeo deve apresentar a versão correspondente ao commit entregue e demonstrar a arquitetura, os fluxos principais, a API, os testes e a análise de vulnerabilidades.
+- [Repositório no GitHub](https://github.com/raffharah/tech-challenge-oficina), branch `main`.
+- **Pendente:** hash do commit da versão avaliada.
+- **Pendente:** relatório da análise de vulnerabilidades.
+- **Pendente:** link público do vídeo da entrega no YouTube.
