@@ -9,10 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class ErroHandler {
@@ -26,6 +32,35 @@ public class ErroHandler {
                 .toList();
         return ResponseEntity.badRequest()
                 .body(new ErroResponse("REQUISICAO_INVALIDA", "Requisicao invalida", campos, null));
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class})
+    ResponseEntity<ErroResponse> requisicaoMalformada(Exception ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErroResponse("REQUISICAO_INVALIDA", "Requisicao invalida", null, null));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    ResponseEntity<ErroResponse> rotaInexistente(NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErroResponse("RECURSO_NAO_ENCONTRADO", "Recurso nao encontrado", null, null));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    ResponseEntity<ErroResponse> metodoNaoSuportado(HttpRequestMethodNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .headers(ex.getHeaders())
+                .body(new ErroResponse("METODO_NAO_SUPORTADO", "Metodo HTTP nao suportado para este recurso", null,
+                        null));
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    ResponseEntity<ErroResponse> tipoDeConteudoNaoSuportado(HttpMediaTypeNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .headers(ex.getHeaders())
+                .body(new ErroResponse("TIPO_DE_CONTEUDO_NAO_SUPORTADO", "Tipo de conteudo nao suportado", null,
+                        null));
     }
 
     @ExceptionHandler(NaoEncontradoException.class)

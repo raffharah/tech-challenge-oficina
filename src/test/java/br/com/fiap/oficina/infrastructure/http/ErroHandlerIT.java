@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -26,6 +27,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -93,6 +95,48 @@ class ErroHandlerIT {
                 .andExpect(content().string(not(containsString("at br.com"))));
     }
 
+    @Test
+    void metodoNaoSuportadoRetorna405() throws Exception {
+        mvc.perform(delete("/teste/validacao").with(jwt()).with(csrf()))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.codigo").value("METODO_NAO_SUPORTADO"))
+                .andExpect(jsonPath("$.mensagem").isNotEmpty());
+    }
+
+    @Test
+    void rotaInexistenteRetorna404() throws Exception {
+        mvc.perform(get("/teste/rota-inexistente").with(jwt()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value("RECURSO_NAO_ENCONTRADO"))
+                .andExpect(jsonPath("$.mensagem").isNotEmpty());
+    }
+
+    @Test
+    void tipoDeConteudoNaoSuportadoRetorna415() throws Exception {
+        mvc.perform(post("/teste/validacao").with(jwt()).with(csrf())
+                        .contentType(MediaType.TEXT_PLAIN).content("nome"))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(jsonPath("$.codigo").value("TIPO_DE_CONTEUDO_NAO_SUPORTADO"))
+                .andExpect(jsonPath("$.mensagem").isNotEmpty());
+    }
+
+    @Test
+    void corpoMalformadoRetorna400() throws Exception {
+        mvc.perform(post("/teste/validacao").with(jwt()).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"nome\""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("REQUISICAO_INVALIDA"))
+                .andExpect(jsonPath("$.mensagem").isNotEmpty());
+    }
+
+    @Test
+    void parametroComTipoInvalidoRetorna400() throws Exception {
+        mvc.perform(get("/teste/numero/abc").with(jwt()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("REQUISICAO_INVALIDA"))
+                .andExpect(jsonPath("$.mensagem").isNotEmpty());
+    }
+
     record Corpo(@NotBlank String nome) {
     }
 
@@ -121,6 +165,10 @@ class ErroHandlerIT {
         @GetMapping("/teste/dominio")
         void dominio() {
             throw new DomainException("SALDO_INSUFICIENTE", "Saldo insuficiente", List.of("item-1"));
+        }
+
+        @GetMapping("/teste/numero/{id}")
+        void numero(@PathVariable Long id) {
         }
 
         @GetMapping("/teste/erro")
