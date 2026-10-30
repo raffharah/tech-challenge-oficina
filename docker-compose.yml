@@ -13,6 +13,37 @@ services:
       timeout: 3s
       retries: 10
 
+  # Aplica as migrations versionadas da aplicação (mesma versão de Flyway do Spring Boot)
+  migration:
+    image: flyway/flyway:12.4.0-alpine
+    command: migrate
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-oficina}
+      FLYWAY_USER: ${DB_USER:-oficina}
+      FLYWAY_PASSWORD: ${DB_PASSWORD:-oficina}
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      REDGATE_DISABLE_TELEMETRY: "true"
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Popula o catálogo da oficina (peças, insumos e serviços); idempotente
+  seed:
+    image: postgres:16-alpine
+    command: ["psql", "-v", "ON_ERROR_STOP=1", "-f", "/seed/seed.sql"]
+    environment:
+      PGHOST: postgres
+      PGDATABASE: ${DB_NAME:-oficina}
+      PGUSER: ${DB_USER:-oficina}
+      PGPASSWORD: ${DB_PASSWORD:-oficina}
+    volumes:
+      - ./docker/seed:/seed:ro
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+
   app:
     build: .
     ports:
@@ -22,9 +53,11 @@ services:
       DB_USER: ${DB_USER:-oficina}
       DB_PASSWORD: ${DB_PASSWORD:-oficina}
       JWT_SEGREDO: ${JWT_SEGREDO:-segredo-local-apenas-para-demonstracao-0123456789}
+      # O schema é responsabilidade do serviço migration
+      SPRING_FLYWAY_ENABLED: "false"
     depends_on:
-      postgres:
-        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
 
 volumes:
   postgres-data:

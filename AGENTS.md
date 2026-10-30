@@ -52,7 +52,8 @@ oficina-mecanica/
 ├── README.md
 ├── pom.xml
 ├── Dockerfile
-├── docker-compose.yml                      # aplicação + PostgreSQL
+├── docker-compose.yml                      # PostgreSQL + migration + seed + aplicação
+├── docker/seed/seed.sql                    # catálogo inicial da oficina
 ├── docs/
 │   ├── fase1-tech-challenge.md
 │   └── ddd/
