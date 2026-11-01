@@ -172,13 +172,14 @@ public class BeanConfig {
     }
 
     @Bean
-    AprovarOrcamento aprovarOrcamento(OrdemServicoRepository ordens, EstoqueDeItens estoque, Clock clock) {
-        return new AprovarOrcamento(ordens, estoque, clock);
+    AprovarOrcamento aprovarOrcamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos,
+            EstoqueDeItens estoque, Clock clock) {
+        return new AprovarOrcamento(ordens, veiculos, estoque, clock);
     }
 
     @Bean
-    RejeitarOrcamento rejeitarOrcamento(OrdemServicoRepository ordens, Clock clock) {
-        return new RejeitarOrcamento(ordens, clock);
+    RejeitarOrcamento rejeitarOrcamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos, Clock clock) {
+        return new RejeitarOrcamento(ordens, veiculos, clock);
     }
 
     @Bean
