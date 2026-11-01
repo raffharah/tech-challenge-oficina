@@ -1,35 +1,31 @@
+# Modelo C4 — Contexto
+
+O sistema de gestão da oficina é um único sistema, usado pelo funcionário com login (JWT) e pelo cliente sem login, que se identifica com o número da OS e o CPF/CNPJ do titular. No MVP ele não se integra com nenhum sistema externo.
+
+```mermaid
 ---
-title: Modelo de Contexto - Sistema de gestão de ordens de serviço
+title: Contexto - Sistema de gestão da oficina mecânica
 config:
   flowchart:
     curve: basis
     wrappingWidth: 260
     nodeSpacing: 60
-    rankSpacing: 200
+    rankSpacing: 120
 ---
-flowchart LR
-    cliente(["<b>Cliente</b><br/>[Pessoa]"])
-    funcionario(["<b>Funcionário</b><br/>[Pessoa]"])
-    sgos["<b>Sistema de gestão de<br/>ordens de serviço</b><br/>[Sistema]"]
-    estoque["<b>Sistema de estoque<br/>de itens</b><br/>[Sistema]"]
-    email["<b>Provedor de caixa<br/>de e-mails</b><br/>[Sistema externo]"]
-    pagamentos["<b>Sistema de pagamentos</b><br/>[Sistema externo]"]
-    nf["<b>Sistema de emissão<br/>de nota fiscal</b><br/>[Sistema externo]"]
-    fornecedor["<b>Sistema de fornecedor<br/>de itens</b><br/>[Sistema externo]"]
+flowchart TB
+    funcionario(["<b>Funcionário</b><br/>[Pessoa]<br/>Atende o cliente, conduz a OS e controla o estoque"])
+    cliente(["<b>Cliente</b><br/>[Pessoa]<br/>Dono do veículo"])
+    sistema["<b>Sistema de gestão da oficina mecânica</b><br/>[Sistema]<br/>Clientes e veículos, catálogo de serviços, peças e insumos, ordens de serviço e orçamentos"]
 
-    funcionario -->|"Identifica o cliente, abre e acompanha ordens de serviço usando"| sgos
-    email -->|"Envia e-mails para"| cliente
-    cliente -->|"Aprova ou recusa orçamentos e consulta o andamento da OS usando"| sgos
-    funcionario -->|"Cadastra, atualiza, inativa itens, registra entradas usando"| estoque
-    sgos -->|"Envio de e-mails usando"| email
-    sgos -->|"Consulta disponibilidade, preço, reserva e consome itens usando"| estoque
-    sgos -->|"Solicita o pagamento usando"| pagamentos
-    sgos -->|"Solicita a emissão da nota fiscal usando"| nf
-    estoque -->|"Solicita reposição e garantia de itens usando"| fornecedor
+    funcionario -->|"Cadastra clientes, veículos, serviços e itens; abre e conduz OS; registra entradas de estoque; consulta listagem e tempo médio<br/>[JSON/HTTPS, JWT]"| sistema
+    cliente -->|"Consulta o andamento e aprova ou rejeita o orçamento informando número da OS e CPF/CNPJ<br/>[JSON/HTTPS, sem login]"| sistema
 
     classDef pessoa fill:#08427b,stroke:#052e56,color:#fff
     classDef sistema fill:#1168bd,stroke:#0b4884,color:#fff
-    classDef externo fill:#999999,stroke:#6b6b6b,color:#fff
-    class cliente,funcionario pessoa
-    class sgos,estoque sistema
-    class email,pagamentos,nf,fornecedor externo
+    class funcionario,cliente pessoa
+    class sistema sistema
+```
+
+## Fora do MVP
+
+O Event Storming e o board do Figma também mapeiam sistemas externos que não foram implementados: provedor de e-mail, sistema de pagamentos, emissão de nota fiscal e fornecedor de itens. O motivo de cada corte está em [`.specs/ROADMAP.md`](../../../.specs/ROADMAP.md) (AD-003).

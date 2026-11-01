@@ -59,7 +59,7 @@ oficina-mecanica/
 │   └── ddd/
 │       ├── linguagem-ubiqua.md
 │       ├── event-storming/                  # fluxo-os, fluxo-pecas-insumos (.md, .png, .pdf)
-│       └── c4/                              # modelo de contexto e de componentes
+│       └── c4/                              # C4: contexto, container e componentes (Mermaid)
 └── src/
     ├── main/java/br/com/fiap/oficina/
     │   ├── OficinaApplication.java          # @SpringBootApplication

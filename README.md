@@ -199,7 +199,7 @@ O banco local se chama `oficina` (usuário e senha `oficina`), com schema `publi
 │   ├── fase1-tech-challenge.md      # enunciado
 │   └── ddd/
 │       ├── linguagem-ubiqua.md
-│       ├── c4/                      # modelos de contexto e de componentes
+│       ├── c4/                      # C4: contexto, container e componentes (Mermaid)
 │       └── event-storming/          # fluxo da OS e de peças e insumos
 ├── .specs/                          # roadmap, decisões (STATE) e specs por feature
 ├── src/
