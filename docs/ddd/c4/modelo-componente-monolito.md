@@ -18,68 +18,72 @@ flowchart TB
 
     subgraph api["API da oficina (Spring Boot)"]
         direction TB
-        auth["<b>Autenticação</b><br/>[Componente: REST Controller]<br/>AutenticacaoController: emite o token"]
-        seguranca["<b>Segurança</b><br/>[Componente: Spring Security]<br/>SecurityConfig: valida JWT nas rotas administrativas"]
+        auth["<b>AutenticacaoController</b><br/>[Componente: REST Controller]<br/>Recebe as credenciais, valida usuário e senha e emite o token JWT"]
+        seguranca["<b>SecurityConfig</b><br/>[Componente: Spring Security]<br/>Autentica tokens JWT, aplica autorização e protege as rotas administrativas"]
 
         subgraph ctx_cliente["Clientes e Veículos"]
             direction TB
-            ctrl_cliente["<b>Controllers de cadastro</b><br/>[Componente: REST Controller]<br/>ClienteController, VeiculoController"]
-            uc_cliente["<b>Casos de uso de cliente</b><br/>[Componente: Java]<br/>CadastrarCliente, ConsultarVeiculos, ..."]
-            repo_cliente["<b>Repositórios de cliente</b><br/>[Componente: Spring Data JPA]<br/>ClienteRepositoryImpl, VeiculoRepositoryImpl"]
+            ctrl_cliente["<b>ClienteController e VeiculoController</b><br/>[Componente: REST Controller]<br/>Cadastra, atualiza, consulta, lista e remove clientes e veículos"]
+            uc_cliente["<b>Casos de uso de Clientes e Veículos</b><br/>[Componente: Application Services]<br/>Executa os comandos e consultas de clientes e veículos"]
+            repo_cliente["<b>ClienteRepositoryImpl e VeiculoRepositoryImpl</b><br/>[Componente: Spring Data JPA]<br/>Persiste clientes e veículos no PostgreSQL"]
         end
 
         subgraph ctx_os["Ordens de Serviço"]
             direction TB
-            ctrl_os["<b>Controllers da oficina</b><br/>[Componente: REST Controller]<br/>OrdemServicoController, ServicoController"]
-            ctrl_portal["<b>Controller do cliente</b><br/>[Componente: REST Controller]<br/>ClienteOrdemServicoController"]
-            uc_os["<b>Casos de uso de OS</b><br/>[Componente: Java]<br/>AbrirOrdemServico, AprovarOrcamento, FinalizarOrdemServico, ..."]
-            repo_os["<b>Repositórios de OS</b><br/>[Componente: Spring Data JPA]<br/>OrdemServicoRepositoryImpl, ServicoRepositoryImpl"]
-            gw_veiculos["<b>Gateway de cadastro</b><br/>[Componente: porta CadastroDeVeiculos]<br/>CadastroDeVeiculosImpl"]
-            gw_estoque["<b>Gateway de estoque</b><br/>[Componente: porta EstoqueDeItens]<br/>EstoqueDeItensImpl"]
+            ctrl_os["<b>OrdemServicoController</b><br/>[Componente: REST Controller]<br/>Abre e conduz ordens de serviço, gera orçamento, finaliza e entrega veículos"]
+            ctrl_servicos["<b>ServicoController</b><br/>[Componente: REST Controller]<br/>Gerencia o catálogo de serviços, preços padrão, consulta, atualização e remoção"]
+            ctrl_portal["<b>ClienteOrdemServicoController</b><br/>[Componente: REST Controller]<br/>Consulta andamento, aprova ou rejeita a OS com número da ordem e CPF/CNPJ"]
+            uc_os["<b>Casos de uso de Ordens de Serviço</b><br/>[Componente: Application Services]<br/>Orquestra abertura, componentes, orçamento, execução, finalização e entrega da OS"]
+            repo_os["<b>OrdemServicoRepositoryImpl e ServicoRepositoryImpl</b><br/>[Componente: Spring Data JPA]<br/>Persiste ordens, histórico de status, serviços e componentes da OS"]
+            gw_veiculos["<b>CadastroDeVeiculosImpl</b><br/>[Componente: Gateway]<br/>Implementa CadastroDeVeiculos e resolve o veículo associado à OS em outro contexto"]
+            gw_estoque["<b>EstoqueDeItensImpl</b><br/>[Componente: Gateway]<br/>Implementa EstoqueDeItens para cotar itens, verificar disponibilidade e registrar baixas"]
         end
 
         subgraph ctx_estoque["Peças e Insumos"]
             direction TB
-            ctrl_estoque["<b>Controller de estoque</b><br/>[Componente: REST Controller]<br/>ItemEstoqueController"]
-            uc_estoque["<b>Casos de uso de estoque</b><br/>[Componente: Java]<br/>CadastrarItem, RegistrarEntrada, BaixarItens, ..."]
-            repo_estoque["<b>Repositório de estoque</b><br/>[Componente: Spring Data JPA]<br/>ItemEstoqueRepositoryImpl"]
+            ctrl_estoque["<b>ItemEstoqueController</b><br/>[Componente: REST Controller]<br/>Gerencia itens, consulta saldos, atualiza dados e registra entradas físicas"]
+            uc_estoque["<b>Casos de uso de Peças e Insumos</b><br/>[Componente: Application Services]<br/>Executa cadastro, consulta, atualização, entrada, baixa e remoção de itens"]
+            repo_estoque["<b>ItemEstoqueRepositoryImpl</b><br/>[Componente: Spring Data JPA]<br/>Persiste itens, saldos físicos e controle de versão do estoque"]
         end
     end
 
     bd[("<b>Banco de dados</b><br/>[Container: PostgreSQL 16]")]
 
-    funcionario -->|"Login [JSON/HTTPS]"| auth
-    funcionario -->|"Chamadas com JWT"| seguranca
-    cliente -->|"Número da OS + CPF/CNPJ, sem login"| ctrl_portal
+    funcionario -->|"Envia usuário e senha [JSON/HTTPS]"| auth
+    auth -->|"Retorna token JWT"| funcionario
+    funcionario -->|"Envia requisições com Bearer token [JSON/HTTPS]"| seguranca
+    cliente -->|"Informa número da OS e CPF/CNPJ [JSON/HTTPS]"| ctrl_portal
 
-    seguranca --> ctrl_cliente
-    seguranca --> ctrl_os
-    seguranca --> ctrl_estoque
+    seguranca -->|"Autoriza operações administrativas"| ctrl_cliente
+    seguranca -->|"Autoriza operações sobre ordens"| ctrl_os
+    seguranca -->|"Autoriza operações sobre serviços"| ctrl_servicos
+    seguranca -->|"Autoriza operações sobre estoque"| ctrl_estoque
 
-    ctrl_cliente --> uc_cliente
-    ctrl_os --> uc_os
-    ctrl_portal -->|"Consulta, aprova e rejeita"| uc_os
-    ctrl_estoque --> uc_estoque
+    ctrl_cliente -->|"Cadastra, consulta, atualiza e remove clientes e veículos"| uc_cliente
+    ctrl_os -->|"Abre, compõe, orça, acompanha, finaliza e entrega ordens"| uc_os
+    ctrl_servicos -->|"Cadastra, consulta, atualiza, lista e remove serviços"| uc_os
+    ctrl_portal -->|"Consulta andamento, aprova ou rejeita o orçamento"| uc_os
+    ctrl_estoque -->|"Cadastra itens, atualiza dados, consulta saldo e registra entradas"| uc_estoque
 
-    uc_os -->|"Identifica cliente e veículo"| gw_veiculos
-    uc_os -->|"Cota itens e dá baixa na aprovação"| gw_estoque
-    gw_veiculos -->|"ConsultarClientes, ConsultarVeiculos"| uc_cliente
-    gw_estoque -->|"ConsultarItens, BaixarItens"| uc_estoque
+    uc_os -->|"Resolve cliente e veículo identificado pela OS"| gw_veiculos
+    uc_os -->|"Cota itens, verifica saldo disponível e dá baixa na aprovação"| gw_estoque
+    gw_veiculos -->|"Consulta clientes e veículos nos casos de uso do contexto"| uc_cliente
+    gw_estoque -->|"Consulta itens, disponibilidade e executa baixas"| uc_estoque
 
-    uc_cliente --> repo_cliente
-    uc_os --> repo_os
-    uc_estoque --> repo_estoque
+    uc_cliente -->|"Consulta ou persiste clientes e veículos"| repo_cliente
+    uc_os -->|"Consulta ou persiste ordens, serviços e histórico de status"| repo_os
+    uc_estoque -->|"Consulta ou persiste itens e saldos"| repo_estoque
 
-    repo_cliente -->|"JDBC/SQL"| bd
-    repo_os -->|"JDBC/SQL"| bd
-    repo_estoque -->|"JDBC/SQL"| bd
+    repo_cliente -->|"Lê e grava clientes e veículos [JDBC/SQL]"| bd
+    repo_os -->|"Lê e grava ordens e catálogo de serviços [JDBC/SQL]"| bd
+    repo_estoque -->|"Lê e grava itens e saldos [JDBC/SQL]"| bd
 
     classDef pessoa fill:#08427b,stroke:#052e56,color:#fff
     classDef container fill:#438dd5,stroke:#2e6295,color:#fff
     classDef componente fill:#85bbf0,stroke:#5d82a8,color:#000
     class funcionario,cliente pessoa
     class bd container
-    class auth,seguranca,ctrl_cliente,uc_cliente,repo_cliente,ctrl_os,ctrl_portal,uc_os,repo_os,gw_veiculos,gw_estoque,ctrl_estoque,uc_estoque,repo_estoque componente
+    class auth,seguranca,ctrl_cliente,ctrl_os,ctrl_servicos,ctrl_portal,uc_os,repo_os,gw_veiculos,gw_estoque,ctrl_estoque,uc_estoque,repo_estoque,uc_cliente,repo_cliente componente
     style api fill:#ffffff,stroke:#444,stroke-dasharray:6 4,color:#000
     style ctx_cliente fill:#f4f8fc,stroke:#5d82a8,color:#000
     style ctx_os fill:#f4f8fc,stroke:#5d82a8,color:#000
