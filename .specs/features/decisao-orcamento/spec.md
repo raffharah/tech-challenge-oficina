@@ -23,7 +23,7 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
-| Canal da resposta | Endpoints `/cliente` sem JWT para aprovar e rejeitar | AD-001, decisão do usuário | y |
+| Canal da resposta | Endpoints `/cliente` sem JWT para aprovar e rejeitar, com o CPF/CNPJ do titular no corpo | AD-001 (revisada em 2026-11-01) | y |
 | Falta de estoque na aprovação | Nada é baixado, OS continua AGUARDANDO_APROVACAO, resposta 422 com os itens faltantes; aprovação pode ser repetida após entrada | AD-004 | y |
 
 **Open questions:** none - all resolved or logged above.
@@ -43,8 +43,9 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 1. WHILE a OS está AGUARDANDO_APROVACAO, WHEN o cliente aprova THEN o sistema SHALL baixar os itens da OS pela porta `EstoqueDeItens` e mudar a OS para EM_EXECUCAO na mesma transação.
 2. IF falta saldo para algum item THEN o sistema SHALL manter a OS AGUARDANDO_APROVACAO, não baixar nenhum item e responder 422 com os itens faltantes.
 3. IF a OS não está AGUARDANDO_APROVACAO THEN o sistema SHALL responder 422.
+4. IF a OS não existe ou o CPF/CNPJ informado não é do titular THEN o sistema SHALL responder 404 com a mesma mensagem nos dois casos, sem baixar itens nem mudar a OS.
 
-**Independent Test**: Aprovar com saldo (EM_EXECUCAO, saldo baixado) e sem saldo (AGUARDANDO_APROVACAO, saldo intacto).
+**Independent Test**: Aprovar com saldo (EM_EXECUCAO, saldo baixado), sem saldo (AGUARDANDO_APROVACAO, saldo intacto) e com CPF de outro cliente (404, nada alterado).
 
 ---
 
@@ -58,8 +59,9 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 
 1. WHILE a OS está AGUARDANDO_APROVACAO, WHEN o cliente rejeita THEN o sistema SHALL mudar a OS para CANCELADA.
 2. WHILE a OS está CANCELADA, the sistema SHALL rejeitar qualquer comando que altere a OS com 422.
+3. IF a OS não existe ou o CPF/CNPJ informado não é do titular THEN o sistema SHALL responder 404 com a mesma mensagem nos dois casos, sem mudar a OS.
 
-**Independent Test**: Rejeitar e tentar incluir serviço (422).
+**Independent Test**: Rejeitar e tentar incluir serviço (422); rejeitar com CPF de outro cliente (404, OS intacta).
 
 ---
 
@@ -76,4 +78,4 @@ O MVP exige registrar a aprovação ou a rejeição do orçamento. A aprovação
 
 ## Success Criteria
 
-- [x] Integração cobre aprovação com saldo, aprovação sem saldo e rejeição.
+- [x] Integração cobre aprovação com saldo, aprovação sem saldo, rejeição e decisão com CPF/CNPJ de outro titular.

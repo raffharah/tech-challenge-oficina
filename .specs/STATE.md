@@ -5,9 +5,10 @@
 ### AD-001
 - **Decision**: O Cliente não é autenticado no MVP; endpoints sob `/cliente`, sem JWT, simulam a resposta do cliente (aprovar ou rejeitar orçamento) e expõem a consulta de andamento.
 - **Reason**: JWT é exigido só nas APIs administrativas e a resposta real do cliente não é necessária no MVP.
-- **Trade-off**: Qualquer chamador pode registrar a decisão do cliente; a consulta exige número da OS + CPF/CNPJ coincidentes para não expor dados por enumeração.
+- **Trade-off**: Sem login, quem conhece o número da OS e o CPF/CNPJ do titular consegue consultar e decidir. Consulta, aprovação e rejeição exigem número da OS + CPF/CNPJ coincidentes; OS de outro titular responde 404 igual a OS inexistente, para não expor dados por enumeração.
 - **Scope**: decisao-orcamento, acompanhamento-os; `infrastructure/http` e `config/SecurityConfig`.
 - **Date**: 2026-10-26
+- **Revised**: 2026-11-01. Antes, aprovar e rejeitar exigiam só o número da OS: qualquer chamador podia decidir pela OS de outro cliente percorrendo números sequenciais, e a resposta expunha CPF/CNPJ e placa que a consulta protege. A decisão passou a exigir o CPF/CNPJ do titular, como a consulta.
 - **Status**: active
 
 ### AD-002
