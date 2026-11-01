@@ -4,10 +4,12 @@ import br.com.fiap.oficina.application.ordemservico.AprovarOrcamento;
 import br.com.fiap.oficina.application.ordemservico.ConsultarAndamento;
 import br.com.fiap.oficina.application.ordemservico.OrdemServicoDTO;
 import br.com.fiap.oficina.application.ordemservico.RejeitarOrcamento;
+import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,14 +31,14 @@ public class ClienteOrdemServicoController {
 
     @PostMapping("/{id}/aprovacao")
     @Transactional
-    OrdemServicoDTO aprovar(@PathVariable Long id) {
-        return aprovar.executar(id);
+    OrdemServicoDTO aprovar(@PathVariable Long id, @Valid @RequestBody DecisaoOrcamentoRequest request) {
+        return aprovar.executar(id, request.cpfCnpj());
     }
 
     @PostMapping("/{id}/rejeicao")
     @Transactional
-    OrdemServicoDTO rejeitar(@PathVariable Long id) {
-        return rejeitar.executar(id);
+    OrdemServicoDTO rejeitar(@PathVariable Long id, @Valid @RequestBody DecisaoOrcamentoRequest request) {
+        return rejeitar.executar(id, request.cpfCnpj());
     }
 
     @GetMapping("/{id}")

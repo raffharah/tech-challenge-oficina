@@ -4,27 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.fiap.oficina.domain.NaoEncontradoException;
-import br.com.fiap.oficina.domain.ordemservico.CadastroDeVeiculos;
 import br.com.fiap.oficina.domain.ordemservico.StatusOrdemServico;
-import br.com.fiap.oficina.domain.ordemservico.VeiculoIdentificado;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 class ConsultarAndamentoTest {
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
-    private final CadastroDeVeiculos cadastro = new CadastroDeVeiculos() {
-        @Override
-        public VeiculoIdentificado identificar(String cpfCnpj, String placa) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String normalizarCpfCnpj(String cpfCnpj) {
-            return cpfCnpj.replaceAll("\\D", "");
-        }
-    };
-    private final ConsultarAndamento consultar = new ConsultarAndamento(ordens, cadastro);
+    private final ConsultarAndamento consultar = new ConsultarAndamento(ordens, new CadastroDeVeiculosSoNormaliza());
 
     @Test
     void titularRecebeStatusHistoricoComponentesETotal() {
