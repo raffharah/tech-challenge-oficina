@@ -52,6 +52,8 @@ Atendimento e orçamento são feitos em anotações. O MVP exige criar a OS a pa
 
 **Independent Test**: Abrir OS e conferir status EM_DIAGNOSTICO.
 
+> **Revisado em 2026-11-02 (AD-007):** a abertura deixa a OS em `RECEBIDA`; a passagem para `EM_DIAGNOSTICO` é o comando `POST /ordens-servico/{id}/diagnostico`. Ver [`ajustes-revisao`](../ajustes-revisao/spec.md) (REV-06).
+
 ---
 
 ### P1: Incluir serviços, peças e insumos ⭐ MVP

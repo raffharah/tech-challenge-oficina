@@ -62,11 +62,11 @@
 
 ## Handoff
 
-- **Feature**: nenhuma iniciada; ver `.specs/ROADMAP.md`
-- **Phase / Task**: Specify, Design e Tasks concluídos para os 8 escopos (Draft); próximo é Execute de `fundacao-plataforma` T1
-- **Completed**: none
+- **Feature**: `ajustes-revisao` (Implemented); escopos 1 a 8 implementados
+- **Phase / Task**: Validate concluído (`.specs/features/ajustes-revisao/validation.md`)
+- **Completed**: REV-01 a REV-06
 - **In-progress** (file:line): none
-- **Next step**: Aprovar tasks, atualizar Decisões do MVP em `docs/ddd/linguagem-ubiqua.md` (AD-003/AD-004) e executar `fundacao-plataforma`.
+- **Next step**: Atualizar o board do Figma e `fluxo-os.png` com o comando "Inicia diagnóstico"; abrir PR de `fix/ajustes-revisao-fase1`.
 - **Blockers**: none
-- **Uncommitted files**: `.specs/`
-- **Branch**: feat/documentacao-inicial
+- **Uncommitted files**: none
+- **Branch**: fix/ajustes-revisao-fase1

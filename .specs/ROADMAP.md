@@ -16,6 +16,7 @@ Cada escopo é uma feature em `.specs/features/<escopo>/spec.md`. Design e tasks
 | 6 | [decisao-orcamento](features/decisao-orcamento/spec.md) | Registro da aprovação ou rejeição do orçamento | 5 | Medium |
 | 7 | [execucao-servicos](features/execucao-servicos/spec.md) | Status Em execução → Finalizada → Entregue | 6 | Small |
 | 8 | [acompanhamento-os](features/acompanhamento-os/spec.md) | Consulta do cliente via API, listagem, detalhamento, tempo médio de execução | 5 | Medium |
+| 9 | [ajustes-revisao](features/ajustes-revisao/spec.md) | Correções da revisão do grupo: Swagger documentado, listagens sem filtro obrigatório, OS do cliente, diagnóstico explícito, modelo de domínio | 1-8 | Medium |
 
 Ordem: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (2, 3 e 4 nessa ordem por causa da numeração das migrations V1-V3).
 
@@ -64,9 +65,9 @@ Design: `fundacao-plataforma/design.md` (padrões de todos os escopos) e `abertu
 
 O corte diverge de documentos que hoje se declaram fonte de verdade. Atualizar antes de implementar:
 
-- `docs/ddd/linguagem-ubiqua.md`, Decisões do MVP: linhas Reserva, Liberação da reserva, Estoque mínimo, Prazo, Agregados do Estoque (Reserva), Agregados da OS (Pagamento, Nota Fiscal) e Sistemas externos (e-mail, pagamento, nota fiscal).
+- ~~`docs/ddd/linguagem-ubiqua.md`, Decisões do MVP~~: resolvido em 2026-11-02 (`ajustes-revisao`).
 - `AGENTS.md`: árvore de exemplo cita `cobranca/`, `Reserva`, `ReservarItens`, `SistemaDePagamentos`; tabela de contextos inclui `cobranca`.
-- `docs/ddd/c4/`: fachadas de pagamento, nota fiscal, fornecedor e componente de notificações.
+- ~~`docs/ddd/c4/`~~: resolvido no alinhamento do C4 ao código; os sistemas não implementados só são citados como fora do MVP.
 
 ## Entregáveis fora das specs
 

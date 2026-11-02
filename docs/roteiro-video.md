@@ -9,7 +9,7 @@ Vídeo de cerca de 8 minutos mostrando só a API em funcionamento, acompanhando 
 | 3. Troca de óleo | Ciclo completo da OS: abertura → diagnóstico → orçamento → aprovação → execução → entrega | 3:00 |
 | 4. Falta de peça | Aprovação barrada por estoque, entrada de peça e nova aprovação | 1:30 |
 | 5. Orçamento recusado | Cliente rejeita e a OS é cancelada | 0:45 |
-| 6. Visão da oficina | Listagem, detalhamento e tempo médio de execução | 0:45 |
+| 6. Visão da oficina | Listagem, detalhamento, tempo médio, OS do cliente e documentação | 1:15 |
 
 ---
 
@@ -139,6 +139,16 @@ POST /veiculos
 ```
 
 Esperado: **201**, `id: 1`.
+
+**2.5 Encontrar o cadastro** (listagens paginadas; o filtro é opcional)
+
+```http
+GET /veiculos?placa=bra-2e19
+```
+
+Esperado: **200**, `total: 1`, com o Gol do Carlos. Sem o filtro, `GET /veiculos` e `GET /clientes` listam todos os cadastros.
+
+> Fala: "Placa e CPF são filtros opcionais da listagem, aceitos com ou sem máscara."
 
 ---
 
@@ -445,7 +455,7 @@ Esperado: **422** `ORDEM_FORA_DE_DIAGNOSTICO`.
 
 ---
 
-## Cena 6 — Visão da oficina (0:45)
+## Cena 6 — Visão da oficina (1:15)
 
 > Fala: "Para a gestão, a oficina lista as OS, vê o detalhe de cada uma e acompanha o tempo médio de execução."
 
@@ -480,6 +490,22 @@ GET /ordens-servico/tempo-medio-execucao
 Esperado: **200** com `mediaMinutos` e `quantidade: 1`. Só entra a OS 1, a única que já passou por execução e foi finalizada. O valor é o tempo entre a aprovação e a finalização dela na gravação.
 
 > Fala: "O tempo médio é calculado pelo histórico de status: de EM_EXECUCAO até FINALIZADA."
+
+**6.4 Cliente vê todas as suas OS** (rota do cliente, sem token)
+
+```http
+GET /cliente/ordens-servico?cpfCnpj=529.982.247-25
+```
+
+Esperado: **200**, `total: 3`, com status e total de cada OS do Carlos, da mais recente para a mais antiga.
+
+> Fala: "O cliente acompanha todas as ordens dele só com o CPF, sem precisar saber o número de cada uma."
+
+**6.5 Documentação da API**
+
+No Swagger, abrir `POST /cliente/ordens-servico/{id}/aprovacao` e mostrar a descrição da regra, o exemplo do corpo e as respostas de erro com o código (`SALDO_INSUFICIENTE`, `TRANSICAO_INVALIDA`). Depois, rolar até **Schemas** → `ErroResponse`.
+
+> Fala: "Cada rota explica a regra de negócio, traz exemplo de uso e lista os erros possíveis com o código para tratamento."
 
 ---
 
