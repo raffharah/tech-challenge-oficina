@@ -70,9 +70,35 @@ class VeiculoControllerIT {
 
         mvc.perform(get("/veiculos").param("placa", "abc-1234").with(jwt()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.placa").value("ABC1234"));
+                .andExpect(jsonPath("$.total").value(1))
+                .andExpect(jsonPath("$.itens[0].placa").value("ABC1234"));
         mvc.perform(get("/veiculos").param("placa", "ABC1234").with(jwt()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(1));
+    }
+
+    @Test
+    void listaTodosPaginadoSemFiltro() throws Exception {
+        int outro = cadastrarCliente("Oficina", "11222333000181");
+        cadastrar("ABC1234", 2010, clienteId);
+        cadastrar("DEF5678", 2012, outro);
+        cadastrar("GHI1J23", 2020, clienteId);
+
+        mvc.perform(get("/veiculos").with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(3))
+                .andExpect(jsonPath("$.itens[0].placa").value("ABC1234"));
+        mvc.perform(get("/veiculos").param("pagina", "1").param("tamanho", "2").with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itens.length()").value(1))
+                .andExpect(jsonPath("$.itens[0].placa").value("GHI1J23"));
+    }
+
+    @Test
+    void filtroPorPlacaInvalidaRetorna422() throws Exception {
+        mvc.perform(get("/veiculos").param("placa", "XX").with(jwt()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.codigo").value("PLACA_INVALIDA"));
     }
 
     @Test
@@ -166,8 +192,10 @@ class VeiculoControllerIT {
     }
 
     @Test
-    void buscaInexistenteRetorna404() throws Exception {
-        mvc.perform(get("/veiculos").param("placa", "ZZZ9999").with(jwt())).andExpect(status().isNotFound());
+    void buscaInexistenteRetorna404OuPaginaVazia() throws Exception {
+        mvc.perform(get("/veiculos").param("placa", "ZZZ9999").with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(0));
         mvc.perform(get("/veiculos/999").with(jwt())).andExpect(status().isNotFound());
     }
 
@@ -182,7 +210,7 @@ class VeiculoControllerIT {
 
     @Test
     void semTokenRetorna401() throws Exception {
-        mvc.perform(get("/veiculos").param("placa", "ABC1234")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/veiculos")).andExpect(status().isUnauthorized());
         mvc.perform(post("/veiculos").contentType(MediaType.APPLICATION_JSON).content(veiculo("ABC1234", 2010, 1)))
                 .andExpect(status().isUnauthorized());
     }

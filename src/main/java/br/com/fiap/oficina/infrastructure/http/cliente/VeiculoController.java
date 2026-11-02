@@ -7,6 +7,7 @@ import br.com.fiap.oficina.application.cliente.CadastrarVeiculoDTO;
 import br.com.fiap.oficina.application.cliente.ConsultarVeiculos;
 import br.com.fiap.oficina.application.cliente.RemoverVeiculo;
 import br.com.fiap.oficina.application.cliente.VeiculoDTO;
+import br.com.fiap.oficina.domain.Pagina;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -59,10 +60,11 @@ public class VeiculoController {
         return consultar.buscarPorId(id);
     }
 
-    @GetMapping(path = "/veiculos", params = "placa")
+    @GetMapping("/veiculos")
     @Transactional(readOnly = true)
-    VeiculoDTO buscarPorPlaca(@RequestParam String placa) {
-        return consultar.buscarPorPlaca(placa);
+    Pagina<VeiculoDTO> listar(@RequestParam(required = false) String placa,
+            @RequestParam(defaultValue = "0") int pagina, @RequestParam(defaultValue = "20") int tamanho) {
+        return consultar.listar(placa, pagina, tamanho);
     }
 
     @GetMapping("/clientes/{clienteId}/veiculos")
