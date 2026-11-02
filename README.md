@@ -25,7 +25,8 @@ RECEBIDA → EM_DIAGNOSTICO → AGUARDANDO_APROVACAO → EM_EXECUCAO → FINALIZ
 
 | Ação | Endpoint | Status resultante |
 | --- | --- | --- |
-| Abrir OS com CPF/CNPJ e placa | `POST /ordens-servico` | `RECEBIDA` → `EM_DIAGNOSTICO` |
+| Abrir OS com CPF/CNPJ e placa | `POST /ordens-servico` | `RECEBIDA` |
+| Iniciar o diagnóstico | `POST /ordens-servico/{id}/diagnostico` | `EM_DIAGNOSTICO` |
 | Incluir/remover serviços e itens | `POST`/`DELETE /ordens-servico/{id}/servicos` e `/itens` | `EM_DIAGNOSTICO` |
 | Gerar orçamento (serviços + itens) | `POST /ordens-servico/{id}/orcamento` | `AGUARDANDO_APROVACAO` |
 | Cliente aprova (baixa o estoque, tudo ou nada) | `POST /cliente/ordens-servico/{id}/aprovacao` com `{"cpfCnpj"}` do titular | `EM_EXECUCAO` |

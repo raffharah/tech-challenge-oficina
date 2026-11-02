@@ -6,7 +6,7 @@ Vídeo de cerca de 8 minutos mostrando só a API em funcionamento, acompanhando 
 | --- | --- | --- |
 | 1. Acesso | Autenticação JWT e catálogo pronto da oficina | 0:45 |
 | 2. Chegada do cliente | Cadastro do cliente e do veículo, com validação de CPF e placa | 1:00 |
-| 3. Troca de óleo | Ciclo completo da OS: abertura → orçamento → aprovação → execução → entrega | 3:00 |
+| 3. Troca de óleo | Ciclo completo da OS: abertura → diagnóstico → orçamento → aprovação → execução → entrega | 3:00 |
 | 4. Falta de peça | Aprovação barrada por estoque, entrada de peça e nova aprovação | 1:30 |
 | 5. Orçamento recusado | Cliente rejeita e a OS é cancelada | 0:45 |
 | 6. Visão da oficina | Listagem, detalhamento e tempo médio de execução | 0:45 |
@@ -155,9 +155,21 @@ POST /ordens-servico
 {"cpfCnpj": "529.982.247-25", "placa": "BRA2E19"}
 ```
 
-Esperado: **201**, `id: 1`, status `EM_DIAGNOSTICO`. No `historico`: `RECEBIDA` → `EM_DIAGNOSTICO`.
+Esperado: **201**, `id: 1`, status `RECEBIDA`. No `historico`: só `RECEBIDA`.
 
-> Fala: "A OS nasce recebida e entra direto em diagnóstico."
+> Fala: "A OS nasce recebida: o carro chegou, mas ninguém avaliou ainda."
+
+Opcional: tentar incluir um serviço agora (`POST /ordens-servico/1/servicos` com `{"servicoId": 1}`) responde **422** `ORDEM_FORA_DE_DIAGNOSTICO`.
+
+**3.1.1 Mecânico inicia o diagnóstico**
+
+```http
+POST /ordens-servico/1/diagnostico
+```
+
+Esperado: **200**, status `EM_DIAGNOSTICO`. No `historico`: `RECEBIDA` → `EM_DIAGNOSTICO`, com horários diferentes.
+
+> Fala: "Quando o mecânico começa a avaliar o carro, a OS passa para em diagnóstico."
 
 **3.2 Incluir o serviço**
 
@@ -292,13 +304,17 @@ Esperado: **200**. O `historico` mostra os 6 status com data e hora: `RECEBIDA`,
 
 > Fala: "O mesmo carro volta para trocar a correia dentada. O mecânico pede 6 bombas d'água, mas só temos 5 em estoque."
 
-**4.1 Abrir a OS 2, incluir serviço e peças**
+**4.1 Abrir a OS 2, iniciar o diagnóstico, incluir serviço e peças**
 
 ```http
 POST /ordens-servico
 ```
 ```json
 {"cpfCnpj": "529.982.247-25", "placa": "BRA2E19"}
+```
+
+```http
+POST /ordens-servico/2/diagnostico
 ```
 
 ```http
@@ -318,7 +334,7 @@ POST /ordens-servico/2/itens
 {"itemId": 9, "quantidade": 6}
 ```
 
-Esperado: **201** em cada uma, OS `id: 2`.
+Esperado: **201** na abertura e nas inclusões, **200** no diagnóstico, OS `id: 2`.
 
 **4.2 Orçamento**
 
@@ -369,13 +385,17 @@ Esperado: **200**, status `EM_EXECUCAO`. Em `GET /itens/9`, saldo `4`.
 
 > Fala: "Outro dia, o Carlos pede orçamento dos freios e decide não fazer."
 
-**5.1 Abrir a OS 3 e montar o orçamento**
+**5.1 Abrir a OS 3, iniciar o diagnóstico e montar o orçamento**
 
 ```http
 POST /ordens-servico
 ```
 ```json
 {"cpfCnpj": "529.982.247-25", "placa": "BRA2E19"}
+```
+
+```http
+POST /ordens-servico/3/diagnostico
 ```
 
 ```http

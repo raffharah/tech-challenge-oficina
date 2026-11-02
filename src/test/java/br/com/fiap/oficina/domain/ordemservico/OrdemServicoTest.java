@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 class OrdemServicoTest {
 
     private static final Instant ABERTURA = Instant.parse("2026-01-10T10:00:00Z");
+    private static final Instant INICIO_DIAGNOSTICO = Instant.parse("2026-01-10T10:30:00Z");
     private static final Instant CONCLUSAO = Instant.parse("2026-01-10T12:00:00Z");
 
     private static final Instant APROVACAO = Instant.parse("2026-01-11T09:00:00Z");
@@ -26,22 +27,57 @@ class OrdemServicoTest {
         return OrdemServico.abrir(veiculo, ABERTURA);
     }
 
+    private OrdemServico emDiagnostico() {
+        OrdemServico ordem = aberta();
+        ordem.iniciarDiagnostico(INICIO_DIAGNOSTICO);
+        return ordem;
+    }
+
     @Test
-    void aberturaTerminaEmDiagnosticoComHistoricoDasDuasTransicoes() {
+    void aberturaTerminaEmRecebidaComHistoricoDaAbertura() {
         OrdemServico ordem = aberta();
 
-        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.RECEBIDA);
         assertThat(ordem.getVeiculoId()).isEqualTo(7L);
         assertThat(ordem.getCpfCnpj()).isEqualTo("52998224725");
         assertThat(ordem.getPlaca()).isEqualTo("ABC1D23");
+        assertThat(ordem.getHistorico())
+                .containsExactly(new MudancaDeStatus(StatusOrdemServico.RECEBIDA, ABERTURA));
+    }
+
+    @Test
+    void iniciarDiagnosticoVaiParaEmDiagnosticoRegistrandoHistorico() {
+        OrdemServico ordem = emDiagnostico();
+
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
         assertThat(ordem.getHistorico()).containsExactly(
                 new MudancaDeStatus(StatusOrdemServico.RECEBIDA, ABERTURA),
-                new MudancaDeStatus(StatusOrdemServico.EM_DIAGNOSTICO, ABERTURA));
+                new MudancaDeStatus(StatusOrdemServico.EM_DIAGNOSTICO, INICIO_DIAGNOSTICO));
+    }
+
+    @Test
+    void iniciarDiagnosticoForaDeRecebidaLancaDomainException() {
+        OrdemServico ordem = emDiagnostico();
+
+        assertThatThrownBy(() -> ordem.iniciarDiagnostico(CONCLUSAO)).isInstanceOf(DomainException.class)
+                .hasFieldOrPropertyWithValue("codigo", "TRANSICAO_INVALIDA");
+        assertThat(ordem.getHistorico()).hasSize(2);
+    }
+
+    @Test
+    void recebidaRejeitaComandosDeDiagnostico() {
+        OrdemServico ordem = aberta();
+
+        assertThatThrownBy(() -> ordem.incluirServico(troca)).isInstanceOf(DomainException.class)
+                .hasFieldOrPropertyWithValue("codigo", "ORDEM_FORA_DE_DIAGNOSTICO");
+        assertThatThrownBy(() -> ordem.incluirItem(oleo, 1)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> ordem.concluirDiagnostico(CONCLUSAO)).isInstanceOf(DomainException.class);
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.RECEBIDA);
     }
 
     @Test
     void transicaoInvalidaLancaDomainExceptionSemAlterarStatusNemHistorico() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
         ordem.incluirServico(troca);
         ordem.concluirDiagnostico(CONCLUSAO);
 
@@ -53,7 +89,7 @@ class OrdemServicoTest {
 
     @Test
     void incluiServicoComValorPadrao() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
 
         ordem.incluirServico(troca);
 
@@ -63,7 +99,7 @@ class OrdemServicoTest {
 
     @Test
     void incluiItemComPrecoCotado() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
 
         ordem.incluirItem(oleo, 4);
 
@@ -73,7 +109,7 @@ class OrdemServicoTest {
 
     @Test
     void mesmoItemSomaQuantidade() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
 
         ordem.incluirItem(oleo, 2);
         ordem.incluirItem(oleo, 3);
@@ -84,7 +120,7 @@ class OrdemServicoTest {
 
     @Test
     void quantidadeNaoPositivaERejeitada() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
 
         assertThatThrownBy(() -> ordem.incluirItem(oleo, 0)).isInstanceOf(DomainException.class);
         assertThatThrownBy(() -> ordem.incluirItem(oleo, -1)).isInstanceOf(DomainException.class);
@@ -93,7 +129,7 @@ class OrdemServicoTest {
 
     @Test
     void removeServicoEItem() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
         ordem.incluirServico(troca);
         ordem.incluirItem(oleo, 2);
 
@@ -106,7 +142,7 @@ class OrdemServicoTest {
 
     @Test
     void servicoRepetidoLancaDomainExceptionSemDuplicar() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
         ordem.incluirServico(troca);
 
         assertThatThrownBy(() -> ordem.incluirServico(troca)).isInstanceOf(DomainException.class);
@@ -116,7 +152,7 @@ class OrdemServicoTest {
 
     @Test
     void comandosForaDeDiagnosticoLancamDomainException() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
         ordem.incluirServico(troca);
         ordem.incluirItem(oleo, 1);
         ordem.concluirDiagnostico(CONCLUSAO);
@@ -132,7 +168,7 @@ class OrdemServicoTest {
 
     @Test
     void concluirDiagnosticoCalculaTotalEAguardaAprovacao() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
         ordem.incluirServico(troca);
         ordem.incluirItem(oleo, 2);
 
@@ -146,7 +182,7 @@ class OrdemServicoTest {
 
     @Test
     void concluirSemServicoLancaDomainExceptionSemMudarStatus() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
         ordem.incluirItem(oleo, 2);
 
         assertThatThrownBy(() -> ordem.concluirDiagnostico(CONCLUSAO)).isInstanceOf(DomainException.class);
@@ -156,7 +192,7 @@ class OrdemServicoTest {
     }
 
     private OrdemServico aguardandoAprovacao() {
-        OrdemServico ordem = aberta();
+        OrdemServico ordem = emDiagnostico();
         ordem.incluirServico(troca);
         ordem.incluirItem(oleo, 2);
         ordem.concluirDiagnostico(CONCLUSAO);
@@ -187,7 +223,7 @@ class OrdemServicoTest {
 
     @Test
     void aprovarERejeitarForaDeAguardandoAprovacaoLancamDomainException() {
-        OrdemServico emDiagnostico = aberta();
+        OrdemServico emDiagnostico = emDiagnostico();
         OrdemServico emExecucao = aguardandoAprovacao();
         emExecucao.aprovar(APROVACAO);
 
@@ -217,7 +253,7 @@ class OrdemServicoTest {
 
     @Test
     void finalizarForaDeEmExecucaoLancaDomainException() {
-        OrdemServico emDiagnostico = aberta();
+        OrdemServico emDiagnostico = emDiagnostico();
 
         assertThatThrownBy(() -> emDiagnostico.finalizar(FINALIZACAO)).isInstanceOf(DomainException.class);
         assertThat(emDiagnostico.getStatus()).isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
@@ -277,6 +313,6 @@ class OrdemServicoTest {
     @Test
     void tempoDeExecucaoVazioSeNaoFinalizada() {
         assertThat(emExecucao().tempoDeExecucao()).isEmpty();
-        assertThat(aberta().tempoDeExecucao()).isEmpty();
+        assertThat(emDiagnostico().tempoDeExecucao()).isEmpty();
     }
 }

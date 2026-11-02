@@ -26,6 +26,7 @@ import br.com.fiap.oficina.application.ordemservico.DetalharOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.EntregarVeiculo;
 import br.com.fiap.oficina.application.ordemservico.FinalizarOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.IniciarDiagnostico;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.ListarOrdensServico;
 import br.com.fiap.oficina.application.ordemservico.RejeitarOrcamento;
@@ -180,6 +181,11 @@ public class BeanConfig {
     @Bean
     RejeitarOrcamento rejeitarOrcamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos, Clock clock) {
         return new RejeitarOrcamento(ordens, veiculos, clock);
+    }
+
+    @Bean
+    IniciarDiagnostico iniciarDiagnostico(OrdemServicoRepository ordens, Clock clock) {
+        return new IniciarDiagnostico(ordens, clock);
     }
 
     @Bean

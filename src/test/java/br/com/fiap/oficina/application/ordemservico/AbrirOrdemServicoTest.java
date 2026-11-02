@@ -22,20 +22,20 @@ class AbrirOrdemServicoTest {
     private final Clock clock = Clock.fixed(AGORA, ZoneOffset.UTC);
 
     @Test
-    void salvaOrdemEmDiagnostico() {
+    void salvaOrdemRecebida() {
         AbrirOrdemServico abrir = new AbrirOrdemServico(ordens,
                 cadastro((cpfCnpj, placa) -> new VeiculoIdentificado(7L, "52998224725", "ABC1D23")), clock);
 
         OrdemServicoDTO dto = abrir.executar(new AbrirOrdemServicoDTO("529.982.247-25", "abc-1d23"));
 
         assertThat(dto.id()).isEqualTo(1L);
-        assertThat(dto.status()).isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
+        assertThat(dto.status()).isEqualTo(StatusOrdemServico.RECEBIDA);
         assertThat(dto.cpfCnpj()).isEqualTo("52998224725");
         assertThat(dto.placa()).isEqualTo("ABC1D23");
         assertThat(dto.historico()).extracting(OrdemServicoDTO.MudancaDeStatusDTO::status)
-                .containsExactly(StatusOrdemServico.RECEBIDA, StatusOrdemServico.EM_DIAGNOSTICO);
+                .containsExactly(StatusOrdemServico.RECEBIDA);
         assertThat(dto.historico()).extracting(OrdemServicoDTO.MudancaDeStatusDTO::dataHora).containsOnly(AGORA);
-        assertThat(ordens.buscarPorId(1L).orElseThrow().getStatus()).isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
+        assertThat(ordens.buscarPorId(1L).orElseThrow().getStatus()).isEqualTo(StatusOrdemServico.RECEBIDA);
     }
 
     @Test

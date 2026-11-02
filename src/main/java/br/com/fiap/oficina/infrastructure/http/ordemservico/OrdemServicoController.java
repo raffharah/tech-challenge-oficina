@@ -9,6 +9,7 @@ import br.com.fiap.oficina.application.ordemservico.EntregarVeiculo;
 import br.com.fiap.oficina.application.ordemservico.FinalizarOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.IniciarDiagnostico;
 import br.com.fiap.oficina.application.ordemservico.ListarOrdensServico;
 import br.com.fiap.oficina.application.ordemservico.OrdemServicoDTO;
 import br.com.fiap.oficina.application.ordemservico.OrdemServicoResumoDTO;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrdemServicoController {
 
     private final AbrirOrdemServico abrir;
+    private final IniciarDiagnostico iniciarDiagnostico;
     private final IncluirServicoNaOrdem incluirServico;
     private final RemoverServicoDaOrdem removerServico;
     private final IncluirItemNaOrdem incluirItem;
@@ -47,11 +49,13 @@ public class OrdemServicoController {
     private final DetalharOrdemServico detalhar;
     private final CalcularTempoMedioExecucao tempoMedio;
 
-    public OrdemServicoController(AbrirOrdemServico abrir, IncluirServicoNaOrdem incluirServico,
+    public OrdemServicoController(AbrirOrdemServico abrir, IniciarDiagnostico iniciarDiagnostico,
+            IncluirServicoNaOrdem incluirServico,
             RemoverServicoDaOrdem removerServico, IncluirItemNaOrdem incluirItem, RemoverItemDaOrdem removerItem,
             ConcluirDiagnostico concluirDiagnostico, FinalizarOrdemServico finalizar, EntregarVeiculo entregar,
             ListarOrdensServico listar, DetalharOrdemServico detalhar, CalcularTempoMedioExecucao tempoMedio) {
         this.abrir = abrir;
+        this.iniciarDiagnostico = iniciarDiagnostico;
         this.incluirServico = incluirServico;
         this.removerServico = removerServico;
         this.incluirItem = incluirItem;
@@ -69,6 +73,12 @@ public class OrdemServicoController {
     @Transactional
     OrdemServicoDTO abrir(@Valid @RequestBody AbrirOrdemServicoRequest request) {
         return abrir.executar(new AbrirOrdemServicoDTO(request.cpfCnpj(), request.placa()));
+    }
+
+    @PostMapping("/{id}/diagnostico")
+    @Transactional
+    OrdemServicoDTO iniciarDiagnostico(@PathVariable Long id) {
+        return iniciarDiagnostico.executar(id);
     }
 
     @PostMapping("/{id}/servicos")

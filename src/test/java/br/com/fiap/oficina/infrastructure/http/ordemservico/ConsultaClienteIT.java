@@ -58,6 +58,7 @@ class ConsultaClienteIT {
 
     private void orcar(int id, String instante) throws Exception {
         em(instante);
+        mvc.perform(post("/ordens-servico/" + id + "/diagnostico").with(jwt())).andExpect(status().isOk());
         mvc.perform(post("/ordens-servico/" + id + "/servicos").with(jwt())
                 .contentType(MediaType.APPLICATION_JSON).content("{\"servicoId\":1}"));
         mvc.perform(post("/ordens-servico/" + id + "/orcamento").with(jwt())).andExpect(status().isOk());

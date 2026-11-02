@@ -58,6 +58,7 @@ class AcompanhamentoAdminIT {
 
     private void orcar(int id, String instante) throws Exception {
         em(instante);
+        mvc.perform(post("/ordens-servico/" + id + "/diagnostico").with(jwt())).andExpect(status().isOk());
         mvc.perform(post("/ordens-servico/" + id + "/servicos").with(jwt())
                 .contentType(MediaType.APPLICATION_JSON).content("{\"servicoId\":1}"));
         mvc.perform(post("/ordens-servico/" + id + "/orcamento").with(jwt())).andExpect(status().isOk());
@@ -86,7 +87,7 @@ class AcompanhamentoAdminIT {
                 .andExpect(jsonPath("$.itens[1].id").value(primeira))
                 .andExpect(jsonPath("$.itens[0].cpfCnpj").value("52998224725"))
                 .andExpect(jsonPath("$.itens[0].placa").value("ABC1D23"))
-                .andExpect(jsonPath("$.itens[0].status").value("EM_DIAGNOSTICO"));
+                .andExpect(jsonPath("$.itens[0].status").value("RECEBIDA"));
     }
 
     @Test

@@ -10,7 +10,9 @@ final class OrdemServicoEmDiagnostico {
     }
 
     static Long salvarEm(OrdemServicoRepositoryEmMemoria ordens) {
-        return ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, "52998224725", "ABC1D23"),
-                Instant.parse("2026-01-10T10:00:00Z"))).getId();
+        OrdemServico ordem = OrdemServico.abrir(new VeiculoIdentificado(7L, "52998224725", "ABC1D23"),
+                Instant.parse("2026-01-10T10:00:00Z"));
+        ordem.iniciarDiagnostico(Instant.parse("2026-01-10T10:30:00Z"));
+        return ordens.salvar(ordem).getId();
     }
 }

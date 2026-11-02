@@ -43,6 +43,7 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Orçamento | Cálculo consolidado do valor total da OS, composto pelo somatório dos serviços prestados e do custo das peças e insumos utilizados, aprovado pelo cliente antes da execução dos serviços. |
 | Serviço | Conjunto de atividades e manutenções realizadas por um funcionário em um veículo. |
 | Diagnóstico | Etapa em que o funcionário avalia o veículo para identificar os problemas e determinar a lista de serviços, peças e insumos necessários. |
+| Iniciar diagnóstico | Comando do funcionário que tira a OS de Recebida e a coloca Em diagnóstico, quando a avaliação do veículo começa. Só a partir daí serviços, peças e insumos podem ser incluídos. |
 | Recusa parcial | O cliente recusa só alguns componentes do orçamento, e a OS é renegociada. |
 | Recusa total | O cliente recusa todo o orçamento, ou recusa novamente o orçamento renegociado. A OS é cancelada. |
 | Renegociação | Uma única rodada após a recusa parcial: a OS volta a Em diagnóstico, os itens são ajustados e um novo orçamento é calculado e enviado. |
@@ -51,7 +52,7 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Tempo médio de execução | Média do tempo entre o início e a conclusão dos serviços da OS. |
 | Entrega do veículo | Entrega ao cliente após o pagamento. Muda a OS para Entregue. |
 | Devolução do veículo | Retorno do veículo ao cliente quando a OS foi cancelada. Não muda o status. |
-| Status da OS - “Recebida” | OS criada, veículo recebido, ainda sem diagnóstico. |
+| Status da OS - “Recebida” | OS criada, veículo recebido, ainda sem diagnóstico. Permanece assim até o funcionário iniciar o diagnóstico. |
 | Status da OS - “Em diagnóstico” | O mecânico avalia o veículo e define serviços, peças e insumos. Volta a esse status na renegociação e no serviço adicional. |
 | Status da OS - “Aguardando aprovação” | Orçamento enviado, à espera da decisão do cliente. |
 | Status da OS - “Em execução” | Orçamento aprovado e OS liberada. Os serviços são iniciados e concluídos um a um. |

@@ -43,6 +43,7 @@ class OrdemServicoComponentesIT {
                         .content("{\"cpfCnpj\":\"52998224725\",\"placa\":\"ABC1D23\"}"))
                 .andReturn().getResponse().getContentAsString();
         ordemId = JsonPath.read(corpo, "$.id");
+        mvc.perform(post("/ordens-servico/" + ordemId + "/diagnostico").with(jwt())).andExpect(status().isOk());
     }
 
     private void incluirServico(long servicoId, int esperado) throws Exception {

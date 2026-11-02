@@ -44,6 +44,7 @@ class OrdemServicoRepositoryImplIT {
 
     private OrdemServico ordemCompleta() {
         OrdemServico ordem = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA);
+        ordem.iniciarDiagnostico(ABERTURA);
         ordem.incluirServico(new Servico(1L, "Troca de oleo", new BigDecimal("100.00")));
         ordem.incluirItem(new ItemCotado(1L, "OLE-1", "Oleo", new BigDecimal("35.50")), 2);
         ordem.concluirDiagnostico(CONCLUSAO);
@@ -80,7 +81,9 @@ class OrdemServicoRepositoryImplIT {
 
     @Test
     void atualizaMantendoIdERemovendoComponente() {
-        OrdemServico salva = ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA));
+        OrdemServico aberta = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA);
+        aberta.iniciarDiagnostico(ABERTURA);
+        OrdemServico salva = ordens.salvar(aberta);
         salva.incluirItem(new ItemCotado(1L, "OLE-1", "Oleo", new BigDecimal("35.50")), 2);
         ordens.salvar(salva);
         OrdemServico recarregada = ordens.buscarPorId(salva.getId()).orElseThrow();
