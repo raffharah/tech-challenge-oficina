@@ -171,7 +171,7 @@ Todas as respostas de erro seguem o formato `{"codigo", "mensagem", "campos", "d
 | --- | --- |
 | 400 | Requisição inválida: campo obrigatório, JSON malformado, parâmetro de tipo inválido |
 | 401 | Token ausente ou inválido |
-| 404 | Recurso ou rota inexistente |
+| 404 | Recurso ou rota inexistente, seja o do caminho (`/ordens-servico/99`) ou o referenciado no corpo (`clienteId`, `servicoId`, `itemId`, CPF/CNPJ e placa na abertura da OS) |
 | 405 / 415 | Método HTTP ou tipo de conteúdo não suportado |
 | 409 | Conflito: CPF/CNPJ, placa, SKU ou nome de serviço duplicado; remoção de registro em uso |
 | 422 | Regra de negócio: CPF/CNPJ ou placa inválidos, transição de status inválida, saldo insuficiente |

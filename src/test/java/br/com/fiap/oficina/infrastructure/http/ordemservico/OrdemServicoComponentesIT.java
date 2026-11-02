@@ -97,9 +97,9 @@ class OrdemServicoComponentesIT {
     }
 
     @Test
-    void servicoOuItemInexistenteRetorna422() throws Exception {
-        incluirServico(99, 422);
-        incluirItem(99, 1, 422);
+    void servicoOuItemInexistenteRetorna404() throws Exception {
+        incluirServico(99, 404);
+        incluirItem(99, 1, 404);
     }
 
     @Test

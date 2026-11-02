@@ -71,6 +71,8 @@ Atendimento e orçamento são feitos em anotações. O MVP exige criar a OS a pa
 5. IF a OS não está EM_DIAGNOSTICO THEN o sistema SHALL rejeitar inclusão e remoção com 422.
 6. IF o serviço já está na OS THEN o sistema SHALL responder 422 sem duplicá-lo.
 
+> **Revisado em 2026-11-02 (AD-008):** o critério 4 passa a responder 404 (`SERVICO_NAO_ENCONTRADO` ou `ITEM_NAO_ENCONTRADO`), como os demais recursos inexistentes. Ver [`ajustes-revisao`](../ajustes-revisao/spec.md) (REV-07).
+
 **Independent Test**: Incluir troca de óleo + 4 litros de óleo; incluir em OS fora de diagnóstico (422).
 
 ---

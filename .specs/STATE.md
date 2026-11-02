@@ -60,6 +60,14 @@
 - **Date**: 2026-11-02
 - **Status**: active
 
+### AD-008
+- **Decision**: Todo recurso inexistente responde 404, venha ele do caminho ou de uma referência no corpo da requisição (`clienteId`, `servicoId`, `itemId`, cliente e veículo na abertura da OS). 422 fica para regra de negócio violada.
+- **Reason**: A API respondia 404 para cliente e veículo inexistentes, mas 422 para serviço ou item inexistente incluído na OS; a regra única deixa o tratamento de erro previsível. Escolhida a regra que já valia na maioria dos casos e fora do fluxo principal.
+- **Trade-off**: O gateway `EstoqueDeItensImpl` deixa de converter `ITEM_NAO_ENCONTRADO` em 422 na cotação; a conversão segue só na baixa, onde item sumido é inconsistência interna e não referência do chamador.
+- **Scope**: abertura-os-orcamento, ajustes-revisao.
+- **Date**: 2026-11-02
+- **Status**: active
+
 ## Handoff
 
 - **Feature**: `ajustes-revisao` (Implemented); escopos 1 a 8 implementados

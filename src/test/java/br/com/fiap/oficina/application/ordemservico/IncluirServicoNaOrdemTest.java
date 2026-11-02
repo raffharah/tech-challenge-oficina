@@ -32,10 +32,11 @@ class IncluirServicoNaOrdemTest {
     }
 
     @Test
-    void servicoInexistenteLancaDomainException() {
+    void servicoInexistenteLancaNaoEncontrado() {
         Long ordemId = OrdemServicoEmDiagnostico.salvarEm(ordens);
 
-        assertThatThrownBy(() -> incluir.executar(ordemId, 99L)).isExactlyInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> incluir.executar(ordemId, 99L)).isInstanceOf(NaoEncontradoException.class)
+                .hasFieldOrPropertyWithValue("codigo", "SERVICO_NAO_ENCONTRADO");
     }
 
     @Test

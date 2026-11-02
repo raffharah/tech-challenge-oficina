@@ -106,9 +106,8 @@ public class OrdemServicoController {
             Inclui um serviço do catálogo na OS em diagnóstico. A OS copia o valor padrão do serviço \
             nesse momento; mudar o catálogo depois não altera a OS.""")
     @ApiResponse(responseCode = "201", description = "Serviço incluído; devolve a OS atualizada.")
-    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
-    @ApiResponse(responseCode = "422", description = """
-            `ORDEM_FORA_DE_DIAGNOSTICO`, `SERVICO_JA_INCLUIDO` ou `SERVICO_NAO_ENCONTRADO`.""")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA` ou `SERVICO_NAO_ENCONTRADO`.")
+    @ApiResponse(responseCode = "422", description = "`ORDEM_FORA_DE_DIAGNOSTICO` ou `SERVICO_JA_INCLUIDO`.")
     @PostMapping("/{id}/servicos")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -134,9 +133,8 @@ public class OrdemServicoController {
             Inclui um item do estoque na OS em diagnóstico, com o preço de venda atual. Incluir de novo \
             o mesmo item soma a quantidade. O estoque só é baixado na aprovação do orçamento.""")
     @ApiResponse(responseCode = "201", description = "Item incluído; devolve a OS atualizada.")
-    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
-    @ApiResponse(responseCode = "422",
-            description = "`ORDEM_FORA_DE_DIAGNOSTICO`, `QUANTIDADE_INVALIDA` ou `ITEM_NAO_ENCONTRADO`.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA` ou `ITEM_NAO_ENCONTRADO`.")
+    @ApiResponse(responseCode = "422", description = "`ORDEM_FORA_DE_DIAGNOSTICO` ou `QUANTIDADE_INVALIDA`.")
     @PostMapping("/{id}/itens")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -194,8 +192,8 @@ public class OrdemServicoController {
         return entregar.executar(id);
     }
 
-    @Operation(summary = "Listar OS",
-            description = "Lista todas as OS em páginas, da abertura mais recente para a mais antiga.")
+    @Operation(summary = "Listar OS", description = """
+            Lista as OS em páginas, da mais recente para a mais antiga, com status, total e data de abertura.""")
     @ApiResponse(responseCode = "200", description = "Página com o resumo das OS.")
     @GetMapping
     @Transactional(readOnly = true)
