@@ -318,6 +318,8 @@ Os comandos, eventos e políticas do caminho principal agrupados por agregado. A
 
 Sequência dos agregados: **Cliente → OS → Orçamento → Serviço → Pagamento → Finaliza Serviço**.
 
+Os agregados aqui são agrupamentos do Event Storming. No código, Orçamento é um objeto de valor da OS, e Serviço e Finaliza Serviço são etapas da própria OS. Os agregados, entidades e objetos de valor implementados estão em [Modelo de domínio](../modelo-de-dominio.md).
+
 **Cliente** (comandos; evento resultante; política)
 
 | Comando | Evento | Política ou observação |

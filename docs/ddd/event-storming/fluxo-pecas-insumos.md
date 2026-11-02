@@ -421,7 +421,7 @@ O fluxo é: a peça com defeito é registrada, a garantia é pedida ao fornecedo
 
 ## 8. Agregados
 
-O caminho principal agrupado em duas colunas do agregado ITEM. As exceções não entram nesta visão.
+O caminho principal agrupado em duas colunas do agregado ITEM. As exceções não entram nesta visão. No código, o agregado é o Item de estoque; a correspondência com as classes está em [Modelo de domínio](../modelo-de-dominio.md).
 
 **ITEM (coluna principal, 12 linhas, de cima para baixo)**
 

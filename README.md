@@ -200,6 +200,7 @@ O banco local se chama `oficina` (usuário e senha `oficina`), com schema `publi
 │   ├── fase1-tech-challenge.md      # enunciado
 │   └── ddd/
 │       ├── linguagem-ubiqua.md
+│       ├── modelo-de-dominio.md     # agregados, entidades e objetos de valor ligados ao código
 │       ├── c4/                      # C4: contexto, container e componentes (Mermaid)
 │       └── event-storming/          # fluxo da OS e de peças e insumos
 ├── .specs/                          # roadmap, decisões (STATE) e specs por feature
@@ -219,6 +220,7 @@ O banco local se chama `oficina` (usuário e senha `oficina`), com schema `publi
 ## Documentação DDD
 
 - [Linguagem Ubíqua e decisões do MVP](docs/ddd/linguagem-ubiqua.md)
+- [Modelo de domínio: agregados, entidades e objetos de valor](docs/ddd/modelo-de-dominio.md)
 - [Event Storming — fluxo de Ordem de Serviço](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=0-1&t=hixmrFlZPOJZbcMW-1)
 - [Event Storming — fluxo de peças e insumos](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=2330-5454&t=wrvbbnXQTibMaU8n-1)
 - [Modelo C4](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=2405-7907&t=wrvbbnXQTibMaU8n-1)
