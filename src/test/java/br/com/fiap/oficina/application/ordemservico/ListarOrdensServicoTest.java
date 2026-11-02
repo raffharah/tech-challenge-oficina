@@ -25,7 +25,9 @@ class ListarOrdensServicoTest {
 
         assertThat(pagina.total()).isEqualTo(2);
         assertThat(pagina.itens()).containsExactly(
-                new OrdemServicoResumoDTO(2L, "11144477735", "XYZ9K88", StatusOrdemServico.EM_DIAGNOSTICO, null),
-                new OrdemServicoResumoDTO(1L, "52998224725", "ABC1D23", StatusOrdemServico.EM_DIAGNOSTICO, null));
+                new OrdemServicoResumoDTO(2L, "11144477735", "XYZ9K88", StatusOrdemServico.RECEBIDA, null,
+                        Instant.parse("2026-01-11T10:00:00Z")),
+                new OrdemServicoResumoDTO(1L, "52998224725", "ABC1D23", StatusOrdemServico.RECEBIDA, null,
+                        Instant.parse("2026-01-10T10:00:00Z")));
     }
 }

@@ -36,17 +36,19 @@ public class OrdemServico {
     }
 
     public static OrdemServico abrir(VeiculoIdentificado veiculo, Instant agora) {
-        OrdemServico ordem = new OrdemServico(null, veiculo.veiculoId(), veiculo.cpfCnpj(), veiculo.placa(),
+        return new OrdemServico(null, veiculo.veiculoId(), veiculo.cpfCnpj(), veiculo.placa(),
                 StatusOrdemServico.RECEBIDA, null, List.of(), List.of(),
                 List.of(new MudancaDeStatus(StatusOrdemServico.RECEBIDA, agora)));
-        ordem.mudarPara(StatusOrdemServico.EM_DIAGNOSTICO, agora);
-        return ordem;
     }
 
     public static OrdemServico restaurar(Long id, Long veiculoId, String cpfCnpj, String placa,
             StatusOrdemServico status, BigDecimal total, List<ServicoDaOrdem> servicos, List<ItemDaOrdem> itens,
             List<MudancaDeStatus> historico) {
         return new OrdemServico(id, veiculoId, cpfCnpj, placa, status, total, servicos, itens, historico);
+    }
+
+    public void iniciarDiagnostico(Instant agora) {
+        mudarPara(StatusOrdemServico.EM_DIAGNOSTICO, agora);
     }
 
     public void incluirServico(Servico servico) {
@@ -176,6 +178,10 @@ public class OrdemServico {
 
     public List<ItemDaOrdem> getItens() {
         return Collections.unmodifiableList(itens);
+    }
+
+    public Instant getAbertaEm() {
+        return historico.get(0).dataHora();
     }
 
     public List<MudancaDeStatus> getHistorico() {

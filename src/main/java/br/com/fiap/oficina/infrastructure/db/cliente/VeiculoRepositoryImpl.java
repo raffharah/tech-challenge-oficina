@@ -1,11 +1,15 @@
 package br.com.fiap.oficina.infrastructure.db.cliente;
 
+import br.com.fiap.oficina.domain.Pagina;
 import br.com.fiap.oficina.domain.cliente.Placa;
 import br.com.fiap.oficina.domain.cliente.Veiculo;
 import br.com.fiap.oficina.domain.cliente.VeiculoRepository;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -37,6 +41,13 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     @Override
     public Optional<Veiculo> buscarPorPlaca(Placa placa) {
         return jpa.findByPlaca(placa.valor()).map(VeiculoRepositoryImpl::paraModelo);
+    }
+
+    @Override
+    public Pagina<Veiculo> listar(int pagina, int tamanho) {
+        Page<VeiculoEntity> page = jpa.findAll(PageRequest.of(pagina, tamanho, Sort.by("id")));
+        return new Pagina<>(page.getContent().stream().map(VeiculoRepositoryImpl::paraModelo).toList(), pagina,
+                tamanho, page.getTotalElements());
     }
 
     @Override

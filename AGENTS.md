@@ -7,7 +7,9 @@ Back-end MVP de uma oficina mecânica (Tech Challenge FIAP SOAT, fase 1): ordens
 - Requisitos e entregáveis: `docs/fase1-tech-challenge.md`.
 - Nomes de classes, métodos, status e regras: `docs/ddd/linguagem-ubiqua.md`. A seção **Decisões do MVP** fecha o escopo. Registre ali um conceito novo antes de implementá-lo.
 - Fluxos (comandos, eventos, políticas) por contexto: `docs/ddd/event-storming/fluxo-os.md` e `docs/ddd/event-storming/fluxo-pecas-insumos.md`. Consulte o fluxo do contexto que a tarefa toca.
+- Agregados, entidades e objetos de valor, com a classe de cada um: `docs/ddd/modelo-de-dominio.md`. Atualize ao criar ou mudar um deles.
 - Sistemas e componentes (C4): `docs/ddd/c4/`.
+- Escopo do MVP e decisões de arquitetura (AD-xxx): `.specs/ROADMAP.md` e `.specs/STATE.md`; specs por feature em `.specs/features/`. Registre ali uma decisão nova.
 
 ## Stack
 
@@ -25,13 +27,13 @@ Contextos (subpacotes):
 | --- | --- |
 | `cliente` | Gestão de Clientes e Veículos |
 | `ordemservico` | Gestão de Ordens de Serviço |
-| `cobranca` | Cobrança e Faturamento |
+| `cobranca` | Cobrança e Faturamento (reservado, fora do MVP: só `.gitkeep`) |
 | `estoque` | Gestão de Peças e Insumos |
 
 Camadas e direção de dependência: `infrastructure` → `application` → `domain`.
 
-- **domain**: Java puro. Entidades, objetos de valor, regras, exceções de negócio e interfaces (repositórios e portas para fora). A regra de negócio mora aqui: transição de status dentro de `OrdemServico`, validação de CPF/CNPJ e placa no construtor do objeto de valor, saldo disponível em `ItemEstoque`.
-- **application**: Java puro. Um caso de uso por classe, nomeado pelo verbo da linguagem ubíqua (`CriarOrdemServico`, `AprovarOrcamento`), com método `executar`. Recebe e devolve DTOs (`CriarOrdemServicoDTO`). Orquestra domínio e repositórios; a regra fica no domínio.
+- **domain**: Java puro. Entidades, objetos de valor, regras, exceções de negócio e interfaces (repositórios e portas para fora). A regra de negócio mora aqui: transição de status dentro de `OrdemServico`, validação de CPF/CNPJ e placa no construtor do objeto de valor, saldo físico que nunca fica negativo em `ItemEstoque`.
+- **application**: Java puro. Um caso de uso por classe, nomeado pelo verbo da linguagem ubíqua (`AbrirOrdemServico`, `AprovarOrcamento`), com método `executar`. Recebe e devolve DTOs (`AbrirOrdemServicoDTO`). Orquestra domínio e repositórios; a regra fica no domínio.
 - **infrastructure**: tudo que é Spring e tecnologia.
   - `http/`: `@RestController`, requests com `@Valid` (validação sintática), conversão request → DTO, `@RestControllerAdvice`.
   - `db/`: `@Entity`, Spring Data, `*RepositoryImpl` implementando o repositório do domínio e convertendo modelo ↔ entity.
@@ -42,7 +44,7 @@ Regras de isolamento:
 
 - Um contexto usa outro contexto só por uma porta declarada no próprio `domain`. Exemplo: `domain/ordemservico/EstoqueDeItens` é implementada em `infrastructure/gateway/estoque`, que chama os casos de uso de `application/estoque`.
 - A transação abre na entrada (método do controller ou do job agendado, com `@Transactional`), mantendo `application` livre de Spring.
-- Sistemas externos (e-mail, pagamento, nota fiscal) são portas com implementação simulada: a chamada monta o payload real e devolve uma resposta simulada, ambos expostos pela API. A implementação real substitui a simulada sem tocar em `domain` ou `application`.
+- Sistemas externos (e-mail, pagamento, nota fiscal) estão fora do MVP. Quando entrarem, serão portas no `domain` com implementação simulada em `infrastructure/gateway`, trocada pela real sem tocar em `domain` ou `application`.
 
 ## Estrutura
 
@@ -58,56 +60,63 @@ oficina-mecanica/
 │   ├── fase1-tech-challenge.md
 │   └── ddd/
 │       ├── linguagem-ubiqua.md
+│       ├── modelo-de-dominio.md             # agregados, entidades e objetos de valor
 │       ├── event-storming/                  # fluxo-os, fluxo-pecas-insumos (.md, .png, .pdf)
 │       └── c4/                              # C4: contexto, container e componentes (Mermaid)
 └── src/
     ├── main/java/br/com/fiap/oficina/
     │   ├── OficinaApplication.java          # @SpringBootApplication
     │   ├── domain/
-    │   │   ├── DomainException.java         # violação de regra de negócio
+    │   │   ├── DomainException.java         # regra de negócio violada (422)
+    │   │   ├── NaoEncontradoException.java  # recurso inexistente (404)
+    │   │   ├── ConflitoException.java       # conflito com dado existente (409)
+    │   │   ├── Pagina.java                  # resultado paginado
     │   │   ├── cliente/
-    │   │   │   ├── Cliente.java
-    │   │   │   ├── Veiculo.java
+    │   │   │   ├── Cliente.java             # raiz de agregado
+    │   │   │   ├── Veiculo.java             # raiz de agregado
     │   │   │   ├── CpfCnpj.java             # objeto de valor, valida dígitos
     │   │   │   ├── Placa.java               # objeto de valor, padrão antigo e Mercosul
-    │   │   │   └── ClienteRepository.java
+    │   │   │   ├── ClienteRepository.java
+    │   │   │   └── VeiculoRepository.java
     │   │   ├── ordemservico/
-    │   │   │   ├── OrdemServico.java        # raiz: status, orçamento, serviços, entrega
-    │   │   │   ├── StatusOrdemServico.java
-    │   │   │   ├── Orcamento.java
+    │   │   │   ├── OrdemServico.java        # raiz: status, serviços, itens, orçamento, histórico
+    │   │   │   ├── StatusOrdemServico.java  # status e transições permitidas
+    │   │   │   ├── ItemDaOrdem.java         # objeto de valor
+    │   │   │   ├── Orcamento.java           # objeto de valor
     │   │   │   ├── OrdemServicoRepository.java
+    │   │   │   ├── CadastroDeVeiculos.java  # porta para o contexto cliente
     │   │   │   └── EstoqueDeItens.java      # porta para o contexto estoque
-    │   │   ├── cobranca/
-    │   │   │   ├── Pagamento.java
-    │   │   │   ├── NotaFiscal.java
-    │   │   │   └── SistemaDePagamentos.java # porta para sistema externo
+    │   │   ├── cobranca/                    # reservado, fora do MVP
     │   │   └── estoque/
-    │   │       ├── ItemEstoque.java         # saldo físico, reservado, mínimo
-    │   │       ├── Reserva.java
+    │   │       ├── ItemEstoque.java         # raiz: saldo físico, entrada e baixa
     │   │       └── ItemEstoqueRepository.java
     │   ├── application/
     │   │   ├── ordemservico/
-    │   │   │   ├── CriarOrdemServico.java   # caso de uso
-    │   │   │   ├── CriarOrdemServicoDTO.java
+    │   │   │   ├── AbrirOrdemServico.java   # caso de uso
+    │   │   │   ├── AbrirOrdemServicoDTO.java
+    │   │   │   ├── IniciarDiagnostico.java  # caso de uso de transição de status
     │   │   │   └── OrdemServicoDTO.java
     │   │   └── estoque/
-    │   │       └── ReservarItens.java
+    │   │       └── BaixarItens.java         # chamado pelo gateway da OS
     │   └── infrastructure/
     │       ├── http/
     │       │   ├── ErroHandler.java         # @RestControllerAdvice
+    │       │   ├── ErroResponse.java        # corpo de todo erro
     │       │   └── ordemservico/
-    │       │       ├── OrdemServicoController.java
-    │       │       └── CriarOrdemServicoRequest.java
+    │       │       ├── OrdemServicoController.java       # rotas da oficina, com @Operation
+    │       │       ├── ClienteOrdemServicoController.java # rotas do cliente, sem JWT
+    │       │       └── AbrirOrdemServicoRequest.java     # @Schema com exemplo por campo
     │       ├── db/
     │       │   └── ordemservico/
     │       │       ├── OrdemServicoEntity.java
     │       │       ├── OrdemServicoJpaRepository.java
     │       │       └── OrdemServicoRepositoryImpl.java
     │       ├── gateway/
-    │       │   ├── estoque/EstoqueDeItensImpl.java
-    │       │   └── pagamento/SistemaDePagamentosSimulado.java
+    │       │   ├── cliente/CadastroDeVeiculosImpl.java
+    │       │   └── estoque/EstoqueDeItensImpl.java
     │       └── config/
     │           ├── BeanConfig.java
+    │           ├── OpenApiConfig.java
     │           └── SecurityConfig.java
     ├── main/resources/
     │   ├── application.yml
@@ -122,7 +131,7 @@ As classes listadas mostram o padrão de cada pasta; crie as demais seguindo o m
 
 ## Convenções
 
-- Nomes de domínio em português, idênticos à linguagem ubíqua, sem acento (`Orcamento`, `SaldoDisponivel`). Sufixos técnicos em inglês: `Repository`, `Controller`, `Entity`, `Request`, `DTO`, `Impl`.
+- Nomes de domínio em português, idênticos à linguagem ubíqua, sem acento (`Orcamento`, `ItemDaOrdem`). Sufixos técnicos em inglês: `Repository`, `Controller`, `Entity`, `Request`, `DTO`, `Impl`.
 - Estado muda por métodos de negócio (`ordemServico.aprovarOrcamento()`), cada um validando a transição.
 - Banco normalizado; o schema muda só por migration nova.
 

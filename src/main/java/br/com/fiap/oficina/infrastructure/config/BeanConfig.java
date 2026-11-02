@@ -26,7 +26,9 @@ import br.com.fiap.oficina.application.ordemservico.DetalharOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.EntregarVeiculo;
 import br.com.fiap.oficina.application.ordemservico.FinalizarOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.IniciarDiagnostico;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.ListarOrdensDoCliente;
 import br.com.fiap.oficina.application.ordemservico.ListarOrdensServico;
 import br.com.fiap.oficina.application.ordemservico.RejeitarOrcamento;
 import br.com.fiap.oficina.application.ordemservico.RemoverItemDaOrdem;
@@ -183,6 +185,11 @@ public class BeanConfig {
     }
 
     @Bean
+    IniciarDiagnostico iniciarDiagnostico(OrdemServicoRepository ordens, Clock clock) {
+        return new IniciarDiagnostico(ordens, clock);
+    }
+
+    @Bean
     FinalizarOrdemServico finalizarOrdemServico(OrdemServicoRepository ordens, Clock clock) {
         return new FinalizarOrdemServico(ordens, clock);
     }
@@ -195,6 +202,11 @@ public class BeanConfig {
     @Bean
     ConsultarAndamento consultarAndamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos) {
         return new ConsultarAndamento(ordens, veiculos);
+    }
+
+    @Bean
+    ListarOrdensDoCliente listarOrdensDoCliente(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos) {
+        return new ListarOrdensDoCliente(ordens, veiculos);
     }
 
     @Bean

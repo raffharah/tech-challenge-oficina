@@ -6,10 +6,10 @@ Vídeo de cerca de 8 minutos mostrando só a API em funcionamento, acompanhando 
 | --- | --- | --- |
 | 1. Acesso | Autenticação JWT e catálogo pronto da oficina | 0:45 |
 | 2. Chegada do cliente | Cadastro do cliente e do veículo, com validação de CPF e placa | 1:00 |
-| 3. Troca de óleo | Ciclo completo da OS: abertura → orçamento → aprovação → execução → entrega | 3:00 |
+| 3. Troca de óleo | Ciclo completo da OS: abertura → diagnóstico → orçamento → aprovação → execução → entrega | 3:00 |
 | 4. Falta de peça | Aprovação barrada por estoque, entrada de peça e nova aprovação | 1:30 |
 | 5. Orçamento recusado | Cliente rejeita e a OS é cancelada | 0:45 |
-| 6. Visão da oficina | Listagem, detalhamento e tempo médio de execução | 0:45 |
+| 6. Visão da oficina | Listagem, detalhamento, tempo médio, OS do cliente e documentação | 1:15 |
 
 ---
 
@@ -140,6 +140,16 @@ POST /veiculos
 
 Esperado: **201**, `id: 1`.
 
+**2.5 Encontrar o cadastro** (listagens paginadas; o filtro é opcional)
+
+```http
+GET /veiculos?placa=bra-2e19
+```
+
+Esperado: **200**, `total: 1`, com o Gol do Carlos. Sem o filtro, `GET /veiculos` e `GET /clientes` listam todos os cadastros.
+
+> Fala: "Placa e CPF são filtros opcionais da listagem, aceitos com ou sem máscara."
+
 ---
 
 ## Cena 3 — Troca de óleo: ciclo completo da OS (3:00)
@@ -155,9 +165,21 @@ POST /ordens-servico
 {"cpfCnpj": "529.982.247-25", "placa": "BRA2E19"}
 ```
 
-Esperado: **201**, `id: 1`, status `EM_DIAGNOSTICO`. No `historico`: `RECEBIDA` → `EM_DIAGNOSTICO`.
+Esperado: **201**, `id: 1`, status `RECEBIDA`. No `historico`: só `RECEBIDA`.
 
-> Fala: "A OS nasce recebida e entra direto em diagnóstico."
+> Fala: "A OS nasce recebida: o carro chegou, mas ninguém avaliou ainda."
+
+Opcional: tentar incluir um serviço agora (`POST /ordens-servico/1/servicos` com `{"servicoId": 1}`) responde **422** `ORDEM_FORA_DE_DIAGNOSTICO`.
+
+**3.1.1 Mecânico inicia o diagnóstico**
+
+```http
+POST /ordens-servico/1/diagnostico
+```
+
+Esperado: **200**, status `EM_DIAGNOSTICO`. No `historico`: `RECEBIDA` → `EM_DIAGNOSTICO`, com horários diferentes.
+
+> Fala: "Quando o mecânico começa a avaliar o carro, a OS passa para em diagnóstico."
 
 **3.2 Incluir o serviço**
 
@@ -292,13 +314,17 @@ Esperado: **200**. O `historico` mostra os 6 status com data e hora: `RECEBIDA`,
 
 > Fala: "O mesmo carro volta para trocar a correia dentada. O mecânico pede 6 bombas d'água, mas só temos 5 em estoque."
 
-**4.1 Abrir a OS 2, incluir serviço e peças**
+**4.1 Abrir a OS 2, iniciar o diagnóstico, incluir serviço e peças**
 
 ```http
 POST /ordens-servico
 ```
 ```json
 {"cpfCnpj": "529.982.247-25", "placa": "BRA2E19"}
+```
+
+```http
+POST /ordens-servico/2/diagnostico
 ```
 
 ```http
@@ -318,7 +344,7 @@ POST /ordens-servico/2/itens
 {"itemId": 9, "quantidade": 6}
 ```
 
-Esperado: **201** em cada uma, OS `id: 2`.
+Esperado: **201** na abertura e nas inclusões, **200** no diagnóstico, OS `id: 2`.
 
 **4.2 Orçamento**
 
@@ -369,13 +395,17 @@ Esperado: **200**, status `EM_EXECUCAO`. Em `GET /itens/9`, saldo `4`.
 
 > Fala: "Outro dia, o Carlos pede orçamento dos freios e decide não fazer."
 
-**5.1 Abrir a OS 3 e montar o orçamento**
+**5.1 Abrir a OS 3, iniciar o diagnóstico e montar o orçamento**
 
 ```http
 POST /ordens-servico
 ```
 ```json
 {"cpfCnpj": "529.982.247-25", "placa": "BRA2E19"}
+```
+
+```http
+POST /ordens-servico/3/diagnostico
 ```
 
 ```http
@@ -425,7 +455,7 @@ Esperado: **422** `ORDEM_FORA_DE_DIAGNOSTICO`.
 
 ---
 
-## Cena 6 — Visão da oficina (0:45)
+## Cena 6 — Visão da oficina (1:15)
 
 > Fala: "Para a gestão, a oficina lista as OS, vê o detalhe de cada uma e acompanha o tempo médio de execução."
 
@@ -460,6 +490,22 @@ GET /ordens-servico/tempo-medio-execucao
 Esperado: **200** com `mediaMinutos` e `quantidade: 1`. Só entra a OS 1, a única que já passou por execução e foi finalizada. O valor é o tempo entre a aprovação e a finalização dela na gravação.
 
 > Fala: "O tempo médio é calculado pelo histórico de status: de EM_EXECUCAO até FINALIZADA."
+
+**6.4 Cliente vê todas as suas OS** (rota do cliente, sem token)
+
+```http
+GET /cliente/ordens-servico?cpfCnpj=529.982.247-25
+```
+
+Esperado: **200**, `total: 3`, com status e total de cada OS do Carlos, da mais recente para a mais antiga.
+
+> Fala: "O cliente acompanha todas as ordens dele só com o CPF, sem precisar saber o número de cada uma."
+
+**6.5 Documentação da API**
+
+No Swagger, abrir `POST /cliente/ordens-servico/{id}/aprovacao` e mostrar a descrição da regra, o exemplo do corpo e as respostas de erro com o código (`SALDO_INSUFICIENTE`, `TRANSICAO_INVALIDA`). Depois, rolar até **Schemas** → `ErroResponse`.
+
+> Fala: "Cada rota explica a regra de negócio, traz exemplo de uso e lista os erros possíveis com o código para tratamento."
 
 ---
 

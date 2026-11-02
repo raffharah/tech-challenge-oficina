@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import br.com.fiap.oficina.infrastructure.TestcontainersConfig;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +42,67 @@ class OrdemServicoAberturaIT {
     }
 
     @Test
-    void abreOrdemEmDiagnosticoRetorna201() throws Exception {
+    void abreOrdemRecebidaRetorna201() throws Exception {
         mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
                         .content(corpo("529.982.247-25", "abc1d23")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.status").value("EM_DIAGNOSTICO"))
+                .andExpect(jsonPath("$.status").value("RECEBIDA"))
                 .andExpect(jsonPath("$.cpfCnpj").value("52998224725"))
                 .andExpect(jsonPath("$.placa").value("ABC1D23"))
+                .andExpect(jsonPath("$.historico.length()").value(1))
+                .andExpect(jsonPath("$.historico[0].status").value("RECEBIDA"));
+    }
+
+    private int abrir() throws Exception {
+        String corpo = mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
+                        .content(corpo("52998224725", "ABC1D23")))
+                .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(corpo, "$.id");
+    }
+
+    @Test
+    void iniciaDiagnosticoRetorna200ComHistorico() throws Exception {
+        int id = abrir();
+
+        mvc.perform(post("/ordens-servico/" + id + "/diagnostico").with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("EM_DIAGNOSTICO"))
                 .andExpect(jsonPath("$.historico.length()").value(2))
-                .andExpect(jsonPath("$.historico[0].status").value("RECEBIDA"))
                 .andExpect(jsonPath("$.historico[1].status").value("EM_DIAGNOSTICO"));
+    }
+
+    @Test
+    void iniciarDiagnosticoDuasVezesRetorna422() throws Exception {
+        int id = abrir();
+        mvc.perform(post("/ordens-servico/" + id + "/diagnostico").with(jwt())).andExpect(status().isOk());
+
+        mvc.perform(post("/ordens-servico/" + id + "/diagnostico").with(jwt()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.codigo").value("TRANSICAO_INVALIDA"));
+    }
+
+    @Test
+    void incluirServicoAntesDoDiagnosticoRetorna422() throws Exception {
+        int id = abrir();
+        jdbc.update("insert into servico (nome, valor_padrao) values ('Troca de oleo', 100.00)");
+
+        mvc.perform(post("/ordens-servico/" + id + "/servicos").with(jwt())
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"servicoId\":1}"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.codigo").value("ORDEM_FORA_DE_DIAGNOSTICO"));
+    }
+
+    @Test
+    void iniciarDiagnosticoDeOrdemInexistenteRetorna404() throws Exception {
+        mvc.perform(post("/ordens-servico/99/diagnostico").with(jwt())).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void iniciarDiagnosticoSemTokenRetorna401() throws Exception {
+        int id = abrir();
+
+        mvc.perform(post("/ordens-servico/" + id + "/diagnostico")).andExpect(status().isUnauthorized());
     }
 
     @Test

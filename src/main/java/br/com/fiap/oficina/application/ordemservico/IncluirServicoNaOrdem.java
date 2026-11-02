@@ -1,6 +1,6 @@
 package br.com.fiap.oficina.application.ordemservico;
 
-import br.com.fiap.oficina.domain.DomainException;
+import br.com.fiap.oficina.domain.NaoEncontradoException;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServicoRepository;
 import br.com.fiap.oficina.domain.ordemservico.Servico;
@@ -19,7 +19,7 @@ public class IncluirServicoNaOrdem {
     public OrdemServicoDTO executar(Long ordemId, Long servicoId) {
         OrdemServico ordem = ordens.obterPorId(ordemId);
         Servico servico = servicos.buscarPorId(servicoId)
-                .orElseThrow(() -> new DomainException("SERVICO_NAO_ENCONTRADO", "Servico nao encontrado"));
+                .orElseThrow(() -> new NaoEncontradoException("SERVICO_NAO_ENCONTRADO", "Servico nao encontrado"));
         ordem.incluirServico(servico);
         return OrdemServicoDTO.de(ordens.salvar(ordem));
     }

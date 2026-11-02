@@ -1,8 +1,10 @@
 package br.com.fiap.oficina.application.cliente;
 
+import br.com.fiap.oficina.domain.Pagina;
 import br.com.fiap.oficina.domain.cliente.Placa;
 import br.com.fiap.oficina.domain.cliente.Veiculo;
 import br.com.fiap.oficina.domain.cliente.VeiculoRepository;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,11 @@ class VeiculoRepositoryEmMemoria implements VeiculoRepository {
     @Override
     public Optional<Veiculo> buscarPorPlaca(Placa placa) {
         return armazenados.values().stream().filter(v -> v.getPlaca().equals(placa)).findFirst();
+    }
+
+    @Override
+    public Pagina<Veiculo> listar(int pagina, int tamanho) {
+        return Pagina.de(new ArrayList<>(armazenados.values()), pagina, tamanho);
     }
 
     @Override

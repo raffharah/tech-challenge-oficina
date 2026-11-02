@@ -26,14 +26,11 @@ public class EstoqueDeItensImpl implements EstoqueDeItens {
 
     @Override
     public ItemCotado cotar(Long itemId) {
-        try {
-            ItemEstoqueDTO item = itens.buscarPorId(itemId);
-            return new ItemCotado(item.id(), item.sku(), item.nome(), item.precoVenda());
-        } catch (NaoEncontradoException e) {
-            throw new DomainException(e.getCodigo(), e.getMessage());
-        }
+        ItemEstoqueDTO item = itens.buscarPorId(itemId);
+        return new ItemCotado(item.id(), item.sku(), item.nome(), item.precoVenda());
     }
 
+    // item da OS sumido do estoque é inconsistência interna, não referência inválida do chamador
     @Override
     public void baixar(List<ItemDaOrdem> itensDaOrdem) {
         try {

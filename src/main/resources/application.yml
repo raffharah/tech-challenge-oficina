@@ -20,3 +20,8 @@ oficina:
     nome: ${OFICINA_USUARIO:funcionario}
     # BCrypt da senha de demonstração "oficina123"; sobrescreva com OFICINA_SENHA_HASH
     senha-hash: ${OFICINA_SENHA_HASH:{bcrypt}$2a$10$oUmJY8K0.vFuhGBjh5c1O.3.uSlSYeE8GOpk.aSHb794/kP96o/bm}
+
+springdoc:
+  default-produces-media-type: application/json
+  swagger-ui:
+    tags-sorter: alpha

@@ -70,6 +70,20 @@ class VeiculoRepositoryImplIT {
     }
 
     @Test
+    void listaTodosPaginadoPorId() {
+        Cliente maria = cliente("11144477735");
+        Cliente paulo = cliente("39053344705");
+        veiculos.salvar(veiculo("DDD1111", maria.getId()));
+        veiculos.salvar(veiculo("DDD2222", paulo.getId()));
+        veiculos.salvar(veiculo("DDD3333", maria.getId()));
+
+        var pagina = veiculos.listar(1, 2);
+
+        assertThat(pagina.total()).isEqualTo(3);
+        assertThat(pagina.itens()).extracting(v -> v.getPlaca().valor()).containsExactly("DDD3333");
+    }
+
+    @Test
     void removeVeiculo() {
         Cliente dono = cliente("86288366757");
         Veiculo salvo = veiculos.salvar(veiculo("CCC1111", dono.getId()));

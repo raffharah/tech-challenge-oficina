@@ -32,7 +32,7 @@ flowchart LR
   f -.pagamento vencido.-> c
 ```
 
-A OS nasce "recebida" e passa logo para "em diagnóstico". O orçamento a leva para "aguardando aprovação". Aprovado, ela vai para "em execução", depois "finalizada" e, após pagamento e retirada, "entregue". Ela volta a "em diagnóstico" em duas situações (recusa parcial do orçamento e problema encontrado no veículo durante o serviço) e termina "cancelada" quando o orçamento é rejeitado ou o pagamento vence.
+A OS nasce "recebida" e fica nesse status até o funcionário iniciar o diagnóstico, quando vai para "em diagnóstico". O orçamento a leva para "aguardando aprovação". Aprovado, ela vai para "em execução", depois "finalizada" e, após pagamento e retirada, "entregue". Ela volta a "em diagnóstico" em duas situações (recusa parcial do orçamento e problema encontrado no veículo durante o serviço) e termina "cancelada" quando o orçamento é rejeitado ou o pagamento vence.
 
 ## 3. Fase 1: Criação da OS
 
@@ -84,7 +84,7 @@ flowchart TD
   classDef ev fill:#ffd9a0,stroke:#c77d00,color:#000
   classDef po fill:#dcc8ff,stroke:#7b4fd1,color:#000
   classDef se fill:#ffb6dc,stroke:#c2417c,color:#000
-  A20["CMD Cria Ordem de Serviço"]:::cmd --> A21["EV OS criada com status recebida"]:::ev --> A22["PO Sistema atualiza a OS para em diagnóstico"]:::po --> A23["CMD Atualiza OS para em diagnóstico"]:::cmd --> A24["EV OS atualizada para em diagnóstico"]:::ev
+  A20["CMD Cria Ordem de Serviço"]:::cmd --> A21["EV OS criada com status recebida"]:::ev --> A23["CMD Inicia diagnóstico"]:::cmd --> A24["EV OS atualizada para em diagnóstico"]:::ev
   A24 --> A25["CMD Adiciona serviços, peças e insumos à OS"]:::cmd --> A27["EV Serviços, peças e insumos adicionados à OS"]:::ev
   A25 --- A26["SE Sistema de estoque de itens"]:::se
   A27 --> A28["PO Somatório simples do valor padrão dos serviços e dos valores de peças e insumos recuperados do contexto de estoque"]:::po --> A29["CMD Calcula orçamento do serviço"]:::cmd --> A30["EV Orçamento calculado"]:::ev
@@ -97,8 +97,8 @@ flowchart TD
 
 | # | Ator e modelo de leitura | Comando | Evento | Política associada | Sistema externo |
 |---|---|---|---|---|---|
-| 6 | Funcionário | Cria Ordem de Serviço | Ordem de serviço criada com status "recebida" | Depois do evento: O Sistema atualiza a OS para "em diagnóstico" | n/a |
-| 7 | n/a | Atualiza OS para "em diagnóstico" | Ordem de serviço atualizada para o status "em diagnóstico" | n/a | n/a |
+| 6 | Funcionário | Cria Ordem de Serviço | Ordem de serviço criada com status "recebida" | n/a | n/a |
+| 7 | Funcionário (mecânico), quando começa a avaliar o veículo | Inicia diagnóstico | Ordem de serviço atualizada para o status "em diagnóstico" | n/a | n/a |
 | 8 | Funcionário. ML: Lista de serviços com peças e insumos necessários | Adiciona serviços, peças e insumos à OS | Serviços, peças e insumos adicionados à OS | n/a | Sistema de estoque de itens |
 | 9 | n/a | Calcula orçamento do serviço | Orçamento calculado | Antes do comando: somatório simples do valor padrão dos serviços e dos valores de peças e insumos recuperados do contexto de estoque | n/a |
 | 10 | n/a | Envia orçamento para o cliente | Orçamento enviado ao cliente | Antes: notificar contendo os detalhes do orçamento. Depois: O Sistema atualiza a OS para "aguardando aprovação" | Sistema de envio de e-mail |
@@ -318,6 +318,8 @@ Os comandos, eventos e políticas do caminho principal agrupados por agregado. A
 
 Sequência dos agregados: **Cliente → OS → Orçamento → Serviço → Pagamento → Finaliza Serviço**.
 
+Os agregados aqui são agrupamentos do Event Storming. No código, Orçamento é um objeto de valor da OS, e Serviço e Finaliza Serviço são etapas da própria OS. Os agregados, entidades e objetos de valor implementados estão em [Modelo de domínio](../modelo-de-dominio.md).
+
 **Cliente** (comandos; evento resultante; política)
 
 | Comando | Evento | Política ou observação |
@@ -332,8 +334,8 @@ Sequência dos agregados: **Cliente → OS → Orçamento → Serviço → Pagam
 
 | Comando | Evento | Política ou observação |
 |---|---|---|
-| Cria Ordem de Serviço (Funcionário) | Ordem de serviço criada com status "recebida" | O Sistema atualiza a OS para "em diagnóstico" |
-| Atualiza OS para "em diagnóstico" | Ordem de serviço atualizada para o status "em diagnóstico" | n/a |
+| Cria Ordem de Serviço (Funcionário) | Ordem de serviço criada com status "recebida" | n/a |
+| Inicia diagnóstico (Funcionário) | Ordem de serviço atualizada para o status "em diagnóstico" | n/a |
 | Adiciona serviços, peças e insumos à OS (Funcionário; ML Lista de serviços com peças e insumos necessários) | Serviços, peças e insumos adicionados à OS | Sistema externo: Sistema de estoque de itens. Política entre OS e Orçamento: somatório simples do valor padrão dos serviços e dos valores de peças e insumos recuperados do contexto de estoque |
 
 **Orçamento**

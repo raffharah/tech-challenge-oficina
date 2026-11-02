@@ -1,5 +1,8 @@
 package br.com.fiap.oficina.infrastructure.http.autenticacao;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.Clock;
 import java.time.Duration;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Autenticação", description = "Emissão do token JWT exigido nas rotas da oficina.")
 @RestController
 public class AutenticacaoController {
 
@@ -33,6 +37,12 @@ public class AutenticacaoController {
         this.clock = clock;
     }
 
+    @Operation(summary = "Gerar token", description = """
+            Troca usuário e senha do funcionário por um token JWT válido por 60 minutos. Use o token \
+            no botão **Authorize** ou no cabeçalho `Authorization: Bearer <token>`.""")
+    @ApiResponse(responseCode = "200", description = "Token emitido e instante de expiração.")
+    @ApiResponse(responseCode = "400", description = "Campo obrigatório ausente.")
+    @ApiResponse(responseCode = "401", description = "Usuário ou senha inválidos.")
     @PostMapping("/autenticacao")
     ResponseEntity<AutenticacaoResponse> autenticar(@Valid @RequestBody AutenticacaoRequest request) {
         try {

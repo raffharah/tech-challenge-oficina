@@ -43,6 +43,7 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Orçamento | Cálculo consolidado do valor total da OS, composto pelo somatório dos serviços prestados e do custo das peças e insumos utilizados, aprovado pelo cliente antes da execução dos serviços. |
 | Serviço | Conjunto de atividades e manutenções realizadas por um funcionário em um veículo. |
 | Diagnóstico | Etapa em que o funcionário avalia o veículo para identificar os problemas e determinar a lista de serviços, peças e insumos necessários. |
+| Iniciar diagnóstico | Comando do funcionário que tira a OS de Recebida e a coloca Em diagnóstico, quando a avaliação do veículo começa. Só a partir daí serviços, peças e insumos podem ser incluídos. |
 | Recusa parcial | O cliente recusa só alguns componentes do orçamento, e a OS é renegociada. |
 | Recusa total | O cliente recusa todo o orçamento, ou recusa novamente o orçamento renegociado. A OS é cancelada. |
 | Renegociação | Uma única rodada após a recusa parcial: a OS volta a Em diagnóstico, os itens são ajustados e um novo orçamento é calculado e enviado. |
@@ -51,7 +52,7 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Tempo médio de execução | Média do tempo entre o início e a conclusão dos serviços da OS. |
 | Entrega do veículo | Entrega ao cliente após o pagamento. Muda a OS para Entregue. |
 | Devolução do veículo | Retorno do veículo ao cliente quando a OS foi cancelada. Não muda o status. |
-| Status da OS - “Recebida” | OS criada, veículo recebido, ainda sem diagnóstico. |
+| Status da OS - “Recebida” | OS criada, veículo recebido, ainda sem diagnóstico. Permanece assim até o funcionário iniciar o diagnóstico. |
 | Status da OS - “Em diagnóstico” | O mecânico avalia o veículo e define serviços, peças e insumos. Volta a esse status na renegociação e no serviço adicional. |
 | Status da OS - “Aguardando aprovação” | Orçamento enviado, à espera da decisão do cliente. |
 | Status da OS - “Em execução” | Orçamento aprovado e OS liberada. Os serviços são iniciados e concluídos um a um. |
@@ -114,17 +115,17 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Tema | Decisão |
 | --- | --- |
 | Sistemas | OS e Estoque ("Sistema de estoque de itens" = "Sistema de gestão de peças e insumos") rodam no mesmo monolito, como módulos isolados. A OS fala com o Estoque só por uma porta (interface) do domínio. |
-| Reserva | Acontece só na aprovação do orçamento: o sistema verifica de novo a disponibilidade e reserva. Falta de estoque na aprovação mantém a OS em Aguardando aprovação e notifica o funcionário. Recusa antes da aprovação não tem reserva para liberar. |
-| Liberação da reserva | O consumo (OS Finalizada) baixa o saldo físico e libera a reserva. Serviço adicional rejeitado não reserva nada. |
-| Estoque mínimo | Comparado com o saldo físico. Gera só a notificação ao funcionário. |
+| Baixa de estoque | Sem reserva no MVP (AD-004): a aprovação do orçamento verifica o saldo físico e dá baixa direta de todas as peças e insumos da OS, tudo ou nada. Faltando saldo de algum item, nada é baixado, a OS continua em Aguardando aprovação e a resposta lista os itens em falta. Rejeição não mexe no estoque. |
+| Estoque mínimo | Fora do MVP. |
 | Fornecedor | Reposição, orçamento de fornecedor e garantia ficam fora do MVP. A entrada de estoque é manual. |
-| Prazo | Informado manualmente no orçamento. O atraso é verificado por rotina agendada diária. |
+| Prazo | Fora do MVP: o orçamento não tem prazo nem verificação de atraso. |
 | Aguardando aprovação | Não expira no MVP. |
+| Início do diagnóstico | A OS nasce Recebida e só passa a Em diagnóstico quando o funcionário inicia o diagnóstico. Serviços, peças e insumos só entram na OS depois disso. |
+| Acompanhamento pelo cliente | O cliente, sem login, lista as próprias OS e consulta cada uma informando o CPF/CNPJ do titular. Quem não tem OS recebe lista vazia, sem revelar se o documento é de um cliente cadastrado. |
 | Catálogo de serviços | Serviço tem nome único (sem diferenciar maiúsculas) e valor padrão maior que zero. A OS copia o valor padrão ao incluir o serviço; alterar o catálogo não muda OS existentes. Serviço referenciado por OS não é removido. |
 | Itens de estoque | Item tem SKU único (sem diferenciar maiúsculas), tipo peça ou insumo, preço de venda maior que zero e saldo físico. O saldo muda só por entrada e baixa, nunca fica negativo. A baixa de vários itens é tudo ou nada. |
-| Agregados do Estoque | Item de Estoque (saldo físico, saldo reservado, estoque mínimo, situação) e Reserva (itens reservados por OS). |
-| Agregados da OS | Ordem de Serviço (inclui orçamento, serviços e entrega do veículo; "Finaliza Serviço" é a etapa de entrega da OS). Cobrança e Faturamento: Pagamento (cobrança e registro do pagamento) e Nota Fiscal. |
-| Sistemas externos | E-mail, pagamento e nota fiscal são portas com implementação simulada. Cada chamada monta o payload real e devolve uma resposta simulada, ambos expostos pela API para acompanhar o processo. A implementação real (ex.: serviços AWS) substitui a simulada sem mudar o domínio. |
+| Agregados | Cliente, Veículo, Serviço (catálogo), Ordem de Serviço e Item de Estoque, cada um com raiz e repositório próprios. A OS inclui serviços, peças e insumos, orçamento, histórico de status e a entrega do veículo ("Finaliza Serviço" é a etapa de entrega da OS). Entidades, objetos de valor e o motivo de cada fronteira estão em [Modelo de domínio](modelo-de-dominio.md). |
+| Sistemas externos | E-mail, pagamento e nota fiscal ficam fora do MVP, junto com o contexto Cobrança e Faturamento (agregados Pagamento e Nota Fiscal). O orçamento é disponibilizado ao cliente pela consulta da OS na API. |
 
 ---
 
@@ -140,4 +141,6 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 
 | Data | Termo | Alteração | Responsável |
 | --- | --- | --- | --- |
-| — | — | — | — |
+| 2026-11-02 | Iniciar diagnóstico; Status "Recebida" | Novo comando do funcionário; a OS permanece Recebida até ele (AD-007). | Grupo |
+| 2026-11-02 | Acompanhamento pelo cliente | Cliente lista as próprias OS pelo CPF/CNPJ do titular. | Grupo |
+| 2026-11-02 | Reserva, Prazo, Estoque mínimo, Agregados, Sistemas externos | Decisões alinhadas ao escopo implementado (AD-003, AD-004) e ao modelo de domínio. | Grupo |

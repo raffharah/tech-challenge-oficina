@@ -30,9 +30,9 @@ flowchart TB
 
         subgraph ctx_os["Ordens de Serviço"]
             direction TB
-            ctrl_os["<b>OrdemServicoController</b><br/>[Componente: REST Controller]<br/>Abre e conduz ordens de serviço, gera orçamento, finaliza e entrega veículos"]
+            ctrl_os["<b>OrdemServicoController</b><br/>[Componente: REST Controller]<br/>Abre a OS, inicia o diagnóstico, gera orçamento, finaliza e entrega veículos"]
             ctrl_servicos["<b>ServicoController</b><br/>[Componente: REST Controller]<br/>Gerencia o catálogo de serviços, preços padrão, consulta, atualização e remoção"]
-            ctrl_portal["<b>ClienteOrdemServicoController</b><br/>[Componente: REST Controller]<br/>Consulta andamento, aprova ou rejeita a OS com número da ordem e CPF/CNPJ"]
+            ctrl_portal["<b>ClienteOrdemServicoController</b><br/>[Componente: REST Controller]<br/>Lista as OS do titular, consulta andamento, aprova ou rejeita a OS com o CPF/CNPJ do titular"]
             uc_os["<b>Casos de uso de Ordens de Serviço</b><br/>[Componente: Application Services]<br/>Orquestra abertura, componentes, orçamento, execução, finalização e entrega da OS"]
             repo_os["<b>OrdemServicoRepositoryImpl e ServicoRepositoryImpl</b><br/>[Componente: Spring Data JPA]<br/>Persiste ordens, histórico de status, serviços e componentes da OS"]
             gw_veiculos["<b>CadastroDeVeiculosImpl</b><br/>[Componente: Gateway]<br/>Implementa CadastroDeVeiculos e resolve o veículo associado à OS em outro contexto"]
@@ -52,7 +52,7 @@ flowchart TB
     funcionario -->|"Envia usuário e senha [JSON/HTTPS]"| auth
     auth -->|"Retorna token JWT"| funcionario
     funcionario -->|"Envia requisições com Bearer token [JSON/HTTPS]"| seguranca
-    cliente -->|"Informa número da OS e CPF/CNPJ [JSON/HTTPS]"| ctrl_portal
+    cliente -->|"Informa CPF/CNPJ e número da OS [JSON/HTTPS]"| ctrl_portal
 
     seguranca -->|"Autoriza operações administrativas"| ctrl_cliente
     seguranca -->|"Autoriza operações sobre ordens"| ctrl_os
@@ -62,7 +62,7 @@ flowchart TB
     ctrl_cliente -->|"Cadastra, consulta, atualiza e remove clientes e veículos"| uc_cliente
     ctrl_os -->|"Abre, compõe, orça, acompanha, finaliza e entrega ordens"| uc_os
     ctrl_servicos -->|"Cadastra, consulta, atualiza, lista e remove serviços"| uc_os
-    ctrl_portal -->|"Consulta andamento, aprova ou rejeita o orçamento"| uc_os
+    ctrl_portal -->|"Lista e consulta as OS, aprova ou rejeita o orçamento"| uc_os
     ctrl_estoque -->|"Cadastra itens, atualiza dados, consulta saldo e registra entradas"| uc_estoque
 
     uc_os -->|"Resolve cliente e veículo identificado pela OS"| gw_veiculos

@@ -44,6 +44,7 @@ class OrdemServicoRepositoryImplIT {
 
     private OrdemServico ordemCompleta() {
         OrdemServico ordem = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA);
+        ordem.iniciarDiagnostico(ABERTURA);
         ordem.incluirServico(new Servico(1L, "Troca de oleo", new BigDecimal("100.00")));
         ordem.incluirItem(new ItemCotado(1L, "OLE-1", "Oleo", new BigDecimal("35.50")), 2);
         ordem.concluirDiagnostico(CONCLUSAO);
@@ -80,7 +81,9 @@ class OrdemServicoRepositoryImplIT {
 
     @Test
     void atualizaMantendoIdERemovendoComponente() {
-        OrdemServico salva = ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA));
+        OrdemServico aberta = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA);
+        aberta.iniciarDiagnostico(ABERTURA);
+        OrdemServico salva = ordens.salvar(aberta);
         salva.incluirItem(new ItemCotado(1L, "OLE-1", "Oleo", new BigDecimal("35.50")), 2);
         ordens.salvar(salva);
         OrdemServico recarregada = ordens.buscarPorId(salva.getId()).orElseThrow();
@@ -141,5 +144,21 @@ class OrdemServicoRepositoryImplIT {
 
         assertThat(lidas).extracting(OrdemServico::getStatus)
                 .containsExactlyInAnyOrder(StatusOrdemServico.FINALIZADA, StatusOrdemServico.ENTREGUE);
+    }
+
+    @Test
+    void listaPorCpfCnpjSoDoTitularPorAberturaDecrescente() {
+        jdbc.update("insert into cliente (nome, cpf_cnpj) values ('Joao', '11144477735')");
+        jdbc.update("insert into veiculo (placa, marca, modelo, ano, cliente_id) values ('XYZ9K88', 'VW', 'Gol', 2019, 2)");
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(2L, "11144477735", "XYZ9K88"), ABERTURA));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"),
+                ABERTURA.plusSeconds(3600)));
+
+        var pagina = ordens.listarPorCpfCnpj("52998224725", 0, 20);
+
+        assertThat(pagina.total()).isEqualTo(2);
+        assertThat(pagina.itens()).extracting(OrdemServico::getId).containsExactly(3L, 1L);
+        assertThat(ordens.listarPorCpfCnpj("39053344705", 0, 20).itens()).isEmpty();
     }
 }

@@ -9,6 +9,7 @@ import br.com.fiap.oficina.application.ordemservico.EntregarVeiculo;
 import br.com.fiap.oficina.application.ordemservico.FinalizarOrdemServico;
 import br.com.fiap.oficina.application.ordemservico.IncluirItemNaOrdem;
 import br.com.fiap.oficina.application.ordemservico.IncluirServicoNaOrdem;
+import br.com.fiap.oficina.application.ordemservico.IniciarDiagnostico;
 import br.com.fiap.oficina.application.ordemservico.ListarOrdensServico;
 import br.com.fiap.oficina.application.ordemservico.OrdemServicoDTO;
 import br.com.fiap.oficina.application.ordemservico.OrdemServicoResumoDTO;
@@ -16,7 +17,11 @@ import br.com.fiap.oficina.application.ordemservico.RemoverItemDaOrdem;
 import br.com.fiap.oficina.application.ordemservico.RemoverServicoDaOrdem;
 import br.com.fiap.oficina.application.ordemservico.TempoMedioExecucaoDTO;
 import br.com.fiap.oficina.domain.Pagina;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +35,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Ordens de serviço", description = """
+        Rotas da oficina para conduzir a OS: abertura, diagnóstico (serviços, peças e insumos), orçamento, \
+        finalização e entrega, além da listagem e do tempo médio de execução.""")
 @RestController
 @RequestMapping("/ordens-servico")
 @SecurityRequirement(name = "bearer")
 public class OrdemServicoController {
 
     private final AbrirOrdemServico abrir;
+    private final IniciarDiagnostico iniciarDiagnostico;
     private final IncluirServicoNaOrdem incluirServico;
     private final RemoverServicoDaOrdem removerServico;
     private final IncluirItemNaOrdem incluirItem;
@@ -47,11 +56,13 @@ public class OrdemServicoController {
     private final DetalharOrdemServico detalhar;
     private final CalcularTempoMedioExecucao tempoMedio;
 
-    public OrdemServicoController(AbrirOrdemServico abrir, IncluirServicoNaOrdem incluirServico,
+    public OrdemServicoController(AbrirOrdemServico abrir, IniciarDiagnostico iniciarDiagnostico,
+            IncluirServicoNaOrdem incluirServico,
             RemoverServicoDaOrdem removerServico, IncluirItemNaOrdem incluirItem, RemoverItemDaOrdem removerItem,
             ConcluirDiagnostico concluirDiagnostico, FinalizarOrdemServico finalizar, EntregarVeiculo entregar,
             ListarOrdensServico listar, DetalharOrdemServico detalhar, CalcularTempoMedioExecucao tempoMedio) {
         this.abrir = abrir;
+        this.iniciarDiagnostico = iniciarDiagnostico;
         this.incluirServico = incluirServico;
         this.removerServico = removerServico;
         this.incluirItem = incluirItem;
@@ -64,6 +75,14 @@ public class OrdemServicoController {
         this.tempoMedio = tempoMedio;
     }
 
+    @Operation(summary = "Abrir OS", description = """
+            Abre a OS para o veículo do cliente, identificados pelo CPF/CNPJ e pela placa já \
+            cadastrados. A OS nasce `RECEBIDA`; o diagnóstico começa em `POST /ordens-servico/{id}/diagnostico`.""")
+    @ApiResponse(responseCode = "201", description = "OS aberta com status `RECEBIDA`.")
+    @ApiResponse(responseCode = "400", description = "Campo obrigatório ausente.")
+    @ApiResponse(responseCode = "404", description = "`CLIENTE_NAO_ENCONTRADO` ou `VEICULO_NAO_ENCONTRADO`.")
+    @ApiResponse(responseCode = "422",
+            description = "`CPF_CNPJ_INVALIDO`, `PLACA_INVALIDA` ou `VEICULO_DE_OUTRO_CLIENTE`.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -71,52 +90,111 @@ public class OrdemServicoController {
         return abrir.executar(new AbrirOrdemServicoDTO(request.cpfCnpj(), request.placa()));
     }
 
+    @Operation(summary = "Iniciar diagnóstico", description = """
+            O mecânico começa a avaliar o veículo: a OS vai de `RECEBIDA` para `EM_DIAGNOSTICO`. \
+            Só a partir daqui serviços, peças e insumos podem ser incluídos.""")
+    @ApiResponse(responseCode = "200", description = "OS em `EM_DIAGNOSTICO`.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
+    @ApiResponse(responseCode = "422", description = "`TRANSICAO_INVALIDA`: a OS não está `RECEBIDA`.")
+    @PostMapping("/{id}/diagnostico")
+    @Transactional
+    OrdemServicoDTO iniciarDiagnostico(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id) {
+        return iniciarDiagnostico.executar(id);
+    }
+
+    @Operation(summary = "Incluir serviço na OS", description = """
+            Inclui um serviço do catálogo na OS em diagnóstico. A OS copia o valor padrão do serviço \
+            nesse momento; mudar o catálogo depois não altera a OS.""")
+    @ApiResponse(responseCode = "201", description = "Serviço incluído; devolve a OS atualizada.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA` ou `SERVICO_NAO_ENCONTRADO`.")
+    @ApiResponse(responseCode = "422", description = "`ORDEM_FORA_DE_DIAGNOSTICO` ou `SERVICO_JA_INCLUIDO`.")
     @PostMapping("/{id}/servicos")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    OrdemServicoDTO incluirServico(@PathVariable Long id, @Valid @RequestBody IncluirServicoRequest request) {
+    OrdemServicoDTO incluirServico(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id,
+            @Valid @RequestBody IncluirServicoRequest request) {
         return incluirServico.executar(id, request.servicoId());
     }
 
+    @Operation(summary = "Remover serviço da OS", description = "Remove o serviço da OS em diagnóstico.")
+    @ApiResponse(responseCode = "204", description = "Serviço removido.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
+    @ApiResponse(responseCode = "422", description = "`ORDEM_FORA_DE_DIAGNOSTICO`.")
     @DeleteMapping("/{id}/servicos/{servicoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    void removerServico(@PathVariable Long id, @PathVariable Long servicoId) {
+    void removerServico(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id,
+            @Parameter(description = "Id do serviço no catálogo.", example = "1")
+            @PathVariable Long servicoId) {
         removerServico.executar(id, servicoId);
     }
 
+    @Operation(summary = "Incluir peça ou insumo na OS", description = """
+            Inclui um item do estoque na OS em diagnóstico, com o preço de venda atual. Incluir de novo \
+            o mesmo item soma a quantidade. O estoque só é baixado na aprovação do orçamento.""")
+    @ApiResponse(responseCode = "201", description = "Item incluído; devolve a OS atualizada.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA` ou `ITEM_NAO_ENCONTRADO`.")
+    @ApiResponse(responseCode = "422", description = "`ORDEM_FORA_DE_DIAGNOSTICO` ou `QUANTIDADE_INVALIDA`.")
     @PostMapping("/{id}/itens")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    OrdemServicoDTO incluirItem(@PathVariable Long id, @Valid @RequestBody IncluirItemRequest request) {
+    OrdemServicoDTO incluirItem(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id,
+            @Valid @RequestBody IncluirItemRequest request) {
         return incluirItem.executar(id, request.itemId(), request.quantidade());
     }
 
+    @Operation(summary = "Remover peça ou insumo da OS", description = "Remove o item da OS em diagnóstico.")
+    @ApiResponse(responseCode = "204", description = "Item removido.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
+    @ApiResponse(responseCode = "422", description = "`ORDEM_FORA_DE_DIAGNOSTICO`.")
     @DeleteMapping("/{id}/itens/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    void removerItem(@PathVariable Long id, @PathVariable Long itemId) {
+    void removerItem(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id,
+            @Parameter(description = "Id do item de estoque.", example = "1")
+            @PathVariable Long itemId) {
         removerItem.executar(id, itemId);
     }
 
+    @Operation(summary = "Gerar orçamento", description = """
+            Conclui o diagnóstico: calcula o total (serviços + peças e insumos) e envia a OS para \
+            `AGUARDANDO_APROVACAO`, à espera da decisão do cliente.""")
+    @ApiResponse(responseCode = "200", description = "OS em `AGUARDANDO_APROVACAO` com o `total`.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
+    @ApiResponse(responseCode = "422",
+            description = "`ORDEM_FORA_DE_DIAGNOSTICO` ou `ORDEM_SEM_SERVICO`: inclua ao menos um serviço.")
     @PostMapping("/{id}/orcamento")
     @Transactional
-    OrdemServicoDTO concluirDiagnostico(@PathVariable Long id) {
+    OrdemServicoDTO concluirDiagnostico(
+            @Parameter(description = "Número da OS.", example = "1") @PathVariable Long id) {
         return concluirDiagnostico.executar(id);
     }
 
+    @Operation(summary = "Finalizar OS",
+            description = "Registra a conclusão dos serviços: a OS vai de `EM_EXECUCAO` para `FINALIZADA`.")
+    @ApiResponse(responseCode = "200", description = "OS em `FINALIZADA`.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
+    @ApiResponse(responseCode = "422", description = "`TRANSICAO_INVALIDA`: a OS não está `EM_EXECUCAO`.")
     @PostMapping("/{id}/finalizacao")
     @Transactional
-    OrdemServicoDTO finalizar(@PathVariable Long id) {
+    OrdemServicoDTO finalizar(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id) {
         return finalizar.executar(id);
     }
 
+    @Operation(summary = "Entregar veículo",
+            description = "Registra a entrega do veículo ao cliente: a OS vai de `FINALIZADA` para `ENTREGUE`.")
+    @ApiResponse(responseCode = "200", description = "OS em `ENTREGUE`.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
+    @ApiResponse(responseCode = "422", description = "`TRANSICAO_INVALIDA`: a OS não está `FINALIZADA`.")
     @PostMapping("/{id}/entrega")
     @Transactional
-    OrdemServicoDTO entregar(@PathVariable Long id) {
+    OrdemServicoDTO entregar(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id) {
         return entregar.executar(id);
     }
 
+    @Operation(summary = "Listar OS", description = """
+            Lista as OS em páginas, da mais recente para a mais antiga, com status, total e data de abertura.""")
+    @ApiResponse(responseCode = "200", description = "Página com o resumo das OS.")
     @GetMapping
     @Transactional(readOnly = true)
     Pagina<OrdemServicoResumoDTO> listar(@RequestParam(defaultValue = "0") int pagina,
@@ -124,12 +202,20 @@ public class OrdemServicoController {
         return listar.executar(pagina, tamanho);
     }
 
+    @Operation(summary = "Detalhar OS",
+            description = "Devolve a OS com serviços, peças e insumos, total e histórico de status com data e hora.")
+    @ApiResponse(responseCode = "200", description = "OS detalhada.")
+    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA`.")
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    OrdemServicoDTO detalhar(@PathVariable Long id) {
+    OrdemServicoDTO detalhar(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id) {
         return detalhar.executar(id);
     }
 
+    @Operation(summary = "Tempo médio de execução", description = """
+            Média, em minutos, do tempo entre a aprovação (`EM_EXECUCAO`) e a finalização (`FINALIZADA`) \
+            das OS já finalizadas ou entregues. Sem OS finalizada, `mediaMinutos` vem nulo.""")
+    @ApiResponse(responseCode = "200", description = "Média e quantidade de OS consideradas.")
     @GetMapping("/tempo-medio-execucao")
     @Transactional(readOnly = true)
     TempoMedioExecucaoDTO tempoMedioExecucao() {

@@ -25,7 +25,8 @@ RECEBIDA → EM_DIAGNOSTICO → AGUARDANDO_APROVACAO → EM_EXECUCAO → FINALIZ
 
 | Ação | Endpoint | Status resultante |
 | --- | --- | --- |
-| Abrir OS com CPF/CNPJ e placa | `POST /ordens-servico` | `RECEBIDA` → `EM_DIAGNOSTICO` |
+| Abrir OS com CPF/CNPJ e placa | `POST /ordens-servico` | `RECEBIDA` |
+| Iniciar o diagnóstico | `POST /ordens-servico/{id}/diagnostico` | `EM_DIAGNOSTICO` |
 | Incluir/remover serviços e itens | `POST`/`DELETE /ordens-servico/{id}/servicos` e `/itens` | `EM_DIAGNOSTICO` |
 | Gerar orçamento (serviços + itens) | `POST /ordens-servico/{id}/orcamento` | `AGUARDANDO_APROVACAO` |
 | Cliente aprova (baixa o estoque, tudo ou nada) | `POST /cliente/ordens-servico/{id}/aprovacao` com `{"cpfCnpj"}` do titular | `EM_EXECUCAO` |
@@ -157,7 +158,7 @@ Envie o token retornado no cabeçalho `Authorization: Bearer <token>`. No Swagge
 | Acesso | Rotas |
 | --- | --- |
 | Público | `POST /autenticacao`, Swagger/OpenAPI |
-| Público (cliente da oficina) | `GET /cliente/ordens-servico/{id}?cpfCnpj=` (andamento), `POST /cliente/ordens-servico/{id}/aprovacao` e `POST /cliente/ordens-servico/{id}/rejeicao` (corpo `{"cpfCnpj": "..."}`) |
+| Público (cliente da oficina) | `GET /cliente/ordens-servico?cpfCnpj=` (lista das próprias OS), `GET /cliente/ordens-servico/{id}?cpfCnpj=` (andamento), `POST /cliente/ordens-servico/{id}/aprovacao` e `POST /cliente/ordens-servico/{id}/rejeicao` (corpo `{"cpfCnpj": "..."}`) |
 | JWT | `/clientes`, `/veiculos`, `/servicos`, `/itens` (CRUD e entradas de estoque), `/ordens-servico` (abertura, componentes, orçamento, finalização, entrega, listagem, detalhamento e `GET /ordens-servico/tempo-medio-execucao`) |
 
 O cliente final não é autenticado no MVP (decisão AD-001 em [`.specs/STATE.md`](.specs/STATE.md)). Em vez de login, as rotas do cliente exigem o número da OS e o CPF/CNPJ do titular; se não coincidirem, a resposta é a mesma de uma OS inexistente (404), sem revelar dados.
@@ -170,7 +171,7 @@ Todas as respostas de erro seguem o formato `{"codigo", "mensagem", "campos", "d
 | --- | --- |
 | 400 | Requisição inválida: campo obrigatório, JSON malformado, parâmetro de tipo inválido |
 | 401 | Token ausente ou inválido |
-| 404 | Recurso ou rota inexistente |
+| 404 | Recurso ou rota inexistente, seja o do caminho (`/ordens-servico/99`) ou o referenciado no corpo (`clienteId`, `servicoId`, `itemId`, CPF/CNPJ e placa na abertura da OS) |
 | 405 / 415 | Método HTTP ou tipo de conteúdo não suportado |
 | 409 | Conflito: CPF/CNPJ, placa, SKU ou nome de serviço duplicado; remoção de registro em uso |
 | 422 | Regra de negócio: CPF/CNPJ ou placa inválidos, transição de status inválida, saldo insuficiente |
@@ -199,6 +200,7 @@ O banco local se chama `oficina` (usuário e senha `oficina`), com schema `publi
 │   ├── fase1-tech-challenge.md      # enunciado
 │   └── ddd/
 │       ├── linguagem-ubiqua.md
+│       ├── modelo-de-dominio.md     # agregados, entidades e objetos de valor ligados ao código
 │       ├── c4/                      # C4: contexto, container e componentes (Mermaid)
 │       └── event-storming/          # fluxo da OS e de peças e insumos
 ├── .specs/                          # roadmap, decisões (STATE) e specs por feature
@@ -218,6 +220,7 @@ O banco local se chama `oficina` (usuário e senha `oficina`), com schema `publi
 ## Documentação DDD
 
 - [Linguagem Ubíqua e decisões do MVP](docs/ddd/linguagem-ubiqua.md)
+- [Modelo de domínio: agregados, entidades e objetos de valor](docs/ddd/modelo-de-dominio.md)
 - [Event Storming — fluxo de Ordem de Serviço](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=0-1&t=hixmrFlZPOJZbcMW-1)
 - [Event Storming — fluxo de peças e insumos](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=2330-5454&t=wrvbbnXQTibMaU8n-1)
 - [Modelo C4](https://www.figma.com/board/tUNm5eJIG34rxl3cYE9nFQ/Event-storming-18SOAT?node-id=2405-7907&t=wrvbbnXQTibMaU8n-1)

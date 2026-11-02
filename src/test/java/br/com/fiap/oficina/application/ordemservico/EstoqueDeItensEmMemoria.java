@@ -1,6 +1,7 @@
 package br.com.fiap.oficina.application.ordemservico;
 
 import br.com.fiap.oficina.domain.DomainException;
+import br.com.fiap.oficina.domain.NaoEncontradoException;
 import br.com.fiap.oficina.domain.ordemservico.EstoqueDeItens;
 import br.com.fiap.oficina.domain.ordemservico.ItemCotado;
 import br.com.fiap.oficina.domain.ordemservico.ItemDaOrdem;
@@ -27,7 +28,7 @@ class EstoqueDeItensEmMemoria implements EstoqueDeItens {
     public ItemCotado cotar(Long itemId) {
         ItemCotado item = catalogo.get(itemId);
         if (item == null) {
-            throw new DomainException("ITEM_NAO_ENCONTRADO", "Item nao encontrado");
+            throw new NaoEncontradoException("ITEM_NAO_ENCONTRADO", "Item nao encontrado");
         }
         return item;
     }

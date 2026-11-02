@@ -35,7 +35,7 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
         entity.placa = ordem.getPlaca();
         entity.status = ordem.getStatus();
         entity.total = ordem.getTotal();
-        entity.abertaEm = ordem.getHistorico().get(0).dataHora();
+        entity.abertaEm = ordem.getAbertaEm();
         ordem.getServicos().forEach(s -> entity.servicos.add(paraEmbutido(s)));
         ordem.getItens().forEach(i -> entity.itens.add(paraEmbutido(i)));
         ordem.getHistorico().forEach(m -> entity.historico.add(paraEntity(m)));
@@ -49,8 +49,19 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
 
     @Override
     public Pagina<OrdemServico> listar(int pagina, int tamanho) {
-        Page<OrdemServicoEntity> page = jpa.findAll(
-                PageRequest.of(pagina, tamanho, Sort.by(Sort.Order.desc("abertaEm"), Sort.Order.desc("id"))));
+        return paraPagina(jpa.findAll(maisNovasPrimeiro(pagina, tamanho)), pagina, tamanho);
+    }
+
+    @Override
+    public Pagina<OrdemServico> listarPorCpfCnpj(String cpfCnpj, int pagina, int tamanho) {
+        return paraPagina(jpa.findByCpfCnpj(cpfCnpj, maisNovasPrimeiro(pagina, tamanho)), pagina, tamanho);
+    }
+
+    private static PageRequest maisNovasPrimeiro(int pagina, int tamanho) {
+        return PageRequest.of(pagina, tamanho, Sort.by(Sort.Order.desc("abertaEm"), Sort.Order.desc("id")));
+    }
+
+    private static Pagina<OrdemServico> paraPagina(Page<OrdemServicoEntity> page, int pagina, int tamanho) {
         return new Pagina<>(page.map(OrdemServicoRepositoryImpl::paraModelo).getContent(), pagina, tamanho,
                 page.getTotalElements());
     }

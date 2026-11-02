@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.fiap.oficina.domain.DomainException;
+import br.com.fiap.oficina.domain.NaoEncontradoException;
 import br.com.fiap.oficina.domain.ordemservico.EstoqueDeItens;
 import br.com.fiap.oficina.domain.ordemservico.ItemCotado;
 import br.com.fiap.oficina.domain.ordemservico.ItemDaOrdem;
@@ -44,8 +45,8 @@ class EstoqueDeItensImplIT {
     }
 
     @Test
-    void itemInexistenteLancaDomainExceptionDe422() {
-        assertThatThrownBy(() -> estoque.cotar(99L)).isExactlyInstanceOf(DomainException.class);
+    void itemInexistenteLancaNaoEncontrado() {
+        assertThatThrownBy(() -> estoque.cotar(99L)).isInstanceOf(NaoEncontradoException.class);
     }
 
     @Test

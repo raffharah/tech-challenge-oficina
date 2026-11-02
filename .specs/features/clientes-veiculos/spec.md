@@ -66,6 +66,8 @@ A oficina perde o histórico de clientes e veículos. O MVP exige CRUD de client
 3. IF a entrada não atende ao formato de CPF ou aos formatos válidos de CNPJ THEN o sistema SHALL responder 422.
 4. WHEN a busca contém letras minúsculas em um CNPJ alfanumérico THEN o sistema SHALL normalizá-las para maiúsculas antes da comparação.
 
+> **Revisado em 2026-11-02 (AD-006):** na API, a busca virou filtro opcional de `GET /clientes`; CPF/CNPJ sem cadastro responde 200 com página vazia em vez de 404. A busca com 404 segue no caso de uso, usada na abertura da OS. Ver [`ajustes-revisao`](../ajustes-revisao/spec.md) (REV-02).
+
 **Independent Test**: Buscar o mesmo CPF ou CNPJ alfanumérico com minúsculas, máscara ou sem máscara.
 
 ---

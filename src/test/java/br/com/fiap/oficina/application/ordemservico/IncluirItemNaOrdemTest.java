@@ -3,7 +3,7 @@ package br.com.fiap.oficina.application.ordemservico;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import br.com.fiap.oficina.domain.DomainException;
+import br.com.fiap.oficina.domain.NaoEncontradoException;
 import br.com.fiap.oficina.domain.ordemservico.EstoqueDeItens;
 import br.com.fiap.oficina.domain.ordemservico.ItemCotado;
 import java.math.BigDecimal;
@@ -30,10 +30,10 @@ class IncluirItemNaOrdemTest {
     }
 
     @Test
-    void itemInexistenteLancaDomainException() {
+    void itemInexistenteLancaNaoEncontrado() {
         Long ordemId = OrdemServicoEmDiagnostico.salvarEm(ordens);
 
-        assertThatThrownBy(() -> incluir.executar(ordemId, 99L, 1)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> incluir.executar(ordemId, 99L, 1)).isInstanceOf(NaoEncontradoException.class);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getItens()).isEmpty();
     }
 }

@@ -4,6 +4,7 @@ import br.com.fiap.oficina.domain.NaoEncontradoException;
 import br.com.fiap.oficina.domain.Pagina;
 import br.com.fiap.oficina.domain.cliente.ClienteRepository;
 import br.com.fiap.oficina.domain.cliente.CpfCnpj;
+import java.util.List;
 
 public class ConsultarClientes {
 
@@ -22,8 +23,14 @@ public class ConsultarClientes {
                 .orElseThrow(ConsultarClientes::naoEncontrado);
     }
 
-    public Pagina<ClienteDTO> listar(int pagina, int tamanho) {
-        return clientes.listar(pagina, tamanho).map(ClienteDTO::de);
+    // cpfCnpj é filtro opcional: sem ele lista todos; com ele devolve a página com 0 ou 1 cliente
+    public Pagina<ClienteDTO> listar(String cpfCnpj, int pagina, int tamanho) {
+        if (cpfCnpj == null || cpfCnpj.isBlank()) {
+            return clientes.listar(pagina, tamanho).map(ClienteDTO::de);
+        }
+        List<ClienteDTO> encontrados = clientes.buscarPorCpfCnpj(new CpfCnpj(cpfCnpj)).map(ClienteDTO::de)
+                .stream().toList();
+        return Pagina.de(encontrados, pagina, tamanho);
     }
 
     private static NaoEncontradoException naoEncontrado() {
