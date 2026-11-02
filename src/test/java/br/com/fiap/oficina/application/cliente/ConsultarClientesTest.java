@@ -23,21 +23,47 @@ class ConsultarClientesTest {
     }
 
     @Test
-    void buscaCnpjAlfanumericoComMinusculas() {
-        ClienteDTO criado = cadastrar.executar(new CadastrarClienteDTO("Oficina", "12ABC34501DE35"));
-
-        assertThat(consultar.buscarPorCpfCnpj("12.abc.345/01de-35")).isEqualTo(criado);
-    }
-
-    @Test
     void cpfCnpjNaoCadastradoGeraNaoEncontrado() {
         assertThatThrownBy(() -> consultar.buscarPorCpfCnpj("52998224725"))
                 .isInstanceOf(NaoEncontradoException.class);
     }
 
     @Test
-    void entradaForaDoFormatoGeraErroDeDominio() {
-        assertThatThrownBy(() -> consultar.buscarPorCpfCnpj("123")).isInstanceOf(DomainException.class);
+    void filtraPorCpfComESemMascara() {
+        ClienteDTO criado = cadastrar.executar(new CadastrarClienteDTO("Maria", "52998224725"));
+        cadastrar.executar(new CadastrarClienteDTO("Oficina", "11222333000181"));
+
+        assertThat(consultar.listar("529.982.247-25", 0, 20).itens()).containsExactly(criado);
+        assertThat(consultar.listar("52998224725", 0, 20).itens()).containsExactly(criado);
+        assertThat(consultar.listar("52998224725", 0, 20).total()).isEqualTo(1);
+    }
+
+    @Test
+    void filtraCnpjAlfanumericoComMinusculas() {
+        ClienteDTO criado = cadastrar.executar(new CadastrarClienteDTO("Oficina", "12ABC34501DE35"));
+
+        assertThat(consultar.listar("12.abc.345/01de-35", 0, 20).itens()).containsExactly(criado);
+    }
+
+    @Test
+    void filtroSemClienteDevolvePaginaVazia() {
+        Pagina<ClienteDTO> pagina = consultar.listar("52998224725", 0, 20);
+
+        assertThat(pagina.itens()).isEmpty();
+        assertThat(pagina.total()).isZero();
+    }
+
+    @Test
+    void filtroForaDoFormatoGeraErroDeDominio() {
+        assertThatThrownBy(() -> consultar.listar("123", 0, 20)).isInstanceOf(DomainException.class);
+    }
+
+    @Test
+    void filtroEmBrancoListaTodos() {
+        cadastrar.executar(new CadastrarClienteDTO("Maria", "52998224725"));
+        cadastrar.executar(new CadastrarClienteDTO("Oficina", "11222333000181"));
+
+        assertThat(consultar.listar(" ", 0, 20).total()).isEqualTo(2);
     }
 
     @Test
@@ -58,7 +84,7 @@ class ConsultarClientesTest {
         cadastrar.executar(new CadastrarClienteDTO("Oficina", "11222333000181"));
         cadastrar.executar(new CadastrarClienteDTO("Outra", "12ABC34501DE35"));
 
-        Pagina<ClienteDTO> pagina = consultar.listar(1, 2);
+        Pagina<ClienteDTO> pagina = consultar.listar(null, 1, 2);
 
         assertThat(pagina.itens()).extracting(ClienteDTO::nome).containsExactly("Outra");
         assertThat(pagina.total()).isEqualTo(3);

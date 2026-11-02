@@ -60,17 +60,11 @@ public class ClienteController {
         return consultar.buscarPorId(id);
     }
 
-    @GetMapping(params = "cpfCnpj")
-    @Transactional(readOnly = true)
-    ClienteDTO buscarPorCpfCnpj(@RequestParam String cpfCnpj) {
-        return consultar.buscarPorCpfCnpj(cpfCnpj);
-    }
-
     @GetMapping
     @Transactional(readOnly = true)
-    Pagina<ClienteDTO> listar(@RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "20") int tamanho) {
-        return consultar.listar(pagina, tamanho);
+    Pagina<ClienteDTO> listar(@RequestParam(required = false) String cpfCnpj,
+            @RequestParam(defaultValue = "0") int pagina, @RequestParam(defaultValue = "20") int tamanho) {
+        return consultar.listar(cpfCnpj, pagina, tamanho);
     }
 
     @DeleteMapping("/{id}")

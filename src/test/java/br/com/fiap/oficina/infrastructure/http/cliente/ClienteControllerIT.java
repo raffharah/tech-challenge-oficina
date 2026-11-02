@@ -128,22 +128,38 @@ class ClienteControllerIT {
     }
 
     @Test
-    void buscaPorCpfCnpjComMascaraEMinusculas() throws Exception {
+    void listaSemFiltroDevolveTodos() throws Exception {
+        cadastrar("Maria", "52998224725");
+        cadastrar("Alfa", "12ABC34501DE35");
+
+        mvc.perform(get("/clientes").with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(2))
+                .andExpect(jsonPath("$.pagina").value(0))
+                .andExpect(jsonPath("$.tamanho").value(20));
+    }
+
+    @Test
+    void filtraPorCpfCnpjComMascaraEMinusculas() throws Exception {
         cadastrar("Maria", "52998224725");
         cadastrar("Alfa", "12ABC34501DE35");
 
         mvc.perform(get("/clientes").param("cpfCnpj", "529.982.247-25").with(jwt()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Maria"));
+                .andExpect(jsonPath("$.total").value(1))
+                .andExpect(jsonPath("$.itens[0].nome").value("Maria"));
         mvc.perform(get("/clientes").param("cpfCnpj", "12.abc.345/01de-35").with(jwt()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Alfa"));
+                .andExpect(jsonPath("$.total").value(1))
+                .andExpect(jsonPath("$.itens[0].nome").value("Alfa"));
     }
 
     @Test
-    void buscaPorCpfCnpjNaoCadastradoRetorna404EInvalidoRetorna422() throws Exception {
+    void filtroNaoCadastradoDevolvePaginaVaziaEInvalidoRetorna422() throws Exception {
         mvc.perform(get("/clientes").param("cpfCnpj", "52998224725").with(jwt()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(0))
+                .andExpect(jsonPath("$.itens.length()").value(0));
         mvc.perform(get("/clientes").param("cpfCnpj", "123").with(jwt()))
                 .andExpect(status().isUnprocessableEntity());
     }

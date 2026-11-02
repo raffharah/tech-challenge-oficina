@@ -36,10 +36,7 @@ class ClienteRepositoryEmMemoria implements ClienteRepository {
 
     @Override
     public Pagina<Cliente> listar(int pagina, int tamanho) {
-        List<Cliente> todos = new ArrayList<>(armazenados.values());
-        int de = Math.min(pagina * tamanho, todos.size());
-        int ate = Math.min(de + tamanho, todos.size());
-        return new Pagina<>(todos.subList(de, ate), pagina, tamanho, todos.size());
+        return Pagina.de(new ArrayList<>(armazenados.values()), pagina, tamanho);
     }
 
     @Override
