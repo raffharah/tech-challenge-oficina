@@ -158,7 +158,7 @@ Envie o token retornado no cabeçalho `Authorization: Bearer <token>`. No Swagge
 | Acesso | Rotas |
 | --- | --- |
 | Público | `POST /autenticacao`, Swagger/OpenAPI |
-| Público (cliente da oficina) | `GET /cliente/ordens-servico/{id}?cpfCnpj=` (andamento), `POST /cliente/ordens-servico/{id}/aprovacao` e `POST /cliente/ordens-servico/{id}/rejeicao` (corpo `{"cpfCnpj": "..."}`) |
+| Público (cliente da oficina) | `GET /cliente/ordens-servico?cpfCnpj=` (lista das próprias OS), `GET /cliente/ordens-servico/{id}?cpfCnpj=` (andamento), `POST /cliente/ordens-servico/{id}/aprovacao` e `POST /cliente/ordens-servico/{id}/rejeicao` (corpo `{"cpfCnpj": "..."}`) |
 | JWT | `/clientes`, `/veiculos`, `/servicos`, `/itens` (CRUD e entradas de estoque), `/ordens-servico` (abertura, componentes, orçamento, finalização, entrega, listagem, detalhamento e `GET /ordens-servico/tempo-medio-execucao`) |
 
 O cliente final não é autenticado no MVP (decisão AD-001 em [`.specs/STATE.md`](.specs/STATE.md)). Em vez de login, as rotas do cliente exigem o número da OS e o CPF/CNPJ do titular; se não coincidirem, a resposta é a mesma de uma OS inexistente (404), sem revelar dados.

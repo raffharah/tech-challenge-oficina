@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 class OrdemServicoRepositoryEmMemoria implements OrdemServicoRepository {
 
@@ -28,13 +29,19 @@ class OrdemServicoRepositoryEmMemoria implements OrdemServicoRepository {
 
     @Override
     public Pagina<OrdemServico> listar(int pagina, int tamanho) {
-        List<OrdemServico> maisNovasPrimeiro = armazenadas.keySet().stream()
-                .map(id -> copia(id, armazenadas.get(id)))
+        return Pagina.de(maisNovasPrimeiro().toList(), pagina, tamanho);
+    }
+
+    @Override
+    public Pagina<OrdemServico> listarPorCpfCnpj(String cpfCnpj, int pagina, int tamanho) {
+        return Pagina.de(maisNovasPrimeiro().filter(o -> o.getCpfCnpj().equals(cpfCnpj)).toList(), pagina,
+                tamanho);
+    }
+
+    private Stream<OrdemServico> maisNovasPrimeiro() {
+        return armazenadas.keySet().stream().map(id -> copia(id, armazenadas.get(id)))
                 .sorted(Comparator.comparing((OrdemServico o) -> o.getHistorico().get(0).dataHora()).reversed()
-                        .thenComparing(OrdemServico::getId, Comparator.reverseOrder()))
-                .toList();
-        return new Pagina<>(maisNovasPrimeiro.stream().skip((long) pagina * tamanho).limit(tamanho).toList(),
-                pagina, tamanho, maisNovasPrimeiro.size());
+                        .thenComparing(OrdemServico::getId, Comparator.reverseOrder()));
     }
 
     @Override

@@ -104,5 +104,36 @@ class ConsultaClienteIT {
     void cpfComFormatoInvalidoRetorna422() throws Exception {
         mvc.perform(get("/cliente/ordens-servico/1").param("cpfCnpj", "123"))
                 .andExpect(status().isUnprocessableEntity());
+        mvc.perform(get("/cliente/ordens-servico").param("cpfCnpj", "123"))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void titularListaSoAsPropriasOrdensSemToken() throws Exception {
+        jdbc.update("insert into cliente (nome, cpf_cnpj) values ('Joao', '11144477735')");
+        jdbc.update("insert into veiculo (placa, marca, modelo, ano, cliente_id) values ('XYZ9K88', 'VW', 'Gol', 2019, 2)");
+        int primeira = abrir("2026-01-10T10:00:00Z");
+        em("2026-01-11T10:00:00Z");
+        mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"cpfCnpj\":\"11144477735\",\"placa\":\"XYZ9K88\"}")).andExpect(status().isCreated());
+        int segunda = abrir("2026-01-12T10:00:00Z");
+        orcar(segunda, "2026-01-12T11:00:00Z");
+
+        mvc.perform(get("/cliente/ordens-servico").param("cpfCnpj", "529.982.247-25"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(2))
+                .andExpect(jsonPath("$.itens[0].id").value(segunda))
+                .andExpect(jsonPath("$.itens[0].status").value("AGUARDANDO_APROVACAO"))
+                .andExpect(jsonPath("$.itens[0].total").value(100.00))
+                .andExpect(jsonPath("$.itens[1].id").value(primeira))
+                .andExpect(jsonPath("$.itens[1].status").value("RECEBIDA"));
+    }
+
+    @Test
+    void titularSemOrdensRecebePaginaVaziaEFaltaDeCpfRetorna400() throws Exception {
+        mvc.perform(get("/cliente/ordens-servico").param("cpfCnpj", "11144477735"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(0));
+        mvc.perform(get("/cliente/ordens-servico")).andExpect(status().isBadRequest());
     }
 }

@@ -121,6 +121,8 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Fornecedor | Reposição, orçamento de fornecedor e garantia ficam fora do MVP. A entrada de estoque é manual. |
 | Prazo | Informado manualmente no orçamento. O atraso é verificado por rotina agendada diária. |
 | Aguardando aprovação | Não expira no MVP. |
+| Início do diagnóstico | A OS nasce Recebida e só passa a Em diagnóstico quando o funcionário inicia o diagnóstico. Serviços, peças e insumos só entram na OS depois disso. |
+| Acompanhamento pelo cliente | O cliente, sem login, lista as próprias OS e consulta cada uma informando o CPF/CNPJ do titular. Quem não tem OS recebe lista vazia, sem revelar se o documento é de um cliente cadastrado. |
 | Catálogo de serviços | Serviço tem nome único (sem diferenciar maiúsculas) e valor padrão maior que zero. A OS copia o valor padrão ao incluir o serviço; alterar o catálogo não muda OS existentes. Serviço referenciado por OS não é removido. |
 | Itens de estoque | Item tem SKU único (sem diferenciar maiúsculas), tipo peça ou insumo, preço de venda maior que zero e saldo físico. O saldo muda só por entrada e baixa, nunca fica negativo. A baixa de vários itens é tudo ou nada. |
 | Agregados do Estoque | Item de Estoque (saldo físico, saldo reservado, estoque mínimo, situação) e Reserva (itens reservados por OS). |

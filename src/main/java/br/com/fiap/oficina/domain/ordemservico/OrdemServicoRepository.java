@@ -13,6 +13,8 @@ public interface OrdemServicoRepository {
 
     Pagina<OrdemServico> listar(int pagina, int tamanho);
 
+    Pagina<OrdemServico> listarPorCpfCnpj(String cpfCnpj, int pagina, int tamanho);
+
     List<OrdemServico> listarFinalizadas();
 
     default OrdemServico obterPorId(Long id) {
