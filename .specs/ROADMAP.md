@@ -66,7 +66,7 @@ Design: `fundacao-plataforma/design.md` (padrões de todos os escopos) e `abertu
 O corte diverge de documentos que hoje se declaram fonte de verdade. Atualizar antes de implementar:
 
 - ~~`docs/ddd/linguagem-ubiqua.md`, Decisões do MVP~~: resolvido em 2026-11-02 (`ajustes-revisao`).
-- `AGENTS.md`: árvore de exemplo cita `cobranca/`, `Reserva`, `ReservarItens`, `SistemaDePagamentos`; tabela de contextos inclui `cobranca`.
+- ~~`AGENTS.md`~~: resolvido em 2026-11-02; a árvore de exemplo cita só classes existentes e `cobranca` aparece como reservado.
 - ~~`docs/ddd/c4/`~~: resolvido no alinhamento do C4 ao código; os sistemas não implementados só são citados como fora do MVP.
 
 ## Entregáveis fora das specs
