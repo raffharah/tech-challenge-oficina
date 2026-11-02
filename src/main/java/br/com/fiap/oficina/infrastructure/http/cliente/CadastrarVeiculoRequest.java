@@ -1,8 +1,18 @@
 package br.com.fiap.oficina.infrastructure.http.cliente;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record CadastrarVeiculoRequest(@NotBlank String placa, @NotBlank String marca, @NotBlank String modelo,
-        @NotNull Integer ano, @NotNull Long clienteId) {
+public record CadastrarVeiculoRequest(
+        @Schema(description = "Placa no padrão antigo ou Mercosul, com ou sem hífen.", example = "BRA2E19")
+        @NotBlank String placa,
+        @Schema(description = "Marca do veículo.", example = "Volkswagen")
+        @NotBlank String marca,
+        @Schema(description = "Modelo do veículo.", example = "Gol 1.0")
+        @NotBlank String modelo,
+        @Schema(description = "Ano de fabricação, de 1900 até o ano seguinte ao atual.", example = "2019")
+        @NotNull Integer ano,
+        @Schema(description = "Id do cliente dono do veículo.", example = "1")
+        @NotNull Long clienteId) {
 }
