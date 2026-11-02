@@ -180,6 +180,10 @@ public class OrdemServico {
         return Collections.unmodifiableList(itens);
     }
 
+    public Instant getAbertaEm() {
+        return historico.get(0).dataHora();
+    }
+
     public List<MudancaDeStatus> getHistorico() {
         return Collections.unmodifiableList(historico);
     }

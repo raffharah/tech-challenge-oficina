@@ -35,7 +35,7 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
         entity.placa = ordem.getPlaca();
         entity.status = ordem.getStatus();
         entity.total = ordem.getTotal();
-        entity.abertaEm = ordem.getHistorico().get(0).dataHora();
+        entity.abertaEm = ordem.getAbertaEm();
         ordem.getServicos().forEach(s -> entity.servicos.add(paraEmbutido(s)));
         ordem.getItens().forEach(i -> entity.itens.add(paraEmbutido(i)));
         ordem.getHistorico().forEach(m -> entity.historico.add(paraEntity(m)));

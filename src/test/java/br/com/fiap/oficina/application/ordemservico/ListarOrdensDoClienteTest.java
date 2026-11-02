@@ -29,8 +29,10 @@ class ListarOrdensDoClienteTest {
 
         assertThat(pagina.total()).isEqualTo(2);
         assertThat(pagina.itens()).containsExactly(
-                new OrdemServicoResumoDTO(3L, "52998224725", "ABC1D23", StatusOrdemServico.RECEBIDA, null),
-                new OrdemServicoResumoDTO(1L, "52998224725", "ABC1D23", StatusOrdemServico.RECEBIDA, null));
+                new OrdemServicoResumoDTO(3L, "52998224725", "ABC1D23", StatusOrdemServico.RECEBIDA, null,
+                        Instant.parse("2026-01-12T10:00:00Z")),
+                new OrdemServicoResumoDTO(1L, "52998224725", "ABC1D23", StatusOrdemServico.RECEBIDA, null,
+                        Instant.parse("2026-01-10T10:00:00Z")));
     }
 
     @Test

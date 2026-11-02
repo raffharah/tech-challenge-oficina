@@ -40,7 +40,7 @@ class OrdemServicoRepositoryEmMemoria implements OrdemServicoRepository {
 
     private Stream<OrdemServico> maisNovasPrimeiro() {
         return armazenadas.keySet().stream().map(id -> copia(id, armazenadas.get(id)))
-                .sorted(Comparator.comparing((OrdemServico o) -> o.getHistorico().get(0).dataHora()).reversed()
+                .sorted(Comparator.comparing(OrdemServico::getAbertaEm).reversed()
                         .thenComparing(OrdemServico::getId, Comparator.reverseOrder()));
     }
 

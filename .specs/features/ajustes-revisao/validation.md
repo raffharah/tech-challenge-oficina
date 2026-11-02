@@ -23,6 +23,8 @@ Prefixos: `D` = `src/test/java/br/com/fiap/oficina/domain`, `A` = `src/test/java
 | REV-04.1 | `H/ordemservico/ConsultaClienteIT.java:112` sem token, só do titular, ordem e campos; `A/ordemservico/ListarOrdensDoClienteTest.java:23`, `:37`; `B/ordemservico/OrdemServicoRepositoryImplIT.java:150` | ✅ |
 | REV-04.2 | `H/ordemservico/ConsultaClienteIT.java:133`; `A/ordemservico/ListarOrdensDoClienteTest.java:49` | ✅ |
 | REV-04.3 | `H/ordemservico/ConsultaClienteIT.java:104` (422), `:133` (400) | ✅ |
+| REV-07 | `A/ordemservico/IncluirServicoNaOrdemTest.java:35`; `A/ordemservico/IncluirItemNaOrdemTest.java:33`; `src/test/java/br/com/fiap/oficina/infrastructure/gateway/estoque/EstoqueDeItensImplIT.java:47`; `H/ordemservico/OrdemServicoComponentesIT.java:100` (404) | ✅ |
+| REV-08 | `D/ordemservico/OrdemServicoTest.java:37`; `A/ordemservico/ListarOrdensServicoTest.java`, `ListarOrdensDoClienteTest.java:23`; `H/ordemservico/AcompanhamentoAdminIT.java`, `ConsultaClienteIT.java:112` (`abertaEm`) | ✅ |
 | REV-05 | `docs/ddd/modelo-de-dominio.md`; Decisões do MVP em `docs/ddd/linguagem-ubiqua.md` | ✅ (documental) |
 | REV-06.1 | `D/ordemservico/OrdemServicoTest.java:37`; `A/ordemservico/AbrirOrdemServicoTest.java:25`; `H/ordemservico/OrdemServicoAberturaIT.java:45` | ✅ |
 | REV-06.2 | `D/ordemservico/OrdemServicoTest.java:49` (data própria); `A/ordemservico/IniciarDiagnosticoTest.java:24`; `H/ordemservico/OrdemServicoAberturaIT.java:65` | ✅ |

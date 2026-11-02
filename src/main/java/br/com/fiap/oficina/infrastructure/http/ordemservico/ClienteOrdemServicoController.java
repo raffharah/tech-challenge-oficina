@@ -73,8 +73,8 @@ public class ClienteOrdemServicoController {
     }
 
     @Operation(summary = "Listar minhas OS", description = """
-            Lista as OS do titular do CPF/CNPJ, da abertura mais recente para a mais antiga, com status \
-            e total. Documento sem OS recebe página vazia.""")
+            Lista as OS do titular do CPF/CNPJ, da mais recente para a mais antiga, com status, total e \
+            data de abertura. Documento sem OS recebe página vazia.""")
     @ApiResponse(responseCode = "200", description = "Página com o resumo das OS do titular.")
     @ApiResponse(responseCode = "400", description = "Parâmetro `cpfCnpj` ausente.")
     @ApiResponse(responseCode = "422", description = "`CPF_CNPJ_INVALIDO`.")

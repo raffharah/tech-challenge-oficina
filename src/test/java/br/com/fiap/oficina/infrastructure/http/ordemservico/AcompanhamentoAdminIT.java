@@ -87,7 +87,9 @@ class AcompanhamentoAdminIT {
                 .andExpect(jsonPath("$.itens[1].id").value(primeira))
                 .andExpect(jsonPath("$.itens[0].cpfCnpj").value("52998224725"))
                 .andExpect(jsonPath("$.itens[0].placa").value("ABC1D23"))
-                .andExpect(jsonPath("$.itens[0].status").value("RECEBIDA"));
+                .andExpect(jsonPath("$.itens[0].status").value("RECEBIDA"))
+                .andExpect(jsonPath("$.itens[0].abertaEm").value("2026-01-11T10:00:00Z"))
+                .andExpect(jsonPath("$.itens[1].abertaEm").value("2026-01-10T10:00:00Z"));
     }
 
     @Test

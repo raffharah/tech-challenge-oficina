@@ -126,7 +126,9 @@ class ConsultaClienteIT {
                 .andExpect(jsonPath("$.itens[0].status").value("AGUARDANDO_APROVACAO"))
                 .andExpect(jsonPath("$.itens[0].total").value(100.00))
                 .andExpect(jsonPath("$.itens[1].id").value(primeira))
-                .andExpect(jsonPath("$.itens[1].status").value("RECEBIDA"));
+                .andExpect(jsonPath("$.itens[0].abertaEm").value("2026-01-12T10:00:00Z"))
+                .andExpect(jsonPath("$.itens[1].status").value("RECEBIDA"))
+                .andExpect(jsonPath("$.itens[1].abertaEm").value("2026-01-10T10:00:00Z"));
     }
 
     @Test

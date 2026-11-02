@@ -19,6 +19,8 @@ A revisão do grupo sobre a entrega da fase 1 encontrou seis pontos de atenção
 - [x] REV-04: cliente lista as próprias OS.
 - [x] REV-05: agregados, entidades e objetos de valor documentados e ligados ao código.
 - [x] REV-06: Recebida e Em diagnóstico como etapas distintas da OS.
+- [x] REV-07: recurso inexistente responde 404 em toda a API (achado da avaliação de coerência).
+- [x] REV-08: listagens de OS mostram a data de abertura (achado da avaliação de coerência).
 
 ## Out of Scope
 
@@ -82,3 +84,11 @@ A revisão do grupo sobre a entrega da fase 1 encontrou seis pontos de atenção
 2. WHEN o funcionário inicia o diagnóstico THEN a OS SHALL ir para `EM_DIAGNOSTICO`, registrando data e hora próprias.
 3. IF a OS não está `RECEBIDA` THEN iniciar o diagnóstico SHALL responder 422 `TRANSICAO_INVALIDA`.
 4. WHILE a OS está `RECEBIDA`, incluir serviço ou item SHALL responder 422 `ORDEM_FORA_DE_DIAGNOSTICO`.
+
+### REV-07: 404 para recurso inexistente
+
+1. IF o funcionário inclui na OS um serviço ou item que não existe THEN o sistema SHALL responder 404 (`SERVICO_NAO_ENCONTRADO` ou `ITEM_NAO_ENCONTRADO`), como já acontece com cliente e veículo (AD-008).
+
+### REV-08: Data de abertura nas listagens
+
+1. WHEN a oficina lista as OS ou o cliente lista as próprias OS THEN cada item SHALL trazer `abertaEm`, a data e hora de abertura.

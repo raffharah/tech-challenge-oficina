@@ -38,6 +38,7 @@ class OrdemServicoTest {
         OrdemServico ordem = aberta();
 
         assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.RECEBIDA);
+        assertThat(ordem.getAbertaEm()).isEqualTo(ABERTURA);
         assertThat(ordem.getVeiculoId()).isEqualTo(7L);
         assertThat(ordem.getCpfCnpj()).isEqualTo("52998224725");
         assertThat(ordem.getPlaca()).isEqualTo("ABC1D23");

@@ -13,6 +13,8 @@
 | T5 | `@Tag`, `@Operation`, `@ApiResponse` e `@Parameter` nos controllers; `@Schema` nos requests; `OpenApiConfig` com descrição geral, `ErroResponse` em 4xx e 401 nas rotas com JWT; `OpenApiIT` exige a cobertura | REV-01 | `9f8f7fd` | Done |
 | T6 | `docs/ddd/modelo-de-dominio.md`; Decisões do MVP alinhadas ao código | REV-05 | `0acbcc7` | Done |
 | T7 | Roteiro do vídeo com listagens e documentação; C4, ROADMAP e specs antigas com as revisões; esta spec | todos | último commit da branch | Done |
+| T8 | Serviço ou item inexistente na OS responde 404; AD-008; `AGENTS.md` com exemplos reais | REV-07 | ver `git log` | Done |
+| T9 | `OrdemServico.getAbertaEm`; `abertaEm` em `OrdemServicoResumoDTO` | REV-08 | ver `git log` | Done |
 
 ## Gate
 
