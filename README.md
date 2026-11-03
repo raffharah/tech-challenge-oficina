@@ -243,6 +243,5 @@ As versões exportadas dos diagramas e os arquivos Markdown de DDD estão em [`d
 ### Entregáveis
 
 - [Repositório no GitHub](https://github.com/raffharah/tech-challenge-oficina), branch `main`.
-- **Pendente:** hash do commit da versão avaliada.
-- **Pendente:** relatório da análise de vulnerabilidades.
-- **Pendente:** link público do vídeo da entrega no YouTube.
+- [Relatório da análise de vulnerabilidades](docs/analise-vulnerabilidades/trivy-check.txt)
+- [Link público do vídeo da entrega no YouTube](https://www.youtube.com/watch?v=hbWY0wh1k_U)
