@@ -34,6 +34,8 @@ flowchart LR
 
 A OS nasce "recebida" e fica nesse status até o funcionário iniciar o diagnóstico, quando vai para "em diagnóstico". O orçamento a leva para "aguardando aprovação". Aprovado, ela vai para "em execução", depois "finalizada" e, após pagamento e retirada, "entregue". Ela volta a "em diagnóstico" em duas situações (recusa parcial do orçamento e problema encontrado no veículo durante o serviço) e termina "cancelada" quando o orçamento é rejeitado ou o pagamento vence.
 
+**Política "Notificar o cliente" (implementada):** cada mudança de status das etapas implementadas (abertura, início do diagnóstico, orçamento, aprovação ou recusa, finalização e entrega) envia ao e-mail do titular uma mensagem com o número da OS, a placa e o novo status; em "aguardando aprovação" ela traz também o total do orçamento. O envio ocorre depois do commit e a falha dele não desfaz a mudança de status (sistema de envio de e-mail, no MVP um servidor SMTP).
+
 ## 3. Fase 1: Criação da OS
 
 A fase vai do pedido do cliente até a aprovação do orçamento e termina no primeiro Ponto Pivotal. Ela tem três partes: identificação do cliente e do veículo, diagnóstico e orçamento, e o tratamento da recusa do orçamento.

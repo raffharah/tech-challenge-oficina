@@ -1,6 +1,6 @@
 # Modelo C4 — Container
 
-O sistema roda como um monólito Spring Boot sobre um PostgreSQL. O schema e o catálogo inicial são preparados por dois containers de execução única, antes da API subir (ver [`docker-compose.yml`](../../../docker-compose.yml)).
+O sistema roda como um monólito Spring Boot sobre um PostgreSQL. O schema e o catálogo inicial são preparados por dois containers de execução única, antes da API subir, e a API entrega os e-mails de status a um servidor SMTP local, o Mailpit (ver [`docker-compose.yml`](../../../docker-compose.yml)).
 
 ```mermaid
 ---
@@ -20,12 +20,14 @@ flowchart TB
         api["<b>API da oficina</b><br/>[Container: Java 21, Spring Boot 4.1]<br/>Monólito modular com a API REST e o Swagger"]
         migration["<b>Migration</b><br/>[Container: Flyway 12.4]<br/>Aplica as migrations versionadas e encerra"]
         seed["<b>Seed</b><br/>[Container: psql]<br/>Cadastra o catálogo da oficina e encerra"]
+        mailpit["<b>Mailpit</b><br/>[Container: axllent/mailpit]<br/>Caixa de e-mail local que recebe as notificações de status"]
         bd[("<b>Banco de dados</b><br/>[Container: PostgreSQL 16]<br/>Clientes, veículos, serviços, itens de estoque e OS")]
     end
 
     funcionario -->|"Usa [JSON/HTTPS, JWT]"| api
     cliente -->|"Consulta e decide o orçamento [JSON/HTTPS]"| api
     api -->|"Lê e grava [JDBC/SQL]"| bd
+    api -->|"Envia o e-mail de status [SMTP]"| mailpit
     migration -->|"Cria e evolui o schema [JDBC/SQL]"| bd
     seed -->|"Insere serviços, peças e insumos [SQL]"| bd
 
@@ -34,7 +36,7 @@ flowchart TB
     classDef apoio fill:#85bbf0,stroke:#5d82a8,color:#000
     class funcionario,cliente pessoa
     class api,bd container
-    class migration,seed apoio
+    class migration,seed,mailpit apoio
     style sistema fill:#ffffff,stroke:#444,stroke-dasharray:6 4,color:#000
 ```
 

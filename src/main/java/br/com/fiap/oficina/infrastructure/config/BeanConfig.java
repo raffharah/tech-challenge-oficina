@@ -214,12 +214,6 @@ public class BeanConfig {
     }
 
     @Bean
-    NotificacaoDeStatus notificacaoDeStatus() {
-        return ordem -> {
-        };
-    }
-
-    @Bean
     ConsultarAndamento consultarAndamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos) {
         return new ConsultarAndamento(ordens, veiculos);
     }

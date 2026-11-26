@@ -11,8 +11,13 @@ spring:
     open-in-view: false
   flyway:
     enabled: true
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
 
 oficina:
+  notificacao:
+    remetente: ${OFICINA_REMETENTE:oficina@oficina.local}
   jwt:
     # Padrão apenas para execução local; sobrescreva com JWT_SEGREDO (mínimo 32 bytes)
     segredo: ${JWT_SEGREDO:segredo-local-apenas-para-demonstracao-0123456789}

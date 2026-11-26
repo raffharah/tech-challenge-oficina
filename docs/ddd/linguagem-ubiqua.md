@@ -126,7 +126,7 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Catálogo de serviços | Serviço tem nome único (sem diferenciar maiúsculas) e valor padrão maior que zero. A OS copia o valor padrão ao incluir o serviço; alterar o catálogo não muda OS existentes. Serviço referenciado por OS não é removido. |
 | Itens de estoque | Item tem SKU único (sem diferenciar maiúsculas), tipo peça ou insumo, preço de venda maior que zero e saldo físico. O saldo muda só por entrada e baixa, nunca fica negativo. A baixa de vários itens é tudo ou nada. |
 | Agregados | Cliente (com e-mail), Veículo, Serviço (catálogo), Ordem de Serviço e Item de Estoque, cada um com raiz e repositório próprios. A OS inclui serviços, peças e insumos desde a abertura, orçamento, histórico de status e a entrega do veículo ("Finaliza Serviço" é a etapa de entrega da OS). Entidades, objetos de valor e o motivo de cada fronteira estão em [Modelo de domínio](modelo-de-dominio.md). |
-| Sistemas externos | E-mail, pagamento e nota fiscal ficam fora do MVP, junto com o contexto Cobrança e Faturamento (agregados Pagamento e Nota Fiscal). O orçamento é disponibilizado ao cliente pela consulta da OS na API. |
+| Sistemas externos | O e-mail entra no MVP só para notificar o cliente a cada mudança de status da OS: o servidor SMTP (Mailpit, na execução local) recebe a mensagem depois do commit, e a falha de envio não desfaz a mudança de status. Pagamento e nota fiscal ficam fora do MVP, junto com o contexto Cobrança e Faturamento (agregados Pagamento e Nota Fiscal). O orçamento é disponibilizado ao cliente pela consulta da OS na API. |
 
 ---
 

@@ -44,6 +44,12 @@ services:
       migration:
         condition: service_completed_successfully
 
+  # Caixa de e-mail local: SMTP na 1025, interface web na 8025
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "${MAILPIT_PORT:-8025}:8025"
+
   app:
     build: .
     ports:
@@ -55,9 +61,12 @@ services:
       JWT_SEGREDO: ${JWT_SEGREDO:-segredo-local-apenas-para-demonstracao-0123456789}
       # O schema é responsabilidade do serviço migration
       SPRING_FLYWAY_ENABLED: "false"
+      MAIL_HOST: mailpit
     depends_on:
       seed:
         condition: service_completed_successfully
+      mailpit:
+        condition: service_started
 
 volumes:
   postgres-data:

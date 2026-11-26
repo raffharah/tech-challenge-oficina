@@ -79,11 +79,12 @@ O Compose sobe, nesta ordem:
 | `postgres` | `postgres:16-alpine` | Banco de dados, com volume `postgres-data` |
 | `migration` | `flyway/flyway:12.4.0-alpine` | Aplica as migrations de `src/main/resources/db/migration` e encerra |
 | `seed` | `postgres:16-alpine` | Executa `docker/seed/seed.sql` (catálogo da oficina) e encerra |
+| `mailpit` | `axllent/mailpit:v1.27` | Caixa de e-mail local: recebe os e-mails de mudança de status da OS (SMTP na 1025, interna) |
 | `app` | build do `Dockerfile` | API na porta 8080, iniciada após o seed; o Flyway da aplicação fica desligado, pois o schema é do serviço `migration` |
 
 O seed é idempotente: ao subir de novo, itens e serviços já existentes não são alterados, preservando o saldo movimentado pelo uso. Para recriar o banco do zero, use `docker compose down -v`.
 
-Variáveis opcionais (com padrão para demonstração): `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_PORT` e `JWT_SEGREDO`.
+Variáveis opcionais (com padrão para demonstração): `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_PORT`, `MAILPIT_PORT` e `JWT_SEGREDO`.
 
 ### Catálogo inicial
 
@@ -138,6 +139,7 @@ Com a aplicação em execução:
 
 - Swagger UI: <http://localhost:8080/swagger-ui/index.html>
 - Especificação OpenAPI: <http://localhost:8080/v3/api-docs>
+- Caixa de e-mail (Mailpit): <http://localhost:8025>
 
 ### Obter o token
 

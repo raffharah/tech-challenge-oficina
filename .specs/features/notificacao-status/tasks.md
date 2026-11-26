@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/notificacao-status/design.md`
 **Pré-requisito**: `abertura-os-completa` concluída (`ClienteDTO.email`)
-**Status**: Fase 1 concluída (T1-T7)
+**Status**: Fase 2 concluída (T8-T10); falta a verificação independente
 
 ---
 
@@ -235,14 +235,14 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `NotificacaoDeStatusImplIT` (`@MockitoBean JavaMailSender`):
+- [x] `NotificacaoDeStatusImplIT` (`@MockitoBean JavaMailSender`):
   - OS levada de `RECEBIDA` a `ENTREGUE` pela API gera 6 envios ao e-mail do titular, com o status de cada etapa (NTF-01.1, NTF-01.2);
   - o e-mail de `AGUARDANDO_APROVACAO` traz o total (NTF-01.3);
   - `SALDO_INSUFICIENTE` não gera envio (NTF-01.4);
   - o envio acontece depois do commit (NTF-01.5);
   - `MailSendException` mantém 200 e o status gravado (NTF-01.6).
-- [ ] `ArquiteturaTest` verde: sem Spring em `domain` e `application` (NTF-01.7)
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `ArquiteturaTest` verde: sem Spring em `domain` e `application` (NTF-01.7)
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -264,8 +264,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `docker compose config` válido
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `docker compose config` válido
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -291,8 +291,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] Os documentos descrevem a notificação implementada
-- [ ] Gate check passes: `./mvnw verify`
+- [x] Os documentos descrevem a notificação implementada
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
