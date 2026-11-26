@@ -35,7 +35,7 @@ class VeiculoRepositoryImplIT {
     }
 
     private Cliente cliente(String cpf) {
-        return clientes.salvar(new Cliente(null, "Dono", new CpfCnpj(cpf)));
+        return clientes.salvar(new Cliente(null, "Dono", new CpfCnpj(cpf), null));
     }
 
     private Veiculo veiculo(String placa, Long clienteId) {

@@ -12,13 +12,24 @@ class ClienteTest {
 
     @Test
     void nomeVazioOuNuloRejeitado() {
-        assertThatThrownBy(() -> new Cliente(null, " ", CPF)).isInstanceOf(DomainException.class);
-        assertThatThrownBy(() -> new Cliente(null, null, CPF)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> new Cliente(null, " ", CPF, null)).isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> new Cliente(null, null, CPF, null)).isInstanceOf(DomainException.class);
+    }
+
+    @Test
+    void clienteNovoNasceSemEmailERegistrarSubstitui() {
+        Cliente cliente = new Cliente(1L, "Maria", CPF, null);
+        assertThat(cliente.getEmail()).isNull();
+
+        cliente.registrarEmail(new Email("a@x.com"));
+        cliente.registrarEmail(new Email("b@x.com"));
+
+        assertThat(cliente.getEmail().valor()).isEqualTo("b@x.com");
     }
 
     @Test
     void renomearMantemCpfCnpj() {
-        Cliente cliente = new Cliente(1L, "Maria", CPF);
+        Cliente cliente = new Cliente(1L, "Maria", CPF, null);
 
         cliente.renomear("Maria Silva");
 
@@ -28,7 +39,7 @@ class ClienteTest {
 
     @Test
     void renomearComNomeVazioRejeitadoMantendoNome() {
-        Cliente cliente = new Cliente(1L, "Maria", CPF);
+        Cliente cliente = new Cliente(1L, "Maria", CPF, null);
 
         assertThatThrownBy(() -> cliente.renomear("")).isInstanceOf(DomainException.class);
         assertThat(cliente.getNome()).isEqualTo("Maria");

@@ -23,6 +23,16 @@ class AtualizarClienteTest {
     }
 
     @Test
+    void renomearMantemEmail() {
+        ClienteDTO criado = new CadastrarCliente(clientes).executar(new CadastrarClienteDTO("Maria", "52998224725"));
+        new RegistrarEmailDoCliente(clientes).executar("52998224725", "maria@oficina.com");
+
+        ClienteDTO dto = atualizar.executar(new AtualizarClienteDTO(criado.id(), "Maria Silva"));
+
+        assertThat(dto.email()).isEqualTo("maria@oficina.com");
+    }
+
+    @Test
     void idInexistenteGeraNaoEncontrado() {
         assertThatThrownBy(() -> atualizar.executar(new AtualizarClienteDTO(99L, "X")))
                 .isInstanceOf(NaoEncontradoException.class);

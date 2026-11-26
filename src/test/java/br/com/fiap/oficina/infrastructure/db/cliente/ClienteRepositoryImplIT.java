@@ -7,6 +7,7 @@ import br.com.fiap.oficina.domain.Pagina;
 import br.com.fiap.oficina.domain.cliente.Cliente;
 import br.com.fiap.oficina.domain.cliente.ClienteRepository;
 import br.com.fiap.oficina.domain.cliente.CpfCnpj;
+import br.com.fiap.oficina.domain.cliente.Email;
 import br.com.fiap.oficina.infrastructure.TestcontainersConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class ClienteRepositoryImplIT {
     @Test
     void salvaEBuscaPorIdECpfCnpj() {
         String cnpj = "12ABC34501DE35";
-        Cliente salvo = clientes.salvar(new Cliente(null, "Oficina", new CpfCnpj(cnpj)));
+        Cliente salvo = clientes.salvar(new Cliente(null, "Oficina", new CpfCnpj(cnpj), null));
 
         assertThat(salvo.getId()).isNotNull();
         assertThat(clientes.buscarPorId(salvo.getId()).orElseThrow().getNome()).isEqualTo("Oficina");
@@ -47,8 +48,17 @@ class ClienteRepositoryImplIT {
     }
 
     @Test
+    void persisteEmailENuloQuandoAusente() {
+        Cliente sem = clientes.salvar(new Cliente(null, "Sem", new CpfCnpj(CPF_A), null));
+        Cliente com = clientes.salvar(new Cliente(null, "Com", new CpfCnpj(CPF_B), new Email("Com@Oficina.com")));
+
+        assertThat(clientes.buscarPorId(sem.getId()).orElseThrow().getEmail()).isNull();
+        assertThat(clientes.buscarPorId(com.getId()).orElseThrow().getEmail().valor()).isEqualTo("com@oficina.com");
+    }
+
+    @Test
     void atualizaNomeMantendoId() {
-        Cliente salvo = clientes.salvar(new Cliente(null, "Maria", new CpfCnpj(CPF_A)));
+        Cliente salvo = clientes.salvar(new Cliente(null, "Maria", new CpfCnpj(CPF_A), null));
         salvo.renomear("Maria Silva");
 
         Cliente atualizado = clientes.salvar(salvo);
@@ -59,7 +69,7 @@ class ClienteRepositoryImplIT {
 
     @Test
     void listaPaginado() {
-        clientes.salvar(new Cliente(null, "Paulo", new CpfCnpj(CPF_B)));
+        clientes.salvar(new Cliente(null, "Paulo", new CpfCnpj(CPF_B), null));
 
         Pagina<Cliente> pagina = clientes.listar(0, 1);
 
@@ -71,7 +81,7 @@ class ClienteRepositoryImplIT {
     @Test
     void removeCliente() {
         String cpf = "39053344705";
-        Cliente salvo = clientes.salvar(new Cliente(null, "Remover", new CpfCnpj(cpf)));
+        Cliente salvo = clientes.salvar(new Cliente(null, "Remover", new CpfCnpj(cpf), null));
 
         clientes.remover(salvo.getId());
 
@@ -81,9 +91,9 @@ class ClienteRepositoryImplIT {
     @Test
     void cpfCnpjDuplicadoViolaConstraint() {
         String cpf = "86288366757";
-        clientes.salvar(new Cliente(null, "Um", new CpfCnpj(cpf)));
+        clientes.salvar(new Cliente(null, "Um", new CpfCnpj(cpf), null));
 
-        assertThatThrownBy(() -> clientes.salvar(new Cliente(null, "Dois", new CpfCnpj(cpf))))
+        assertThatThrownBy(() -> clientes.salvar(new Cliente(null, "Dois", new CpfCnpj(cpf), null)))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 }

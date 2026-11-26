@@ -4,6 +4,7 @@ import br.com.fiap.oficina.domain.Pagina;
 import br.com.fiap.oficina.domain.cliente.Cliente;
 import br.com.fiap.oficina.domain.cliente.ClienteRepository;
 import br.com.fiap.oficina.domain.cliente.CpfCnpj;
+import br.com.fiap.oficina.domain.cliente.Email;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +26,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
         entity.id = cliente.getId();
         entity.nome = cliente.getNome();
         entity.cpfCnpj = cliente.getCpfCnpj().valor();
+        entity.email = cliente.getEmail() == null ? null : cliente.getEmail().valor();
         return paraModelo(jpa.saveAndFlush(entity));
     }
 
@@ -52,6 +54,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     }
 
     private static Cliente paraModelo(ClienteEntity entity) {
-        return new Cliente(entity.id, entity.nome, new CpfCnpj(entity.cpfCnpj));
+        return new Cliente(entity.id, entity.nome, new CpfCnpj(entity.cpfCnpj),
+                entity.email == null ? null : new Email(entity.email));
     }
 }

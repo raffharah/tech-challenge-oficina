@@ -20,4 +20,7 @@ class ClienteEntity {
 
     @Column(name = "cpf_cnpj", nullable = false, unique = true)
     String cpfCnpj;
+
+    @Column(length = 254)
+    String email;
 }

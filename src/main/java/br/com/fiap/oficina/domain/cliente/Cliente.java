@@ -7,15 +7,21 @@ public class Cliente {
     private final Long id;
     private String nome;
     private final CpfCnpj cpfCnpj;
+    private Email email;
 
-    public Cliente(Long id, String nome, CpfCnpj cpfCnpj) {
+    public Cliente(Long id, String nome, CpfCnpj cpfCnpj, Email email) {
         this.id = id;
         this.nome = nomeValido(nome);
         this.cpfCnpj = cpfCnpj;
+        this.email = email;
     }
 
     public void renomear(String novoNome) {
         this.nome = nomeValido(novoNome);
+    }
+
+    public void registrarEmail(Email novoEmail) {
+        this.email = novoEmail;
     }
 
     private static String nomeValido(String nome) {
@@ -35,5 +41,9 @@ public class Cliente {
 
     public CpfCnpj getCpfCnpj() {
         return cpfCnpj;
+    }
+
+    public Email getEmail() {
+        return email;
     }
 }

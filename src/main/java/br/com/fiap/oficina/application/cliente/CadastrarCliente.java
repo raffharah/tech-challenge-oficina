@@ -14,7 +14,7 @@ public class CadastrarCliente {
     }
 
     public ClienteDTO executar(CadastrarClienteDTO dto) {
-        Cliente cliente = new Cliente(null, dto.nome(), new CpfCnpj(dto.cpfCnpj()));
+        Cliente cliente = new Cliente(null, dto.nome(), new CpfCnpj(dto.cpfCnpj()), null);
         if (clientes.buscarPorCpfCnpj(cliente.getCpfCnpj()).isPresent()) {
             throw new ConflitoException("CLIENTE_DUPLICADO", "Ja existe cliente com este CPF/CNPJ");
         }

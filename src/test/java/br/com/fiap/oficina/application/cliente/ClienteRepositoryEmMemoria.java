@@ -18,7 +18,7 @@ class ClienteRepositoryEmMemoria implements ClienteRepository {
     @Override
     public Cliente salvar(Cliente cliente) {
         Cliente salvo = cliente.getId() == null
-                ? new Cliente(++sequencia, cliente.getNome(), cliente.getCpfCnpj())
+                ? new Cliente(++sequencia, cliente.getNome(), cliente.getCpfCnpj(), cliente.getEmail())
                 : cliente;
         armazenados.put(salvo.getId(), salvo);
         return salvo;
