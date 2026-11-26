@@ -17,7 +17,7 @@ spring:
 
 oficina:
   notificacao:
-    remetente: ${OFICINA_REMETENTE:oficina@oficina.local}
+    remetente: ${NOTIFICACAO_REMETENTE:oficina@oficina.local}
   jwt:
     # Padrão apenas para execução local; sobrescreva com JWT_SEGREDO (mínimo 32 bytes)
     segredo: ${JWT_SEGREDO:segredo-local-apenas-para-demonstracao-0123456789}

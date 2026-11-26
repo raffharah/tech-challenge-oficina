@@ -84,7 +84,7 @@ O Compose sobe, nesta ordem:
 
 O seed é idempotente: ao subir de novo, itens e serviços já existentes não são alterados, preservando o saldo movimentado pelo uso. Para recriar o banco do zero, use `docker compose down -v`.
 
-Variáveis opcionais (com padrão para demonstração): `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_PORT`, `MAILPIT_PORT` e `JWT_SEGREDO`.
+Variáveis opcionais (com padrão para demonstração): `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_PORT`, `MAILPIT_PORT`, `JWT_SEGREDO` e `NOTIFICACAO_REMETENTE` (remetente dos e-mails de status).
 
 ### Catálogo inicial
 

@@ -70,7 +70,7 @@ public class NotificacaoDeStatusImpl implements NotificacaoDeStatus {
         try {
             mail.send(mensagem);
         } catch (MailException e) {
-            LOG.warn("Falha ao enviar e-mail de status da OS {}", numero, e);
+            LOG.error("Falha ao enviar e-mail de status da OS {}", numero, e);
         }
     }
 }
