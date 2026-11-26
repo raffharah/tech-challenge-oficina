@@ -21,7 +21,9 @@ classDiagram
       <<Raiz de agregado>>
       id
       nome
+      email
       renomear()
+      registrarEmail()
     }
     class Veiculo {
       <<Raiz de agregado>>
@@ -36,6 +38,9 @@ classDiagram
       <<Objeto de valor>>
     }
     class Placa {
+      <<Objeto de valor>>
+    }
+    class Email {
       <<Objeto de valor>>
     }
   }
@@ -92,6 +97,7 @@ classDiagram
   }
   Cliente *-- CpfCnpj
   Veiculo *-- Placa
+  Cliente *-- Email
   Veiculo ..> Cliente : clienteId
   OrdemServico *-- "0..*" ServicoDaOrdem
   OrdemServico *-- "0..*" ItemDaOrdem
@@ -110,16 +116,17 @@ Linha cheia (`*--`) indica composição dentro do agregado. A linha tracejada (`
 
 | Tipo | Elemento | Responsabilidade e regras | Código |
 | --- | --- | --- | --- |
-| Raiz de agregado | **Cliente** | Proprietário do veículo, identificado pelo CPF/CNPJ, que não muda depois do cadastro. Nome obrigatório (`NOME_OBRIGATORIO`). Só é removido sem veículos (`CLIENTE_COM_VEICULOS`). | [`Cliente`](../../src/main/java/br/com/fiap/oficina/domain/cliente/Cliente.java), [`ClienteRepository`](../../src/main/java/br/com/fiap/oficina/domain/cliente/ClienteRepository.java) |
+| Raiz de agregado | **Cliente** | Proprietário do veículo, identificado pelo CPF/CNPJ, que não muda depois do cadastro. Nome obrigatório (`NOME_OBRIGATORIO`). O e-mail é opcional no cadastro e passa a existir na abertura da OS, que grava ou substitui o valor. Só é removido sem veículos (`CLIENTE_COM_VEICULOS`). | [`Cliente`](../../src/main/java/br/com/fiap/oficina/domain/cliente/Cliente.java), [`ClienteRepository`](../../src/main/java/br/com/fiap/oficina/domain/cliente/ClienteRepository.java) |
 | Raiz de agregado | **Veículo** | Objeto de trabalho da oficina, identificado pela placa e vinculado a um cliente pelo `clienteId`. Marca e modelo obrigatórios; ano entre 1900 e o ano seguinte ao atual (`ANO_VEICULO_INVALIDO`). Placa e dono não mudam. | [`Veiculo`](../../src/main/java/br/com/fiap/oficina/domain/cliente/Veiculo.java), [`VeiculoRepository`](../../src/main/java/br/com/fiap/oficina/domain/cliente/VeiculoRepository.java) |
 | Objeto de valor | **CPF/CNPJ** | Documento do cliente. Valida os dígitos verificadores do CPF e do CNPJ, inclusive o CNPJ alfanumérico, e normaliza sem máscara e em maiúsculas (`CPF_CNPJ_INVALIDO`). | [`CpfCnpj`](../../src/main/java/br/com/fiap/oficina/domain/cliente/CpfCnpj.java) |
+| Objeto de valor | **E-mail** | E-mail do cliente, validado pelo formato e guardado em minúsculas (`EMAIL_INVALIDO`). | [`Email`](../../src/main/java/br/com/fiap/oficina/domain/cliente/Email.java) |
 | Objeto de valor | **Placa** | Placa no padrão antigo (`ABC1234`) ou Mercosul (`ABC1D23`), normalizada sem hífen e em maiúsculas (`PLACA_INVALIDA`). | [`Placa`](../../src/main/java/br/com/fiap/oficina/domain/cliente/Placa.java) |
 
 ## Gestão de Ordens de Serviço (`domain/ordemservico`)
 
 | Tipo | Elemento | Responsabilidade e regras | Código |
 | --- | --- | --- | --- |
-| Raiz de agregado | **Ordem de Serviço (OS)** | Agrupa o diagnóstico, os serviços, as peças e insumos, o orçamento e o histórico de status do veículo de um cliente. Toda mudança de status passa por um método de negócio que valida a transição (`TRANSICAO_INVALIDA`). Serviços e itens só mudam em `EM_DIAGNOSTICO` (`ORDEM_FORA_DE_DIAGNOSTICO`), e o orçamento exige ao menos um serviço (`ORDEM_SEM_SERVICO`). | [`OrdemServico`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/OrdemServico.java), [`OrdemServicoRepository`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/OrdemServicoRepository.java) |
+| Raiz de agregado | **Ordem de Serviço (OS)** | Agrupa o diagnóstico, os serviços, as peças e insumos, o orçamento e o histórico de status do veículo de um cliente. Toda mudança de status passa por um método de negócio que valida a transição (`TRANSICAO_INVALIDA`). A OS é aberta `RECEBIDA` já com os serviços e itens solicitados. Depois da abertura, serviços e itens só mudam em `EM_DIAGNOSTICO` (`ORDEM_FORA_DE_DIAGNOSTICO`), e o orçamento exige ao menos um serviço (`ORDEM_SEM_SERVICO`). | [`OrdemServico`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/OrdemServico.java), [`OrdemServicoRepository`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/OrdemServicoRepository.java) |
 | Raiz de agregado | **Serviço** (catálogo) | Serviço oferecido pela oficina, com nome único e valor padrão (mão de obra) maior que zero (`VALOR_PADRAO_INVALIDO`). | [`Servico`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/Servico.java), [`ServicoRepository`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/ServicoRepository.java) |
 | Objeto de valor | **Status da OS** | Os sete status e as transições permitidas entre eles: Recebida → Em diagnóstico → Aguardando aprovação → Em execução → Finalizada → Entregue, ou Cancelada a partir de Aguardando aprovação. | [`StatusOrdemServico`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/StatusOrdemServico.java) |
 | Objeto de valor | **Serviço da OS** | Cópia do serviço do catálogo no momento da inclusão (id, nome e valor). Mudar o catálogo depois não altera a OS. | [`ServicoDaOrdem`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/ServicoDaOrdem.java) |
@@ -127,8 +134,9 @@ Linha cheia (`*--`) indica composição dentro do agregado. A linha tracejada (`
 | Objeto de valor | **Orçamento** | Total da OS: soma dos valores dos serviços e de quantidade × preço dos itens. É calculado ao concluir o diagnóstico. | [`Orcamento`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/Orcamento.java) |
 | Objeto de valor | **Mudança de status** | Registro de um status com data e hora. A sequência forma o histórico que o cliente acompanha e que dá o tempo de execução (AD-005). | [`MudancaDeStatus`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/MudancaDeStatus.java) |
 | Objeto de valor | **Veículo identificado** | Resposta do contexto de Clientes ao abrir a OS: id do veículo, CPF/CNPJ e placa já validados e normalizados. | [`VeiculoIdentificado`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/VeiculoIdentificado.java) |
+| Objeto de valor | **Item solicitado** | Item pedido na abertura da OS: item já cotado e quantidade. | [`ItemSolicitado`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/ItemSolicitado.java) |
 | Objeto de valor | **Item cotado** | Resposta do contexto de Estoque ao incluir uma peça ou insumo: id, SKU, nome e preço de venda atual. | [`ItemCotado`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/ItemCotado.java) |
-| Porta | **Cadastro de veículos** | Interface que a OS declara para identificar cliente e veículo sem depender do contexto de Clientes. | [`CadastroDeVeiculos`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/CadastroDeVeiculos.java) |
+| Porta | **Cadastro de veículos** | Interface que a OS declara para identificar cliente e veículo e registrar o e-mail do cliente sem depender do contexto de Clientes. | [`CadastroDeVeiculos`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/CadastroDeVeiculos.java) |
 | Porta | **Estoque de itens** | Interface que a OS declara para cotar itens e dar baixa no estoque na aprovação. | [`EstoqueDeItens`](../../src/main/java/br/com/fiap/oficina/domain/ordemservico/EstoqueDeItens.java) |
 
 ## Gestão de Peças e Insumos (`domain/estoque`)

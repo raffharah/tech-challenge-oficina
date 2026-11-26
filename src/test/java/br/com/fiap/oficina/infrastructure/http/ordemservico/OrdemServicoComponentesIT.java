@@ -40,10 +40,12 @@ class OrdemServicoComponentesIT {
         jdbc.update("insert into servico (nome, valor_padrao) values ('Troca de oleo', 100.00)");
         jdbc.update("insert into item_estoque (sku, nome, tipo, preco_venda, saldo_fisico) values ('OLE-1', 'Oleo', 'INSUMO', 35.50, 10)");
         String corpo = mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"cpfCnpj\":\"52998224725\",\"placa\":\"ABC1D23\"}"))
+                        .content("{\"cpfCnpj\":\"52998224725\",\"email\":\"maria@oficina.com\",\"placa\":\"ABC1D23\",\"servicos\":[1],\"itens\":[{\"itemId\":1,\"quantidade\":1}]}"))
                 .andReturn().getResponse().getContentAsString();
         ordemId = JsonPath.read(corpo, "$.id");
         mvc.perform(post("/ordens-servico/" + ordemId + "/diagnostico").with(jwt())).andExpect(status().isOk());
+        jdbc.update("delete from ordem_servico_servico");
+        jdbc.update("delete from ordem_servico_item");
     }
 
     private void incluirServico(long servicoId, int esperado) throws Exception {

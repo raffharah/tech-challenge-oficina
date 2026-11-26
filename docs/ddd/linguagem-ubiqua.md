@@ -25,6 +25,7 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Sistema | Plataforma automatizada que realiza as validações de regras de negócio (como checagem de CPF/CNPJ e validação do formato de placa). |
 | Serviço | Atividade ou manutenção oferecida pela oficina e solicitada pelo cliente na etapa de recepção. |
 | CPF/CNPJ | Identificador fiscal do cliente, único no sistema. É validado pelo formato e pelos dígitos verificadores, conforme as regras da Receita Federal. |
+| E-mail do cliente | Informado na abertura da OS. Grava ou substitui o e-mail do cliente; formato inválido é recusado. |
 | Placa | Identificador único do veículo, validado pelo formato (padrão antigo ABC-1234 ou Mercosul ABC1D23). |
 | Pedido de serviço | Solicitação inicial do cliente. Depois da identificação do cliente e do veículo, resulta na abertura da OS. |
 | Cliente suspenso | Cliente impedido de abrir novos pedidos de serviço por inadimplência, consequência de uma OS cancelada por pagamento vencido. |
@@ -120,11 +121,11 @@ O objetivo é eliminar ambiguidades e garantir que todos falem a mesma língua a
 | Fornecedor | Reposição, orçamento de fornecedor e garantia ficam fora do MVP. A entrada de estoque é manual. |
 | Prazo | Fora do MVP: o orçamento não tem prazo nem verificação de atraso. |
 | Aguardando aprovação | Não expira no MVP. |
-| Início do diagnóstico | A OS nasce Recebida e só passa a Em diagnóstico quando o funcionário inicia o diagnóstico. Serviços, peças e insumos só entram na OS depois disso. |
+| Início do diagnóstico | A abertura recebe CPF/CNPJ, e-mail, placa, serviços e itens solicitados, e a OS nasce Recebida já com eles. Ela só passa a Em diagnóstico quando o funcionário inicia o diagnóstico; incluir e remover serviços, peças e insumos depois da abertura exige Em diagnóstico (AD-007, AD-011). |
 | Acompanhamento pelo cliente | O cliente, sem login, lista as próprias OS e consulta cada uma informando o CPF/CNPJ do titular. Quem não tem OS recebe lista vazia, sem revelar se o documento é de um cliente cadastrado. |
 | Catálogo de serviços | Serviço tem nome único (sem diferenciar maiúsculas) e valor padrão maior que zero. A OS copia o valor padrão ao incluir o serviço; alterar o catálogo não muda OS existentes. Serviço referenciado por OS não é removido. |
 | Itens de estoque | Item tem SKU único (sem diferenciar maiúsculas), tipo peça ou insumo, preço de venda maior que zero e saldo físico. O saldo muda só por entrada e baixa, nunca fica negativo. A baixa de vários itens é tudo ou nada. |
-| Agregados | Cliente, Veículo, Serviço (catálogo), Ordem de Serviço e Item de Estoque, cada um com raiz e repositório próprios. A OS inclui serviços, peças e insumos, orçamento, histórico de status e a entrega do veículo ("Finaliza Serviço" é a etapa de entrega da OS). Entidades, objetos de valor e o motivo de cada fronteira estão em [Modelo de domínio](modelo-de-dominio.md). |
+| Agregados | Cliente (com e-mail), Veículo, Serviço (catálogo), Ordem de Serviço e Item de Estoque, cada um com raiz e repositório próprios. A OS inclui serviços, peças e insumos desde a abertura, orçamento, histórico de status e a entrega do veículo ("Finaliza Serviço" é a etapa de entrega da OS). Entidades, objetos de valor e o motivo de cada fronteira estão em [Modelo de domínio](modelo-de-dominio.md). |
 | Sistemas externos | E-mail, pagamento e nota fiscal ficam fora do MVP, junto com o contexto Cobrança e Faturamento (agregados Pagamento e Nota Fiscal). O orçamento é disponibilizado ao cliente pela consulta da OS na API. |
 
 ---

@@ -35,10 +35,21 @@ class OrdemServicoAberturaIT {
         jdbc.update("insert into cliente (nome, cpf_cnpj) values ('Maria', '52998224725')");
         jdbc.update("insert into cliente (nome, cpf_cnpj) values ('Joao', '11144477735')");
         jdbc.update("insert into veiculo (placa, marca, modelo, ano, cliente_id) values ('ABC1D23', 'Fiat', 'Uno', 2020, 1)");
+        jdbc.update("insert into servico (nome, valor_padrao) values ('Troca de oleo', 100.00)");
+        jdbc.update("insert into item_estoque (sku, nome, tipo, preco_venda, saldo_fisico) values ('OLE-1', 'Oleo', 'INSUMO', 35.50, 10)");
     }
 
     private String corpo(String cpfCnpj, String placa) {
-        return "{\"cpfCnpj\":\"%s\",\"placa\":\"%s\"}".formatted(cpfCnpj, placa);
+        return corpo(cpfCnpj, "maria@oficina.com", placa, "[1]", "[{\"itemId\":1,\"quantidade\":2}]");
+    }
+
+    private String corpo(String cpfCnpj, String email, String placa, String servicos, String itens) {
+        return "{\"cpfCnpj\":\"%s\",\"email\":\"%s\",\"placa\":\"%s\",\"servicos\":%s,\"itens\":%s}"
+                .formatted(cpfCnpj, email, placa, servicos, itens);
+    }
+
+    private String emailDoCliente() {
+        return jdbc.queryForObject("select email from cliente where id = 1", String.class);
     }
 
     @Test
@@ -51,7 +62,74 @@ class OrdemServicoAberturaIT {
                 .andExpect(jsonPath("$.cpfCnpj").value("52998224725"))
                 .andExpect(jsonPath("$.placa").value("ABC1D23"))
                 .andExpect(jsonPath("$.historico.length()").value(1))
-                .andExpect(jsonPath("$.historico[0].status").value("RECEBIDA"));
+                .andExpect(jsonPath("$.historico[0].status").value("RECEBIDA"))
+                .andExpect(jsonPath("$.servicos.length()").value(1))
+                .andExpect(jsonPath("$.servicos[0].valor").value(100.00))
+                .andExpect(jsonPath("$.itens.length()").value(1))
+                .andExpect(jsonPath("$.itens[0].quantidade").value(2))
+                .andExpect(jsonPath("$.itens[0].precoUnitario").value(35.50))
+                .andExpect(jsonPath("$.total").doesNotExist());
+
+        assertThat(emailDoCliente()).isEqualTo("maria@oficina.com");
+        assertThat(jdbc.queryForObject("select saldo_fisico from item_estoque where id = 1", Integer.class))
+                .isEqualTo(10);
+    }
+
+    @Test
+    void servicoInexistenteRetorna404SemGravarOrdemNemEmail() throws Exception {
+        mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
+                        .content(corpo("52998224725", "novo@oficina.com", "ABC1D23", "[99]",
+                                "[{\"itemId\":1,\"quantidade\":1}]")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value("SERVICO_NAO_ENCONTRADO"));
+
+        assertThat(jdbc.queryForObject("select count(*) from ordem_servico", Integer.class)).isZero();
+        assertThat(emailDoCliente()).isNull();
+    }
+
+    @Test
+    void itemInexistenteRetorna404SemGravarOrdemNemEmail() throws Exception {
+        mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
+                        .content(corpo("52998224725", "novo@oficina.com", "ABC1D23", "[1]",
+                                "[{\"itemId\":99,\"quantidade\":1}]")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value("ITEM_NAO_ENCONTRADO"));
+
+        assertThat(jdbc.queryForObject("select count(*) from ordem_servico", Integer.class)).isZero();
+        assertThat(emailDoCliente()).isNull();
+    }
+
+    @Test
+    void emailInvalidoRetorna422SemGravarOrdem() throws Exception {
+        mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
+                        .content(corpo("52998224725", "ana", "ABC1D23", "[1]",
+                                "[{\"itemId\":1,\"quantidade\":1}]")))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.codigo").value("EMAIL_INVALIDO"));
+
+        assertThat(jdbc.queryForObject("select count(*) from ordem_servico", Integer.class)).isZero();
+    }
+
+    @Test
+    void emailNovoSubstituiOAnterior() throws Exception {
+        jdbc.update("update cliente set email = 'antigo@oficina.com' where id = 1");
+
+        mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
+                        .content(corpo("52998224725", "ABC1D23")))
+                .andExpect(status().isCreated());
+
+        assertThat(emailDoCliente()).isEqualTo("maria@oficina.com");
+    }
+
+    @Test
+    void corpoIncompletoRetorna400() throws Exception {
+        for (String corpo : new String[] {
+                "{\"cpfCnpj\":\"52998224725\",\"placa\":\"ABC1D23\",\"servicos\":[1],\"itens\":[{\"itemId\":1,\"quantidade\":1}]}",
+                "{\"cpfCnpj\":\"52998224725\",\"email\":\"a@b.com\",\"placa\":\"ABC1D23\",\"servicos\":[],\"itens\":[{\"itemId\":1,\"quantidade\":1}]}",
+                "{\"cpfCnpj\":\"52998224725\",\"email\":\"a@b.com\",\"placa\":\"ABC1D23\",\"servicos\":[1]}"}) {
+            mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON).content(corpo))
+                    .andExpect(status().isBadRequest());
+        }
     }
 
     private int abrir() throws Exception {
@@ -85,7 +163,6 @@ class OrdemServicoAberturaIT {
     @Test
     void incluirServicoAntesDoDiagnosticoRetorna422() throws Exception {
         int id = abrir();
-        jdbc.update("insert into servico (nome, valor_padrao) values ('Troca de oleo', 100.00)");
 
         mvc.perform(post("/ordens-servico/" + id + "/servicos").with(jwt())
                         .contentType(MediaType.APPLICATION_JSON).content("{\"servicoId\":1}"))

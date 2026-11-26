@@ -17,7 +17,8 @@ public record AbrirOrdemServicoRequest(
         @NotBlank String placa,
         @Schema(description = "Ids dos serviços solicitados; ao menos um.", example = "[1]")
         @NotEmpty List<@NotNull Long> servicos,
-        @Schema(description = "Peças e insumos solicitados; ao menos um. Item repetido soma a quantidade.")
+        @Schema(description = "Peças e insumos solicitados; ao menos um. Item repetido soma a quantidade.",
+                example = "[{\"itemId\": 1, \"quantidade\": 2}]")
         @NotEmpty List<@Valid ItemSolicitadoRequest> itens) {
 
     public record ItemSolicitadoRequest(

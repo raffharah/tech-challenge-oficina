@@ -42,6 +42,7 @@ class AcompanhamentoAdminIT {
         jdbc.update("insert into cliente (nome, cpf_cnpj) values ('Maria', '52998224725')");
         jdbc.update("insert into veiculo (placa, marca, modelo, ano, cliente_id) values ('ABC1D23', 'Fiat', 'Uno', 2020, 1)");
         jdbc.update("insert into servico (nome, valor_padrao) values ('Troca de oleo', 100.00)");
+        jdbc.update("insert into item_estoque (sku, nome, tipo, preco_venda, saldo_fisico) values ('OLE-1', 'Oleo', 'INSUMO', 35.50, 10)");
     }
 
     private void em(String instante) {
@@ -51,7 +52,7 @@ class AcompanhamentoAdminIT {
     private int abrir(String instante) throws Exception {
         em(instante);
         String corpo = mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"cpfCnpj\":\"52998224725\",\"placa\":\"ABC1D23\"}"))
+                        .content("{\"cpfCnpj\":\"52998224725\",\"email\":\"maria@oficina.com\",\"placa\":\"ABC1D23\",\"servicos\":[1],\"itens\":[{\"itemId\":1,\"quantidade\":1}]}"))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(corpo, "$.id");
     }
@@ -59,6 +60,8 @@ class AcompanhamentoAdminIT {
     private void orcar(int id, String instante) throws Exception {
         em(instante);
         mvc.perform(post("/ordens-servico/" + id + "/diagnostico").with(jwt())).andExpect(status().isOk());
+        jdbc.update("delete from ordem_servico_servico");
+        jdbc.update("delete from ordem_servico_item");
         mvc.perform(post("/ordens-servico/" + id + "/servicos").with(jwt())
                 .contentType(MediaType.APPLICATION_JSON).content("{\"servicoId\":1}"));
         mvc.perform(post("/ordens-servico/" + id + "/orcamento").with(jwt())).andExpect(status().isOk());
