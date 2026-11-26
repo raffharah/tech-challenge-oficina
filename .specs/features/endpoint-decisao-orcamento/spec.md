@@ -6,8 +6,8 @@ A fase 2 pede um endpoint para receber notificações externas de aprovação ou
 
 ## Goals
 
-- [ ] DEC-01: um endpoint recebe a aprovação ou a recusa do orçamento.
-- [ ] DEC-02: as rotas `/aprovacao` e `/rejeicao` deixam de existir.
+- [x] DEC-01: um endpoint recebe a aprovação ou a recusa do orçamento.
+- [x] DEC-02: as rotas `/aprovacao` e `/rejeicao` deixam de existir.
 
 ## Out of Scope
 
@@ -73,13 +73,13 @@ A fase 2 pede um endpoint para receber notificações externas de aprovação ou
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| DEC-01 | P1: Decidir o orçamento por um endpoint | - | Pending |
-| DEC-02 | P1: Remover as rotas antigas | - | Pending |
+| DEC-01 | P1: Decidir o orçamento por um endpoint | Tasks | Verified |
+| DEC-02 | P1: Remover as rotas antigas | Tasks | Verified |
 
-**Coverage:** 2 total, 0 mapped to tasks, 2 unmapped
+**Coverage:** 2 total, 2 mapped to tasks, 0 unmapped
 
 ---
 
 ## Success Criteria
 
-- [ ] `DecisaoOrcamentoIT` cobre aprovação, recusa, falta de saldo, outro titular e rotas antigas removidas.
+- [x] `DecisaoOrcamentoIT` cobre aprovação, recusa, falta de saldo, outro titular e rotas antigas removidas.

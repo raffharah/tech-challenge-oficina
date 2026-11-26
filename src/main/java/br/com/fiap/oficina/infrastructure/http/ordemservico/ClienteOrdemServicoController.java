@@ -41,35 +41,25 @@ public class ClienteOrdemServicoController {
         this.listar = listar;
     }
 
-    @Operation(summary = "Aprovar orçamento", description = """
-            O titular aprova o orçamento: a OS vai de `AGUARDANDO_APROVACAO` para `EM_EXECUCAO` e as \
-            peças e insumos são baixados do estoque. A baixa é tudo ou nada: faltando saldo de algum \
-            item, nada é baixado e a OS continua aguardando aprovação.""")
-    @ApiResponse(responseCode = "200", description = "OS em `EM_EXECUCAO`.")
-    @ApiResponse(responseCode = "400", description = "Corpo sem `cpfCnpj`.")
+    @Operation(summary = "Decidir orçamento", description = """
+            O titular aprova (`APROVADO`) ou recusa (`RECUSADO`) o orçamento. Aprovado, a OS vai de \
+            `AGUARDANDO_APROVACAO` para `EM_EXECUCAO` e as peças e insumos são baixados do estoque; a \
+            baixa é tudo ou nada: faltando saldo de algum item, nada é baixado e a OS continua aguardando \
+            aprovação. Recusado, a OS vai para `CANCELADA` e nada sai do estoque.""")
+    @ApiResponse(responseCode = "200", description = "OS em `EM_EXECUCAO` (aprovado) ou `CANCELADA` (recusado).")
+    @ApiResponse(responseCode = "400", description = "Corpo sem `cpfCnpj` ou `decisao`, ou `decisao` desconhecida.")
     @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA` (ou de outro titular).")
     @ApiResponse(responseCode = "422", description = """
             `SALDO_INSUFICIENTE` (com os itens em falta em `detalhes`), `TRANSICAO_INVALIDA` ou \
             `CPF_CNPJ_INVALIDO`.""")
-    @PostMapping("/{id}/aprovacao")
+    @PostMapping("/{id}/decisao")
     @Transactional
-    OrdemServicoDTO aprovar(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id,
+    OrdemServicoDTO decidir(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id,
             @Valid @RequestBody DecisaoOrcamentoRequest request) {
-        return aprovar.executar(id, request.cpfCnpj());
-    }
-
-    @Operation(summary = "Rejeitar orçamento", description = """
-            O titular rejeita o orçamento: a OS vai de `AGUARDANDO_APROVACAO` para `CANCELADA`. \
-            Nada sai do estoque.""")
-    @ApiResponse(responseCode = "200", description = "OS em `CANCELADA`.")
-    @ApiResponse(responseCode = "400", description = "Corpo sem `cpfCnpj`.")
-    @ApiResponse(responseCode = "404", description = "`ORDEM_SERVICO_NAO_ENCONTRADA` (ou de outro titular).")
-    @ApiResponse(responseCode = "422", description = "`TRANSICAO_INVALIDA` ou `CPF_CNPJ_INVALIDO`.")
-    @PostMapping("/{id}/rejeicao")
-    @Transactional
-    OrdemServicoDTO rejeitar(@Parameter(description = "Número da OS.", example = "1") @PathVariable Long id,
-            @Valid @RequestBody DecisaoOrcamentoRequest request) {
-        return rejeitar.executar(id, request.cpfCnpj());
+        return switch (request.decisao()) {
+            case APROVADO -> aprovar.executar(id, request.cpfCnpj());
+            case RECUSADO -> rejeitar.executar(id, request.cpfCnpj());
+        };
     }
 
     @Operation(summary = "Listar minhas OS", description = """

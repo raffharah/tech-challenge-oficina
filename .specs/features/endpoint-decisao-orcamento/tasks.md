@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: inline (sem `design.md`). A rota nova escolhe entre `AprovarOrcamento` e `RejeitarOrcamento`, que já existem, pelo campo `decisao`. Domínio e application não mudam (AD-010).
-**Status**: Draft
+**Status**: Reviewed
 
 ---
 
@@ -57,8 +57,8 @@ T1 → T2
 - Skill: NONE
 
 **Done when**:
-- [ ] Compila; validação coberta em T2
-- [ ] Gate check passes: `./mvnw verify`
+- [x] Compila; validação coberta em T2
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: none
 **Gate**: build
@@ -80,7 +80,7 @@ T1 → T2
 - Skill: NONE
 
 **Done when**:
-- [ ] `DecisaoOrcamentoIT`:
+- [x] `DecisaoOrcamentoIT`:
   - `APROVADO` com saldo leva a OS a `EM_EXECUCAO` com saldo baixado (DEC-01.1);
   - `RECUSADO` leva a `CANCELADA` com saldo intacto (DEC-01.2);
   - falta de saldo responde 422 `SALDO_INSUFICIENTE` e nada muda (DEC-01.3);
@@ -89,8 +89,8 @@ T1 → T2
   - `decisao` ausente ou `"TALVEZ"` responde 400 (DEC-01.6);
   - CPF/CNPJ inválido responde 422 (DEC-01.7);
   - `POST /aprovacao` e `/rejeicao` respondem 404 com a OS intacta (DEC-02.1).
-- [ ] As demais ITs passam a usar `/decisao`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] As demais ITs passam a usar `/decisao`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full

@@ -58,8 +58,13 @@ class DecisaoOrcamentoIT {
     }
 
     private ResultActions decidir(String decisao, int id, String cpfCnpj) throws Exception {
-        return mvc.perform(post("/cliente/ordens-servico/" + id + "/" + decisao)
-                .contentType(MediaType.APPLICATION_JSON).content("{\"cpfCnpj\":\"" + cpfCnpj + "\"}"));
+        return mvc.perform(post("/cliente/ordens-servico/" + id + "/decisao")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"cpfCnpj\":\"" + cpfCnpj + "\",\"decisao\":\"" + decisao + "\"}"));
+    }
+
+    private String statusDaOrdem() {
+        return jdbc.queryForObject("select status from ordem_servico where id = ?", String.class, ordemId);
     }
 
     private int saldoFisico() {
@@ -67,10 +72,10 @@ class DecisaoOrcamentoIT {
     }
 
     @Test
-    void aprovacaoComSaldoBaixaEstoqueEVaiParaEmExecucao() throws Exception {
+    void aprovadoComSaldoBaixaEstoqueEVaiParaEmExecucao() throws Exception {
         aguardarAprovacao(4);
 
-        decidir("aprovacao", ordemId, TITULAR)
+        decidir("APROVADO", ordemId, TITULAR)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("EM_EXECUCAO"));
 
@@ -78,51 +83,53 @@ class DecisaoOrcamentoIT {
     }
 
     @Test
-    void aprovacaoSemSaldoRetorna422ComItensFaltantesSemAlterarNada() throws Exception {
+    void aprovadoSemSaldoRetorna422ComItensFaltantesSemAlterarNada() throws Exception {
         aguardarAprovacao(11);
 
-        decidir("aprovacao", ordemId, TITULAR)
+        decidir("APROVADO", ordemId, TITULAR)
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.codigo").value("SALDO_INSUFICIENTE"))
                 .andExpect(jsonPath("$.detalhes.length()").value(1));
 
         assertThat(saldoFisico()).isEqualTo(10);
-        assertThat(jdbc.queryForObject("select status from ordem_servico where id = ?", String.class, ordemId))
-                .isEqualTo("AGUARDANDO_APROVACAO");
+        assertThat(statusDaOrdem()).isEqualTo("AGUARDANDO_APROVACAO");
     }
 
     @Test
-    void rejeicaoCancelaEBloqueiaInclusaoPosterior() throws Exception {
+    void recusadoCancelaSemBaixarEBloqueiaInclusaoPosterior() throws Exception {
         aguardarAprovacao(2);
 
-        decidir("rejeicao", ordemId, TITULAR)
+        decidir("RECUSADO", ordemId, TITULAR)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("CANCELADA"));
 
+        assertThat(saldoFisico()).isEqualTo(10);
         mvc.perform(post("/ordens-servico/" + ordemId + "/servicos").with(jwt())
                         .contentType(MediaType.APPLICATION_JSON).content("{\"servicoId\":1}"))
                 .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    void decisaoForaDeAguardandoAprovacaoRetorna422() throws Exception {
-        decidir("aprovacao", ordemId, TITULAR)
-                .andExpect(status().isUnprocessableEntity());
-        decidir("rejeicao", ordemId, TITULAR)
-                .andExpect(status().isUnprocessableEntity());
+    void decisaoForaDeAguardandoAprovacaoRetorna422TransicaoInvalida() throws Exception {
+        for (String decisao : new String[] {"APROVADO", "RECUSADO"}) {
+            decidir(decisao, ordemId, TITULAR)
+                    .andExpect(status().isUnprocessableEntity())
+                    .andExpect(jsonPath("$.codigo").value("TRANSICAO_INVALIDA"));
+        }
     }
 
     @Test
     void ordemInexistenteRetorna404() throws Exception {
-        decidir("aprovacao", 999, TITULAR).andExpect(status().isNotFound());
-        decidir("rejeicao", 999, TITULAR).andExpect(status().isNotFound());
+        for (String decisao : new String[] {"APROVADO", "RECUSADO"}) {
+            decidir(decisao, 999, TITULAR).andExpect(status().isNotFound());
+        }
     }
 
     @Test
     void cpfDeOutroTitularRetorna404ComCorpoIdenticoSemAlterarNada() throws Exception {
         aguardarAprovacao(4);
 
-        for (String decisao : new String[] {"aprovacao", "rejeicao"}) {
+        for (String decisao : new String[] {"APROVADO", "RECUSADO"}) {
             String outroCpf = decidir(decisao, ordemId, "11144477735").andExpect(status().isNotFound())
                     .andReturn().getResponse().getContentAsString();
             String inexistente = decidir(decisao, 999, TITULAR).andExpect(status().isNotFound())
@@ -131,19 +138,38 @@ class DecisaoOrcamentoIT {
         }
 
         assertThat(saldoFisico()).isEqualTo(10);
-        assertThat(jdbc.queryForObject("select status from ordem_servico where id = ?", String.class, ordemId))
-                .isEqualTo("AGUARDANDO_APROVACAO");
+        assertThat(statusDaOrdem()).isEqualTo("AGUARDANDO_APROVACAO");
     }
 
     @Test
-    void decisaoSemCpfRetorna400() throws Exception {
+    void corpoSemCpfOuSemDecisaoOuComDecisaoDesconhecidaRetorna400() throws Exception {
         aguardarAprovacao(2);
 
-        mvc.perform(post("/cliente/ordens-servico/" + ordemId + "/aprovacao")
-                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.campos[0].campo").value("cpfCnpj"));
-        mvc.perform(post("/cliente/ordens-servico/" + ordemId + "/rejeicao"))
-                .andExpect(status().isBadRequest());
+        for (String corpo : new String[] {"{\"decisao\":\"APROVADO\"}", "{\"cpfCnpj\":\"" + TITULAR + "\"}",
+                "{\"cpfCnpj\":\"" + TITULAR + "\",\"decisao\":\"TALVEZ\"}"}) {
+            mvc.perform(post("/cliente/ordens-servico/" + ordemId + "/decisao")
+                            .contentType(MediaType.APPLICATION_JSON).content(corpo))
+                    .andExpect(status().isBadRequest());
+        }
+        assertThat(statusDaOrdem()).isEqualTo("AGUARDANDO_APROVACAO");
+    }
+
+    @Test
+    void cpfInvalidoRetorna422() throws Exception {
+        decidir("APROVADO", ordemId, "123")
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.codigo").value("CPF_CNPJ_INVALIDO"));
+    }
+
+    @Test
+    void rotasAntigasNaoExistemMaisESeguemSemAlterarAOrdem() throws Exception {
+        aguardarAprovacao(2);
+
+        for (String rota : new String[] {"aprovacao", "rejeicao"}) {
+            mvc.perform(post("/cliente/ordens-servico/" + ordemId + "/" + rota)
+                            .contentType(MediaType.APPLICATION_JSON).content("{\"cpfCnpj\":\"" + TITULAR + "\"}"))
+                    .andExpect(status().isNotFound());
+        }
+        assertThat(statusDaOrdem()).isEqualTo("AGUARDANDO_APROVACAO");
     }
 }

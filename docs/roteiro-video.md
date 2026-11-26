@@ -243,10 +243,10 @@ Esperado: **200** com status `AGUARDANDO_APROVACAO`, itens e total.
 **3.7 Alguém tenta aprovar com outro CPF**
 
 ```http
-POST /cliente/ordens-servico/1/aprovacao
+POST /cliente/ordens-servico/1/decisao
 ```
 ```json
-{"cpfCnpj": "111.444.777-35"}
+{"cpfCnpj": "111.444.777-35", "decisao": "APROVADO"}
 ```
 
 Esperado: **404** `ORDEM_SERVICO_NAO_ENCONTRADA`.
@@ -256,10 +256,10 @@ Esperado: **404** `ORDEM_SERVICO_NAO_ENCONTRADA`.
 **3.8 Cliente aprova**
 
 ```http
-POST /cliente/ordens-servico/1/aprovacao
+POST /cliente/ordens-servico/1/decisao
 ```
 ```json
-{"cpfCnpj": "529.982.247-25"}
+{"cpfCnpj": "529.982.247-25", "decisao": "APROVADO"}
 ```
 
 Esperado: **200**, status `EM_EXECUCAO`.
@@ -357,10 +357,10 @@ Esperado: **200**, `total: 2049.30`.
 **4.3 Cliente aprova, mas falta peça**
 
 ```http
-POST /cliente/ordens-servico/2/aprovacao
+POST /cliente/ordens-servico/2/decisao
 ```
 ```json
-{"cpfCnpj": "529.982.247-25"}
+{"cpfCnpj": "529.982.247-25", "decisao": "APROVADO"}
 ```
 
 Esperado: **422** `SALDO_INSUFICIENTE`, com `detalhes: [{"sku": "PEC-BOMBA-DAGUA", "quantidadePedida": 6, "saldoFisico": 5}]`.
@@ -381,10 +381,10 @@ Esperado: **200**, `saldoFisico: 10`.
 **4.5 Cliente aprova de novo**
 
 ```http
-POST /cliente/ordens-servico/2/aprovacao
+POST /cliente/ordens-servico/2/decisao
 ```
 ```json
-{"cpfCnpj": "529.982.247-25"}
+{"cpfCnpj": "529.982.247-25", "decisao": "APROVADO"}
 ```
 
 Esperado: **200**, status `EM_EXECUCAO`. Em `GET /itens/9`, saldo `4`.
@@ -434,10 +434,10 @@ Esperado: **200**, `total: 402.80`.
 **5.2 Cliente rejeita**
 
 ```http
-POST /cliente/ordens-servico/3/rejeicao
+POST /cliente/ordens-servico/3/decisao
 ```
 ```json
-{"cpfCnpj": "529.982.247-25"}
+{"cpfCnpj": "529.982.247-25", "decisao": "RECUSADO"}
 ```
 
 Esperado: **200**, status `CANCELADA`. Em `GET /itens/4`, o saldo continua `12`: nada saiu do estoque.
@@ -503,7 +503,7 @@ Esperado: **200**, `total: 3`, com status e total de cada OS do Carlos, da mais 
 
 **6.5 Documentação da API**
 
-No Swagger, abrir `POST /cliente/ordens-servico/{id}/aprovacao` e mostrar a descrição da regra, o exemplo do corpo e as respostas de erro com o código (`SALDO_INSUFICIENTE`, `TRANSICAO_INVALIDA`). Depois, rolar até **Schemas** → `ErroResponse`.
+No Swagger, abrir `POST /cliente/ordens-servico/{id}/decisao` e mostrar a descrição da regra, o exemplo do corpo e as respostas de erro com o código (`SALDO_INSUFICIENTE`, `TRANSICAO_INVALIDA`). Depois, rolar até **Schemas** → `ErroResponse`.
 
 > Fala: "Cada rota explica a regra de negócio, traz exemplo de uso e lista os erros possíveis com o código para tratamento."
 

@@ -67,8 +67,8 @@ class ConsultaClienteIT {
     private void executar(int id, String aprovacao, String finalizacao) throws Exception {
         orcar(id, aprovacao);
         em(aprovacao);
-        mvc.perform(post("/cliente/ordens-servico/" + id + "/aprovacao")
-                .contentType(MediaType.APPLICATION_JSON).content("{\"cpfCnpj\":\"52998224725\"}")).andExpect(status().isOk());
+        mvc.perform(post("/cliente/ordens-servico/" + id + "/decisao")
+                .contentType(MediaType.APPLICATION_JSON).content("{\"cpfCnpj\":\"52998224725\",\"decisao\":\"APROVADO\"}")).andExpect(status().isOk());
         if (finalizacao != null) {
             em(finalizacao);
             mvc.perform(post("/ordens-servico/" + id + "/finalizacao").with(jwt())).andExpect(status().isOk());

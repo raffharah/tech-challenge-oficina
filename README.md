@@ -29,8 +29,8 @@ RECEBIDA → EM_DIAGNOSTICO → AGUARDANDO_APROVACAO → EM_EXECUCAO → FINALIZ
 | Iniciar o diagnóstico | `POST /ordens-servico/{id}/diagnostico` | `EM_DIAGNOSTICO` |
 | Incluir/remover serviços e itens | `POST`/`DELETE /ordens-servico/{id}/servicos` e `/itens` | `EM_DIAGNOSTICO` |
 | Gerar orçamento (serviços + itens) | `POST /ordens-servico/{id}/orcamento` | `AGUARDANDO_APROVACAO` |
-| Cliente aprova (baixa o estoque, tudo ou nada) | `POST /cliente/ordens-servico/{id}/aprovacao` com `{"cpfCnpj"}` do titular | `EM_EXECUCAO` |
-| Cliente rejeita | `POST /cliente/ordens-servico/{id}/rejeicao` com `{"cpfCnpj"}` do titular | `CANCELADA` |
+| Cliente aprova (baixa o estoque, tudo ou nada) | `POST /cliente/ordens-servico/{id}/decisao` com `{"cpfCnpj", "decisao": "APROVADO"}` | `EM_EXECUCAO` |
+| Cliente rejeita | `POST /cliente/ordens-servico/{id}/decisao` com `{"cpfCnpj", "decisao": "RECUSADO"}` | `CANCELADA` |
 | Finalizar os serviços | `POST /ordens-servico/{id}/finalizacao` | `FINALIZADA` |
 | Entregar o veículo | `POST /ordens-servico/{id}/entrega` | `ENTREGUE` |
 
@@ -158,7 +158,7 @@ Envie o token retornado no cabeçalho `Authorization: Bearer <token>`. No Swagge
 | Acesso | Rotas |
 | --- | --- |
 | Público | `POST /autenticacao`, Swagger/OpenAPI |
-| Público (cliente da oficina) | `GET /cliente/ordens-servico?cpfCnpj=` (lista das próprias OS), `GET /cliente/ordens-servico/{id}?cpfCnpj=` (andamento), `POST /cliente/ordens-servico/{id}/aprovacao` e `POST /cliente/ordens-servico/{id}/rejeicao` (corpo `{"cpfCnpj": "..."}`) |
+| Público (cliente da oficina) | `GET /cliente/ordens-servico?cpfCnpj=` (lista das próprias OS), `GET /cliente/ordens-servico/{id}?cpfCnpj=` (andamento), `POST /cliente/ordens-servico/{id}/decisao` (corpo `{"cpfCnpj": "...", "decisao": "APROVADO" \| "RECUSADO"}`) |
 | JWT | `/clientes`, `/veiculos`, `/servicos`, `/itens` (CRUD e entradas de estoque), `/ordens-servico` (abertura, componentes, orçamento, finalização, entrega, listagem, detalhamento e `GET /ordens-servico/tempo-medio-execucao`) |
 
 O cliente final não é autenticado no MVP (decisão AD-001 em [`.specs/STATE.md`](.specs/STATE.md)). Em vez de login, as rotas do cliente exigem o número da OS e o CPF/CNPJ do titular; se não coincidirem, a resposta é a mesma de uma OS inexistente (404), sem revelar dados.

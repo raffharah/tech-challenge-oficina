@@ -47,8 +47,8 @@ class ExecucaoEntregaIT {
         mvc.perform(post("/ordens-servico/" + ordemId + "/servicos").with(jwt())
                 .contentType(MediaType.APPLICATION_JSON).content("{\"servicoId\":1}"));
         mvc.perform(post("/ordens-servico/" + ordemId + "/orcamento").with(jwt())).andExpect(status().isOk());
-        mvc.perform(post("/cliente/ordens-servico/" + ordemId + "/aprovacao")
-                .contentType(MediaType.APPLICATION_JSON).content("{\"cpfCnpj\":\"52998224725\"}")).andExpect(status().isOk());
+        mvc.perform(post("/cliente/ordens-servico/" + ordemId + "/decisao")
+                .contentType(MediaType.APPLICATION_JSON).content("{\"cpfCnpj\":\"52998224725\",\"decisao\":\"APROVADO\"}")).andExpect(status().isOk());
     }
 
     @Test
