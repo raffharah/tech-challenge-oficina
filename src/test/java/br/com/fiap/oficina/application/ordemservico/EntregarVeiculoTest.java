@@ -16,7 +16,9 @@ class EntregarVeiculoTest {
     private static final Instant AGORA = Instant.parse("2026-01-13T10:00:00Z");
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
-    private final EntregarVeiculo entregar = new EntregarVeiculo(ordens, Clock.fixed(AGORA, ZoneOffset.UTC));
+    private final NotificacaoDeStatusEmMemoria notificacao = new NotificacaoDeStatusEmMemoria();
+    private final EntregarVeiculo entregar = new EntregarVeiculo(ordens, notificacao,
+            Clock.fixed(AGORA, ZoneOffset.UTC));
 
     @Test
     void entregaARegistrandoDataDoClock() {
@@ -30,6 +32,8 @@ class EntregarVeiculoTest {
         assertThat(dto.status()).isEqualTo(StatusOrdemServico.ENTREGUE);
         assertThat(dto.historico().get(5).dataHora()).isEqualTo(AGORA);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus()).isEqualTo(StatusOrdemServico.ENTREGUE);
+        assertThat(notificacao.notificadas).extracting(o -> o.getStatus())
+                .containsExactly(StatusOrdemServico.ENTREGUE);
     }
 
     @Test
@@ -37,6 +41,7 @@ class EntregarVeiculoTest {
         Long ordemId = OrdemServicoEmExecucao.salvarEm(ordens);
 
         assertThatThrownBy(() -> entregar.executar(ordemId)).isInstanceOf(DomainException.class);
+        assertThat(notificacao.notificadas).isEmpty();
     }
 
     @Test

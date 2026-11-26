@@ -18,8 +18,9 @@ class RejeitarOrcamentoTest {
     private static final String TITULAR = "529.982.247-25";
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
+    private final NotificacaoDeStatusEmMemoria notificacao = new NotificacaoDeStatusEmMemoria();
     private final RejeitarOrcamento rejeitar = new RejeitarOrcamento(ordens, new CadastroDeVeiculosSoNormaliza(),
-            Clock.fixed(AGORA, ZoneOffset.UTC));
+            notificacao, Clock.fixed(AGORA, ZoneOffset.UTC));
 
     @Test
     void cancelaAOrdem() {
@@ -30,6 +31,8 @@ class RejeitarOrcamentoTest {
         assertThat(dto.status()).isEqualTo(StatusOrdemServico.CANCELADA);
         assertThat(dto.historico().get(3).dataHora()).isEqualTo(AGORA);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus()).isEqualTo(StatusOrdemServico.CANCELADA);
+        assertThat(notificacao.notificadas).extracting(o -> o.getStatus())
+                .containsExactly(StatusOrdemServico.CANCELADA);
     }
 
     @Test
@@ -37,6 +40,7 @@ class RejeitarOrcamentoTest {
         Long ordemId = OrdemServicoEmDiagnostico.salvarEm(ordens);
 
         assertThatThrownBy(() -> rejeitar.executar(ordemId, TITULAR)).isInstanceOf(DomainException.class);
+        assertThat(notificacao.notificadas).isEmpty();
     }
 
     @Test

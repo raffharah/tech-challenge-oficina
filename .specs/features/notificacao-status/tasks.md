@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/notificacao-status/design.md`
 **Pré-requisito**: `abertura-os-completa` concluída (`ClienteDTO.email`)
-**Status**: Draft
+**Status**: Fase 1 concluída (T1-T7)
 
 ---
 
@@ -65,8 +65,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `AbrirOrdemServicoTest`: notifica a OS `RECEBIDA` com `id` (NTF-01.1); abertura com serviço inexistente não notifica (NTF-01.4)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AbrirOrdemServicoTest`: notifica a OS `RECEBIDA` com `id` (NTF-01.1); abertura com serviço inexistente não notifica (NTF-01.4)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -88,8 +88,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `IniciarDiagnosticoTest`: notifica `EM_DIAGNOSTICO`; transição inválida não notifica
-- [ ] Gate check passes: `./mvnw test`
+- [x] `IniciarDiagnosticoTest`: notifica `EM_DIAGNOSTICO`; transição inválida não notifica
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -111,8 +111,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `ConcluirDiagnosticoTest`: notifica `AGUARDANDO_APROVACAO` com `total` preenchido (NTF-01.3); `ORDEM_SEM_SERVICO` não notifica
-- [ ] Gate check passes: `./mvnw test`
+- [x] `ConcluirDiagnosticoTest`: notifica `AGUARDANDO_APROVACAO` com `total` preenchido (NTF-01.3); `ORDEM_SEM_SERVICO` não notifica
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -134,8 +134,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `AprovarOrcamentoTest`: notifica `EM_EXECUCAO`; `SALDO_INSUFICIENTE` não notifica (NTF-01.4)
-- [ ] Gate check passes: `./mvnw test`
+- [x] `AprovarOrcamentoTest`: notifica `EM_EXECUCAO`; `SALDO_INSUFICIENTE` não notifica (NTF-01.4)
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -157,8 +157,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `RejeitarOrcamentoTest`: notifica `CANCELADA`; transição inválida não notifica
-- [ ] Gate check passes: `./mvnw test`
+- [x] `RejeitarOrcamentoTest`: notifica `CANCELADA`; transição inválida não notifica
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -180,8 +180,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `FinalizarOrdemServicoTest`: notifica `FINALIZADA`; transição inválida não notifica
-- [ ] Gate check passes: `./mvnw test`
+- [x] `FinalizarOrdemServicoTest`: notifica `FINALIZADA`; transição inválida não notifica
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick
@@ -203,8 +203,8 @@ T8 → T9 → T10
 - Skill: NONE
 
 **Done when**:
-- [ ] `EntregarVeiculoTest`: notifica `ENTREGUE`; transição inválida não notifica
-- [ ] Gate check passes: `./mvnw test`
+- [x] `EntregarVeiculoTest`: notifica `ENTREGUE`; transição inválida não notifica
+- [x] Gate check passes: `./mvnw test`
 
 **Tests**: unit
 **Gate**: quick

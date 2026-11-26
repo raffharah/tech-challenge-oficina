@@ -35,7 +35,7 @@ class RemoverServicoDaOrdemTest {
     void ordemForaDeDiagnosticoLancaDomainException() {
         Long ordemId = OrdemServicoEmDiagnostico.salvarEm(ordens);
         Long servicoId = servicoNaOrdem(ordemId);
-        new ConcluirDiagnostico(ordens, Clock.systemUTC()).executar(ordemId);
+        new ConcluirDiagnostico(ordens, new NotificacaoDeStatusEmMemoria(), Clock.systemUTC()).executar(ordemId);
 
         assertThatThrownBy(() -> remover.executar(ordemId, servicoId)).isInstanceOf(DomainException.class);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getServicos()).hasSize(1);

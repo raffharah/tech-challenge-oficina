@@ -19,7 +19,9 @@ class IniciarDiagnosticoTest {
     private static final Instant AGORA = Instant.parse("2026-01-10T10:30:00Z");
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
-    private final IniciarDiagnostico iniciar = new IniciarDiagnostico(ordens, Clock.fixed(AGORA, ZoneOffset.UTC));
+    private final NotificacaoDeStatusEmMemoria notificacao = new NotificacaoDeStatusEmMemoria();
+    private final IniciarDiagnostico iniciar = new IniciarDiagnostico(ordens, notificacao,
+            Clock.fixed(AGORA, ZoneOffset.UTC));
 
     @Test
     void iniciaDiagnosticoRegistrandoDataDoClock() {
@@ -31,6 +33,8 @@ class IniciarDiagnosticoTest {
         assertThat(dto.historico().get(1).dataHora()).isEqualTo(AGORA);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus())
                 .isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
+        assertThat(notificacao.notificadas).extracting(OrdemServico::getStatus)
+                .containsExactly(StatusOrdemServico.EM_DIAGNOSTICO);
     }
 
     @Test
@@ -38,6 +42,7 @@ class IniciarDiagnosticoTest {
         Long ordemId = OrdemServicoEmDiagnostico.salvarEm(ordens);
 
         assertThatThrownBy(() -> iniciar.executar(ordemId)).isInstanceOf(DomainException.class);
+        assertThat(notificacao.notificadas).isEmpty();
     }
 
     @Test

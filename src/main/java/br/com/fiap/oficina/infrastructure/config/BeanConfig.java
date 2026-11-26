@@ -40,6 +40,7 @@ import br.com.fiap.oficina.domain.cliente.VeiculoRepository;
 import br.com.fiap.oficina.domain.estoque.ItemEstoqueRepository;
 import br.com.fiap.oficina.domain.ordemservico.CadastroDeVeiculos;
 import br.com.fiap.oficina.domain.ordemservico.EstoqueDeItens;
+import br.com.fiap.oficina.domain.ordemservico.NotificacaoDeStatus;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServicoRepository;
 import br.com.fiap.oficina.domain.ordemservico.ServicoRepository;
 import java.time.Clock;
@@ -151,8 +152,9 @@ public class BeanConfig {
 
     @Bean
     AbrirOrdemServico abrirOrdemServico(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos,
-            ServicoRepository servicos, EstoqueDeItens estoque, Clock clock) {
-        return new AbrirOrdemServico(ordens, veiculos, servicos, estoque, clock);
+            ServicoRepository servicos, EstoqueDeItens estoque, NotificacaoDeStatus notificacao,
+            Clock clock) {
+        return new AbrirOrdemServico(ordens, veiculos, servicos, estoque, notificacao, clock);
     }
 
     @Bean
@@ -176,34 +178,45 @@ public class BeanConfig {
     }
 
     @Bean
-    ConcluirDiagnostico concluirDiagnostico(OrdemServicoRepository ordens, Clock clock) {
-        return new ConcluirDiagnostico(ordens, clock);
+    ConcluirDiagnostico concluirDiagnostico(OrdemServicoRepository ordens, NotificacaoDeStatus notificacao,
+            Clock clock) {
+        return new ConcluirDiagnostico(ordens, notificacao, clock);
     }
 
     @Bean
     AprovarOrcamento aprovarOrcamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos,
-            EstoqueDeItens estoque, Clock clock) {
-        return new AprovarOrcamento(ordens, veiculos, estoque, clock);
+            EstoqueDeItens estoque, NotificacaoDeStatus notificacao, Clock clock) {
+        return new AprovarOrcamento(ordens, veiculos, estoque, notificacao, clock);
     }
 
     @Bean
-    RejeitarOrcamento rejeitarOrcamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos, Clock clock) {
-        return new RejeitarOrcamento(ordens, veiculos, clock);
+    RejeitarOrcamento rejeitarOrcamento(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos,
+            NotificacaoDeStatus notificacao, Clock clock) {
+        return new RejeitarOrcamento(ordens, veiculos, notificacao, clock);
     }
 
     @Bean
-    IniciarDiagnostico iniciarDiagnostico(OrdemServicoRepository ordens, Clock clock) {
-        return new IniciarDiagnostico(ordens, clock);
+    IniciarDiagnostico iniciarDiagnostico(OrdemServicoRepository ordens, NotificacaoDeStatus notificacao,
+            Clock clock) {
+        return new IniciarDiagnostico(ordens, notificacao, clock);
     }
 
     @Bean
-    FinalizarOrdemServico finalizarOrdemServico(OrdemServicoRepository ordens, Clock clock) {
-        return new FinalizarOrdemServico(ordens, clock);
+    FinalizarOrdemServico finalizarOrdemServico(OrdemServicoRepository ordens, NotificacaoDeStatus notificacao,
+            Clock clock) {
+        return new FinalizarOrdemServico(ordens, notificacao, clock);
     }
 
     @Bean
-    EntregarVeiculo entregarVeiculo(OrdemServicoRepository ordens, Clock clock) {
-        return new EntregarVeiculo(ordens, clock);
+    EntregarVeiculo entregarVeiculo(OrdemServicoRepository ordens, NotificacaoDeStatus notificacao,
+            Clock clock) {
+        return new EntregarVeiculo(ordens, notificacao, clock);
+    }
+
+    @Bean
+    NotificacaoDeStatus notificacaoDeStatus() {
+        return ordem -> {
+        };
     }
 
     @Bean

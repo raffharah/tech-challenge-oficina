@@ -26,10 +26,11 @@ class AprovarOrcamentoTest {
     private static final String TITULAR = "529.982.247-25";
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
+    private final NotificacaoDeStatusEmMemoria notificacao = new NotificacaoDeStatusEmMemoria();
     private final Clock clock = Clock.fixed(AGORA, ZoneOffset.UTC);
 
     private AprovarOrcamento aprovar(EstoqueDeItensEmMemoria estoque) {
-        return new AprovarOrcamento(ordens, new CadastroDeVeiculosSoNormaliza(), estoque, clock);
+        return new AprovarOrcamento(ordens, new CadastroDeVeiculosSoNormaliza(), estoque, notificacao, clock);
     }
 
     @Test
@@ -45,6 +46,8 @@ class AprovarOrcamentoTest {
                 List.of(new ItemDaOrdem(10L, "OLE-1", "Oleo", 2, new BigDecimal("35.50"))));
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus())
                 .isEqualTo(StatusOrdemServico.EM_EXECUCAO);
+        assertThat(notificacao.notificadas).extracting(o -> o.getStatus())
+                .containsExactly(StatusOrdemServico.EM_EXECUCAO);
     }
 
     @Test
@@ -57,6 +60,7 @@ class AprovarOrcamentoTest {
 
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus())
                 .isEqualTo(StatusOrdemServico.AGUARDANDO_APROVACAO);
+        assertThat(notificacao.notificadas).isEmpty();
     }
 
     @Test

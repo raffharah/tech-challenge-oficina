@@ -4,6 +4,7 @@ import br.com.fiap.oficina.domain.NaoEncontradoException;
 import br.com.fiap.oficina.domain.ordemservico.CadastroDeVeiculos;
 import br.com.fiap.oficina.domain.ordemservico.EstoqueDeItens;
 import br.com.fiap.oficina.domain.ordemservico.ItemSolicitado;
+import br.com.fiap.oficina.domain.ordemservico.NotificacaoDeStatus;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServicoRepository;
 import br.com.fiap.oficina.domain.ordemservico.Servico;
@@ -18,14 +19,16 @@ public class AbrirOrdemServico {
     private final CadastroDeVeiculos veiculos;
     private final ServicoRepository servicos;
     private final EstoqueDeItens estoque;
+    private final NotificacaoDeStatus notificacao;
     private final Clock clock;
 
     public AbrirOrdemServico(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos, ServicoRepository servicos,
-            EstoqueDeItens estoque, Clock clock) {
+            EstoqueDeItens estoque, NotificacaoDeStatus notificacao, Clock clock) {
         this.ordens = ordens;
         this.veiculos = veiculos;
         this.servicos = servicos;
         this.estoque = estoque;
+        this.notificacao = notificacao;
         this.clock = clock;
     }
 
@@ -39,6 +42,8 @@ public class AbrirOrdemServico {
                 .map(i -> new ItemSolicitado(estoque.cotar(i.itemId()), i.quantidade())).toList();
         OrdemServico ordem = OrdemServico.abrir(veiculo, solicitados, itens, clock.instant());
         veiculos.registrarEmail(dto.cpfCnpj(), dto.email());
-        return OrdemServicoDTO.de(ordens.salvar(ordem));
+        OrdemServico salva = ordens.salvar(ordem);
+        notificacao.notificar(salva);
+        return OrdemServicoDTO.de(salva);
     }
 }

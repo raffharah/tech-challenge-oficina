@@ -16,7 +16,8 @@ class FinalizarOrdemServicoTest {
     private static final Instant AGORA = Instant.parse("2026-01-12T16:00:00Z");
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
-    private final FinalizarOrdemServico finalizar = new FinalizarOrdemServico(ordens,
+    private final NotificacaoDeStatusEmMemoria notificacao = new NotificacaoDeStatusEmMemoria();
+    private final FinalizarOrdemServico finalizar = new FinalizarOrdemServico(ordens, notificacao,
             Clock.fixed(AGORA, ZoneOffset.UTC));
 
     @Test
@@ -28,6 +29,8 @@ class FinalizarOrdemServicoTest {
         assertThat(dto.status()).isEqualTo(StatusOrdemServico.FINALIZADA);
         assertThat(dto.historico().get(4).dataHora()).isEqualTo(AGORA);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus()).isEqualTo(StatusOrdemServico.FINALIZADA);
+        assertThat(notificacao.notificadas).extracting(o -> o.getStatus())
+                .containsExactly(StatusOrdemServico.FINALIZADA);
     }
 
     @Test
@@ -35,6 +38,7 @@ class FinalizarOrdemServicoTest {
         Long ordemId = OrdemServicoEmDiagnostico.salvarEm(ordens);
 
         assertThatThrownBy(() -> finalizar.executar(ordemId)).isInstanceOf(DomainException.class);
+        assertThat(notificacao.notificadas).isEmpty();
     }
 
     @Test

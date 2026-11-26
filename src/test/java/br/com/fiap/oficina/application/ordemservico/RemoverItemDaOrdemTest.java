@@ -34,7 +34,7 @@ class RemoverItemDaOrdemTest {
         ServicoRepositoryEmMemoria servicos = new ServicoRepositoryEmMemoria();
         Long servicoId = new CadastrarServico(servicos).executar(new CadastrarServicoDTO("A", BigDecimal.TEN)).id();
         new IncluirServicoNaOrdem(ordens, servicos).executar(ordemId, servicoId);
-        new ConcluirDiagnostico(ordens, Clock.systemUTC()).executar(ordemId);
+        new ConcluirDiagnostico(ordens, new NotificacaoDeStatusEmMemoria(), Clock.systemUTC()).executar(ordemId);
 
         assertThatThrownBy(() -> remover.executar(ordemId, 10L)).isInstanceOf(DomainException.class);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getItens()).hasSize(1);

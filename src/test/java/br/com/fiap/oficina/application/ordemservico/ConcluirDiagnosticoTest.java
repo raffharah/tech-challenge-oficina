@@ -20,7 +20,9 @@ class ConcluirDiagnosticoTest {
 
     private final OrdemServicoRepositoryEmMemoria ordens = new OrdemServicoRepositoryEmMemoria();
     private final ServicoRepositoryEmMemoria servicos = new ServicoRepositoryEmMemoria();
-    private final ConcluirDiagnostico concluir = new ConcluirDiagnostico(ordens, Clock.fixed(AGORA, ZoneOffset.UTC));
+    private final NotificacaoDeStatusEmMemoria notificacao = new NotificacaoDeStatusEmMemoria();
+    private final ConcluirDiagnostico concluir = new ConcluirDiagnostico(ordens, notificacao,
+            Clock.fixed(AGORA, ZoneOffset.UTC));
 
     @Test
     void devolveTotalEAguardaAprovacao() {
@@ -38,6 +40,10 @@ class ConcluirDiagnosticoTest {
         assertThat(dto.historico().get(2).dataHora()).isEqualTo(AGORA);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus())
                 .isEqualTo(StatusOrdemServico.AGUARDANDO_APROVACAO);
+        assertThat(notificacao.notificadas).singleElement().satisfies(o -> {
+            assertThat(o.getStatus()).isEqualTo(StatusOrdemServico.AGUARDANDO_APROVACAO);
+            assertThat(o.getTotal()).isEqualTo(new BigDecimal("171.00"));
+        });
     }
 
     @Test
@@ -47,6 +53,7 @@ class ConcluirDiagnosticoTest {
         assertThatThrownBy(() -> concluir.executar(ordemId)).isInstanceOf(DomainException.class);
         assertThat(ordens.buscarPorId(ordemId).orElseThrow().getStatus())
                 .isEqualTo(StatusOrdemServico.EM_DIAGNOSTICO);
+        assertThat(notificacao.notificadas).isEmpty();
     }
 
     @Test

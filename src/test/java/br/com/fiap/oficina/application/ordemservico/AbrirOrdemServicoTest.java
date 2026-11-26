@@ -30,6 +30,7 @@ class AbrirOrdemServicoTest {
     private final EstoqueDeItensEmMemoria estoque = new EstoqueDeItensEmMemoria(
             Map.of(10L, new ItemCotado(10L, "OLE-1", "Oleo 5W30", new BigDecimal("35.50"))));
     private final Clock clock = Clock.fixed(AGORA, ZoneOffset.UTC);
+    private final NotificacaoDeStatusEmMemoria notificacao = new NotificacaoDeStatusEmMemoria();
     private final List<String> emails = new ArrayList<>();
 
     @Test
@@ -49,6 +50,10 @@ class AbrirOrdemServicoTest {
         assertThat(dto.historico()).extracting(OrdemServicoDTO.MudancaDeStatusDTO::dataHora).containsOnly(AGORA);
         assertThat(ordens.buscarPorId(1L).orElseThrow().getStatus()).isEqualTo(StatusOrdemServico.RECEBIDA);
         assertThat(estoque.baixas).isEmpty();
+        assertThat(notificacao.notificadas).singleElement().satisfies(o -> {
+            assertThat(o.getId()).isEqualTo(1L);
+            assertThat(o.getStatus()).isEqualTo(StatusOrdemServico.RECEBIDA);
+        });
     }
 
     @Test
@@ -70,6 +75,7 @@ class AbrirOrdemServicoTest {
                         e -> assertThat(e.getCodigo()).isEqualTo("SERVICO_NAO_ENCONTRADO"));
         assertThat(ordens.quantidade()).isZero();
         assertThat(emails).isEmpty();
+        assertThat(notificacao.notificadas).isEmpty();
     }
 
     @Test
@@ -128,6 +134,6 @@ class AbrirOrdemServicoTest {
             public String normalizarCpfCnpj(String cpfCnpj) {
                 return cpfCnpj;
             }
-        }, servicos, estoque, clock);
+        }, servicos, estoque, notificacao, clock);
     }
 }
