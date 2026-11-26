@@ -19,7 +19,7 @@ public record AbrirOrdemServicoRequest(
         @NotEmpty List<@NotNull Long> servicos,
         @Schema(description = "Peças e insumos solicitados; ao menos um. Item repetido soma a quantidade.",
                 example = "[{\"itemId\": 1, \"quantidade\": 2}]")
-        @NotEmpty List<@Valid ItemSolicitadoRequest> itens) {
+        @NotEmpty List<@NotNull @Valid ItemSolicitadoRequest> itens) {
 
     public record ItemSolicitadoRequest(
             @Schema(description = "Id do item de estoque.", example = "1") @NotNull Long itemId,

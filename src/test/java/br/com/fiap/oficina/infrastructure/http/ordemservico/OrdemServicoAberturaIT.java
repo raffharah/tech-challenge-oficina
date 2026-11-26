@@ -126,7 +126,8 @@ class OrdemServicoAberturaIT {
         for (String corpo : new String[] {
                 "{\"cpfCnpj\":\"52998224725\",\"placa\":\"ABC1D23\",\"servicos\":[1],\"itens\":[{\"itemId\":1,\"quantidade\":1}]}",
                 "{\"cpfCnpj\":\"52998224725\",\"email\":\"a@b.com\",\"placa\":\"ABC1D23\",\"servicos\":[],\"itens\":[{\"itemId\":1,\"quantidade\":1}]}",
-                "{\"cpfCnpj\":\"52998224725\",\"email\":\"a@b.com\",\"placa\":\"ABC1D23\",\"servicos\":[1]}"}) {
+                "{\"cpfCnpj\":\"52998224725\",\"email\":\"a@b.com\",\"placa\":\"ABC1D23\",\"servicos\":[1]}",
+                "{\"cpfCnpj\":\"52998224725\",\"email\":\"a@b.com\",\"placa\":\"ABC1D23\",\"servicos\":[1],\"itens\":[null]}"}) {
             mvc.perform(post("/ordens-servico").with(jwt()).contentType(MediaType.APPLICATION_JSON).content(corpo))
                     .andExpect(status().isBadRequest());
         }
