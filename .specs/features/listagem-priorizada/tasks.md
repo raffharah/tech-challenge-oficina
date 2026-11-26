@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: inline (sem `design.md`: uma query nova no repositório, AD-009)
-**Status**: Draft
+**Status**: Done
 
 ---
 
@@ -58,9 +58,9 @@ T1 → T2
 - Skill: NONE
 
 **Done when**:
-- [ ] `OrdemServicoRepositoryImplIT`: OS nos 7 status, com datas variadas, voltam na ordem de LST-01.1; mesmo status sai por `abertaEm` crescente e, com data igual, por `id` (LST-01.2); `FINALIZADA` e `ENTREGUE` ausentes (LST-01.3); `totalElementos` conta só as listadas, e a segunda página continua a ordem (LST-01.5)
-- [ ] `ListarOrdensServicoTest` atualizado para `listarPorPrioridade`
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `OrdemServicoRepositoryImplIT`: OS nos 7 status, com datas variadas, voltam na ordem de LST-01.1; mesmo status sai por `abertaEm` crescente e, com data igual, por `id` (LST-01.2); `FINALIZADA` e `ENTREGUE` ausentes (LST-01.3); `totalElementos` conta só as listadas, e a segunda página continua a ordem (LST-01.5)
+- [x] `ListarOrdensServicoTest` atualizado para `listarPorPrioridade`
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full
@@ -82,8 +82,8 @@ T1 → T2
 - Skill: NONE
 
 **Done when**:
-- [ ] `AcompanhamentoAdminIT` cobre a ordem da rota, a ausência de `ENTREGUE` na listagem e o 200 do detalhe dela
-- [ ] Gate check passes: `./mvnw verify`
+- [x] `AcompanhamentoAdminIT` cobre a ordem da rota, a ausência de `ENTREGUE` na listagem e o 200 do detalhe dela
+- [x] Gate check passes: `./mvnw verify`
 
 **Tests**: integration
 **Gate**: full

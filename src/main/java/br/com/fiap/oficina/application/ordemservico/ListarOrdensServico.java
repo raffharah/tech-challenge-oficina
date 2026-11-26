@@ -12,6 +12,6 @@ public class ListarOrdensServico {
     }
 
     public Pagina<OrdemServicoResumoDTO> executar(int pagina, int tamanho) {
-        return ordens.listar(pagina, tamanho).map(OrdemServicoResumoDTO::de);
+        return ordens.listarPorPrioridade(pagina, tamanho).map(OrdemServicoResumoDTO::de);
     }
 }

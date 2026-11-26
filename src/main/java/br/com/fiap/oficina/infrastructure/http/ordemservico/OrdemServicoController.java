@@ -193,7 +193,9 @@ public class OrdemServicoController {
     }
 
     @Operation(summary = "Listar OS", description = """
-            Lista as OS em páginas, da mais recente para a mais antiga, com status, total e data de abertura.""")
+            Lista as OS em andamento em páginas, com status, total e data de abertura. Ordem: `EM_EXECUCAO`, \
+            `AGUARDANDO_APROVACAO`, `EM_DIAGNOSTICO`, `RECEBIDA`, `CANCELADA`; no mesmo status, a mais antiga primeiro. \
+            Omite `FINALIZADA` e `ENTREGUE`, que seguem acessíveis em `GET /ordens-servico/{id}`.""")
     @ApiResponse(responseCode = "200", description = "Página com o resumo das OS.")
     @GetMapping
     @Transactional(readOnly = true)

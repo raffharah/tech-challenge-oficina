@@ -76,20 +76,38 @@ class AcompanhamentoAdminIT {
     }
 
     @Test
-    void listaOrdenadaPorAberturaDecrescente() throws Exception {
+    void listaOrdenadaPorAberturaCrescente() throws Exception {
         int primeira = abrir("2026-01-10T10:00:00Z");
         int segunda = abrir("2026-01-11T10:00:00Z");
 
         mvc.perform(get("/ordens-servico").with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(2))
-                .andExpect(jsonPath("$.itens[0].id").value(segunda))
-                .andExpect(jsonPath("$.itens[1].id").value(primeira))
+                .andExpect(jsonPath("$.itens[0].id").value(primeira))
+                .andExpect(jsonPath("$.itens[1].id").value(segunda))
                 .andExpect(jsonPath("$.itens[0].cpfCnpj").value("52998224725"))
                 .andExpect(jsonPath("$.itens[0].placa").value("ABC1D23"))
                 .andExpect(jsonPath("$.itens[0].status").value("RECEBIDA"))
-                .andExpect(jsonPath("$.itens[0].abertaEm").value("2026-01-11T10:00:00Z"))
-                .andExpect(jsonPath("$.itens[1].abertaEm").value("2026-01-10T10:00:00Z"));
+                .andExpect(jsonPath("$.itens[0].abertaEm").value("2026-01-10T10:00:00Z"))
+                .andExpect(jsonPath("$.itens[1].abertaEm").value("2026-01-11T10:00:00Z"));
+    }
+
+    @Test
+    void listaOmiteEntregueMasDetalheContinuaAcessivel() throws Exception {
+        int entregue = abrir("2026-01-10T10:00:00Z");
+        executar(entregue, "2026-01-11T09:00:00Z", "2026-01-11T10:00:00Z");
+        em("2026-01-11T11:00:00Z");
+        mvc.perform(post("/ordens-servico/" + entregue + "/entrega").with(jwt())).andExpect(status().isOk());
+        int emAndamento = abrir("2026-01-12T10:00:00Z");
+
+        mvc.perform(get("/ordens-servico").with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.total").value(1))
+                .andExpect(jsonPath("$.itens.length()").value(1))
+                .andExpect(jsonPath("$.itens[0].id").value(emAndamento));
+        mvc.perform(get("/ordens-servico/" + entregue).with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ENTREGUE"));
     }
 
     @Test

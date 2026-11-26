@@ -11,7 +11,7 @@ public interface OrdemServicoRepository {
 
     Optional<OrdemServico> buscarPorId(Long id);
 
-    Pagina<OrdemServico> listar(int pagina, int tamanho);
+    Pagina<OrdemServico> listarPorPrioridade(int pagina, int tamanho);
 
     Pagina<OrdemServico> listarPorCpfCnpj(String cpfCnpj, int pagina, int tamanho);
 

@@ -48,8 +48,8 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
     }
 
     @Override
-    public Pagina<OrdemServico> listar(int pagina, int tamanho) {
-        return paraPagina(jpa.findAll(maisNovasPrimeiro(pagina, tamanho)), pagina, tamanho);
+    public Pagina<OrdemServico> listarPorPrioridade(int pagina, int tamanho) {
+        return paraPagina(jpa.listarPorPrioridade(PageRequest.of(pagina, tamanho)), pagina, tamanho);
     }
 
     @Override

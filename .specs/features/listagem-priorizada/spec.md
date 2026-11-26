@@ -6,9 +6,9 @@ A fase 2 exige que a listagem de OS da oficina mostre primeiro o que está em an
 
 ## Goals
 
-- [ ] LST-01: listagem ordenada por prioridade de status.
-- [ ] LST-02: dentro do mesmo status, a OS mais antiga vem primeiro.
-- [ ] LST-03: OS finalizadas e entregues ficam fora da listagem, sem remoção do banco.
+- [x] LST-01: listagem ordenada por prioridade de status.
+- [x] LST-02: dentro do mesmo status, a OS mais antiga vem primeiro.
+- [x] LST-03: OS finalizadas e entregues ficam fora da listagem, sem remoção do banco.
 
 ## Out of Scope
 
@@ -56,11 +56,11 @@ A fase 2 exige que a listagem de OS da oficina mostre primeiro o que está em an
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| LST-01 | P1: Listar OS em andamento por prioridade | - | Pending |
-| LST-02 | P1: Listar OS em andamento por prioridade | - | Pending |
-| LST-03 | P1: Listar OS em andamento por prioridade | - | Pending |
+| LST-01 | P1: Listar OS em andamento por prioridade | - | Done |
+| LST-02 | P1: Listar OS em andamento por prioridade | - | Done |
+| LST-03 | P1: Listar OS em andamento por prioridade | - | Done |
 
-**Coverage:** 3 total, 0 mapped to tasks, 3 unmapped
+**Coverage:** 3 total, 3 mapped to tasks, 0 unmapped
 
 ---
 

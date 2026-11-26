@@ -2,6 +2,7 @@ package br.com.fiap.oficina.application.ordemservico;
 
 import br.com.fiap.oficina.domain.ordemservico.OrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.OrdemServicoRepository;
+import br.com.fiap.oficina.domain.ordemservico.StatusOrdemServico;
 import br.com.fiap.oficina.domain.Pagina;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -28,8 +29,15 @@ class OrdemServicoRepositoryEmMemoria implements OrdemServicoRepository {
     }
 
     @Override
-    public Pagina<OrdemServico> listar(int pagina, int tamanho) {
-        return Pagina.de(maisNovasPrimeiro().toList(), pagina, tamanho);
+    public Pagina<OrdemServico> listarPorPrioridade(int pagina, int tamanho) {
+        List<StatusOrdemServico> prioridade = List.of(StatusOrdemServico.EM_EXECUCAO,
+                StatusOrdemServico.AGUARDANDO_APROVACAO, StatusOrdemServico.EM_DIAGNOSTICO,
+                StatusOrdemServico.RECEBIDA, StatusOrdemServico.CANCELADA);
+        return Pagina.de(armazenadas.keySet().stream().map(id -> copia(id, armazenadas.get(id)))
+                .filter(o -> prioridade.contains(o.getStatus()))
+                .sorted(Comparator.comparing((OrdemServico o) -> prioridade.indexOf(o.getStatus()))
+                        .thenComparing(OrdemServico::getAbertaEm).thenComparing(OrdemServico::getId))
+                .toList(), pagina, tamanho);
     }
 
     @Override

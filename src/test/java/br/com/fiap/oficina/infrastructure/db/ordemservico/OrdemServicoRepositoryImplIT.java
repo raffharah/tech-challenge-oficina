@@ -110,18 +110,41 @@ class OrdemServicoRepositoryImplIT {
     }
 
     @Test
-    void listaPaginadoPorAberturaDecrescente() {
+    void listaPorPrioridadeDeStatusSemFinalizadasEEntreguesPaginado() {
         VeiculoIdentificado veiculo = new VeiculoIdentificado(1L, "52998224725", "ABC1D23");
-        ordens.salvar(OrdemServico.abrir(veiculo, ABERTURA));
-        ordens.salvar(OrdemServico.abrir(veiculo, ABERTURA.plusSeconds(3600)));
-        ordens.salvar(OrdemServico.abrir(veiculo, ABERTURA.plusSeconds(7200)));
+        Instant t = ABERTURA;
+        OrdemServico recebida = ordens.salvar(OrdemServico.abrir(veiculo, t));
+        OrdemServico recebidaNova = ordens.salvar(OrdemServico.abrir(veiculo, t.plusSeconds(60)));
+        OrdemServico recebidaMesmaData = ordens.salvar(OrdemServico.abrir(veiculo, t.plusSeconds(60)));
+        OrdemServico diagnostico = OrdemServico.abrir(veiculo, t.plusSeconds(10));
+        diagnostico.iniciarDiagnostico(t.plusSeconds(20));
+        diagnostico = ordens.salvar(diagnostico);
+        OrdemServico aguardando = ordens.salvar(ordemCompleta());
+        OrdemServico execucao = ordemCompleta();
+        execucao.aprovar(CONCLUSAO.plusSeconds(60));
+        execucao = ordens.salvar(execucao);
+        OrdemServico finalizada = ordemCompleta();
+        finalizada.aprovar(CONCLUSAO.plusSeconds(60));
+        finalizada.finalizar(CONCLUSAO.plusSeconds(120));
+        ordens.salvar(finalizada);
+        OrdemServico entregue = ordemCompleta();
+        entregue.aprovar(CONCLUSAO.plusSeconds(60));
+        entregue.finalizar(CONCLUSAO.plusSeconds(120));
+        entregue.entregar(CONCLUSAO.plusSeconds(180));
+        ordens.salvar(entregue);
+        OrdemServico cancelada = ordemCompleta();
+        cancelada.rejeitar(CONCLUSAO.plusSeconds(60));
+        cancelada = ordens.salvar(cancelada);
+        assertThat(cancelada.getStatus()).isEqualTo(StatusOrdemServico.CANCELADA);
 
-        var primeira = ordens.listar(0, 2);
-        var segunda = ordens.listar(1, 2);
+        var primeira = ordens.listarPorPrioridade(0, 4);
+        var segunda = ordens.listarPorPrioridade(1, 4);
 
-        assertThat(primeira.total()).isEqualTo(3);
-        assertThat(primeira.itens()).extracting(OrdemServico::getId).containsExactly(3L, 2L);
-        assertThat(segunda.itens()).extracting(OrdemServico::getId).containsExactly(1L);
+        assertThat(primeira.total()).isEqualTo(7);
+        assertThat(primeira.itens()).extracting(OrdemServico::getId).containsExactly(
+                execucao.getId(), aguardando.getId(), diagnostico.getId(), recebida.getId());
+        assertThat(segunda.itens()).extracting(OrdemServico::getId).containsExactly(
+                recebidaNova.getId(), recebidaMesmaData.getId(), cancelada.getId());
     }
 
     @Test

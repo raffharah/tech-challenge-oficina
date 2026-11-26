@@ -15,7 +15,7 @@ class ListarOrdensServicoTest {
     private final ListarOrdensServico listar = new ListarOrdensServico(ordens);
 
     @Test
-    void listaDaMaisNovaParaAMaisAntigaComCamposDoResumo() {
+    void listaDaMaisAntigaParaAMaisNovaComCamposDoResumo() {
         ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, "52998224725", "ABC1D23"),
                 Instant.parse("2026-01-10T10:00:00Z")));
         ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(8L, "11144477735", "XYZ9K88"),
@@ -25,9 +25,9 @@ class ListarOrdensServicoTest {
 
         assertThat(pagina.total()).isEqualTo(2);
         assertThat(pagina.itens()).containsExactly(
-                new OrdemServicoResumoDTO(2L, "11144477735", "XYZ9K88", StatusOrdemServico.RECEBIDA, null,
-                        Instant.parse("2026-01-11T10:00:00Z")),
                 new OrdemServicoResumoDTO(1L, "52998224725", "ABC1D23", StatusOrdemServico.RECEBIDA, null,
-                        Instant.parse("2026-01-10T10:00:00Z")));
+                        Instant.parse("2026-01-10T10:00:00Z")),
+                new OrdemServicoResumoDTO(2L, "11144477735", "XYZ9K88", StatusOrdemServico.RECEBIDA, null,
+                        Instant.parse("2026-01-11T10:00:00Z")));
     }
 }
