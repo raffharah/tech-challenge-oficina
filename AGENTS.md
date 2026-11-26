@@ -1,10 +1,10 @@
 # AGENTS.md
 
-Back-end MVP de uma oficina mecânica (Tech Challenge FIAP SOAT, fase 1): ordens de serviço, clientes, veículos, cobrança e estoque de peças e insumos.
+Back-end de uma oficina mecânica (Tech Challenge FIAP SOAT, fase 2): ordens de serviço, clientes, veículos, cobrança e estoque de peças e insumos.
 
 ## Fontes de verdade
 
-- Requisitos e entregáveis: `docs/fase1-tech-challenge.md`.
+- Requisitos e entregáveis: `docs/fase2-tech-challenge.md`, evolução de `docs/fase1-tech-challenge.md`; o que a fase 1 entregou segue valendo, salvo quando a fase 2 o altera.
 - Nomes de classes, métodos, status e regras: `docs/ddd/linguagem-ubiqua.md`. A seção **Decisões do MVP** fecha o escopo. Registre ali um conceito novo antes de implementá-lo.
 - Fluxos (comandos, eventos, políticas) por contexto: `docs/ddd/event-storming/fluxo-os.md` e `docs/ddd/event-storming/fluxo-pecas-insumos.md`. Consulte o fluxo do contexto que a tarefa toca.
 - Agregados, entidades e objetos de valor, com a classe de cada um: `docs/ddd/modelo-de-dominio.md`. Atualize ao criar ou mudar um deles.
@@ -58,6 +58,7 @@ oficina-mecanica/
 ├── docker/seed/seed.sql                    # catálogo inicial da oficina
 ├── docs/
 │   ├── fase1-tech-challenge.md
+│   ├── fase2-tech-challenge.md
 │   └── ddd/
 │       ├── linguagem-ubiqua.md
 │       ├── modelo-de-dominio.md             # agregados, entidades e objetos de valor
