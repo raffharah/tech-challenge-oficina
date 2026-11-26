@@ -30,6 +30,7 @@ A fase 2 pede a atualização de status da OS por uma ferramenta como e-mail (`d
 | Momento do envio | Depois do commit da transação da mudança; o caso de uso chama a porta e o gateway adia o envio para depois do commit | Não enviar e-mail de mudança que sofreu rollback; `domain` e `application` seguem sem Spring | y |
 | Servidor de e-mail local | Mailpit no `docker-compose`; SMTP configurável por variáveis de ambiente | Mostra os e-mails no vídeo sem provedor real | y |
 | Remetente | Configuração `oficina.notificacao.remetente` | Endereço muda por ambiente | y |
+| Cliente sem e-mail | A mudança de status segue e nenhum e-mail é enviado | O e-mail entra pela abertura; cliente de OS anterior à coluna `email` fica sem ele | y |
 
 **Open questions:** none - all resolved or logged above.
 
@@ -51,7 +52,8 @@ A fase 2 pede a atualização de status da OS por uma ferramenta como e-mail (`d
 4. IF a mudança de status falha (regra violada ou rollback) THEN o sistema SHALL não enviar e-mail.
 5. The sistema SHALL enviar o e-mail só depois do commit da transação que gravou a mudança de status.
 6. IF o envio do e-mail falha THEN o sistema SHALL manter a mudança de status, responder como responderia sem a falha e registrar o erro em log com o número da OS.
-7. The sistema SHALL enviar o e-mail por uma porta do `domain` implementada em `infrastructure/gateway`, sem dependência de Spring em `domain` e `application`.
+7. IF o cliente titular não tem e-mail cadastrado THEN o sistema SHALL manter a mudança de status, responder como responderia com e-mail e não enviar mensagem.
+8. The sistema SHALL enviar o e-mail por uma porta do `domain` implementada em `infrastructure/gateway`, sem dependência de Spring em `domain` e `application`.
 
 **Independent Test**: Levar uma OS de `RECEBIDA` a `ENTREGUE` e conferir 6 e-mails no servidor SMTP de teste; com o SMTP fora do ar, cada passo responde 200.
 

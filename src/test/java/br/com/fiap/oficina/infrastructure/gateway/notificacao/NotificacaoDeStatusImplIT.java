@@ -19,22 +19,28 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestcontainersConfig.class)
+@ExtendWith(OutputCaptureExtension.class)
 class NotificacaoDeStatusImplIT {
 
     @Autowired
@@ -42,6 +48,9 @@ class NotificacaoDeStatusImplIT {
 
     @Autowired
     JdbcTemplate jdbc;
+
+    @Autowired
+    PostgreSQLContainer postgres;
 
     @MockitoBean
     JavaMailSender mail;
@@ -115,9 +124,11 @@ class NotificacaoDeStatusImplIT {
 
     @Test
     void envioAcontecePosCommitComOStatusJaGravado() throws Exception {
+        JdbcTemplate outraConexao = new JdbcTemplate(new DriverManagerDataSource(
+                postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()));
         List<String> statusVistos = new ArrayList<>();
         doAnswer(i -> {
-            statusVistos.add(jdbc.queryForObject("select status from ordem_servico", String.class));
+            statusVistos.add(outraConexao.queryForObject("select status from ordem_servico", String.class));
             return null;
         }).when(mail).send(any(SimpleMailMessage.class));
 
@@ -127,7 +138,8 @@ class NotificacaoDeStatusImplIT {
     }
 
     @Test
-    void falhaDoServidorDeEmailMantem200EStatusGravado() throws Exception {
+    void falhaDoServidorDeEmailMantem200EStatusGravadoERegistraLogComONumeroDaOs(CapturedOutput saida)
+            throws Exception {
         abrir(1);
         doThrow(new MailSendException("fora do ar")).when(mail).send(any(SimpleMailMessage.class));
 
@@ -135,6 +147,22 @@ class NotificacaoDeStatusImplIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("EM_DIAGNOSTICO"));
 
+        assertThat(jdbc.queryForObject("select status from ordem_servico", String.class))
+                .isEqualTo("EM_DIAGNOSTICO");
+        assertThat(saida.getOut()).contains("Falha ao enviar e-mail de status da OS " + ordemId);
+    }
+
+    @Test
+    void clienteSemEmailNaoRecebeEmailEAMudancaDeStatusSegue() throws Exception {
+        abrir(1);
+        jdbc.update("update cliente set email = null");
+        reset(mail);
+
+        mvc.perform(post("/ordens-servico/" + ordemId + "/diagnostico").with(jwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("EM_DIAGNOSTICO"));
+
+        verify(mail, never()).send(any(SimpleMailMessage.class));
         assertThat(jdbc.queryForObject("select status from ordem_servico", String.class))
                 .isEqualTo("EM_DIAGNOSTICO");
     }

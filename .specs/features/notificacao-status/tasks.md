@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/notificacao-status/design.md`
 **Pré-requisito**: `abertura-os-completa` concluída (`ClienteDTO.email`)
-**Status**: Fase 2 concluída (T8-T10); falta a verificação independente
+**Status**: Fase 2 concluída (T8-T10); verificação inline concluída (validation.md: PASS)
 
 ---
 
