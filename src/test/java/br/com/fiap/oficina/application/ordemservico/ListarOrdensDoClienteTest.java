@@ -7,6 +7,7 @@ import br.com.fiap.oficina.domain.ordemservico.OrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.StatusOrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.VeiculoIdentificado;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ListarOrdensDoClienteTest {
@@ -16,7 +17,7 @@ class ListarOrdensDoClienteTest {
             new CadastroDeVeiculosSoNormaliza());
 
     private void abrir(String cpfCnpj, String placa, String instante) {
-        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, cpfCnpj, placa), Instant.parse(instante)));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, cpfCnpj, placa), List.of(), List.of(), Instant.parse(instante)));
     }
 
     @Test

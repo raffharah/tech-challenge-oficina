@@ -3,6 +3,7 @@ package br.com.fiap.oficina.infrastructure.gateway.cliente;
 import br.com.fiap.oficina.application.cliente.ClienteDTO;
 import br.com.fiap.oficina.application.cliente.ConsultarClientes;
 import br.com.fiap.oficina.application.cliente.ConsultarVeiculos;
+import br.com.fiap.oficina.application.cliente.RegistrarEmailDoCliente;
 import br.com.fiap.oficina.application.cliente.VeiculoDTO;
 import br.com.fiap.oficina.domain.DomainException;
 import br.com.fiap.oficina.domain.cliente.CpfCnpj;
@@ -16,10 +17,18 @@ public class CadastroDeVeiculosImpl implements CadastroDeVeiculos {
 
     private final ConsultarClientes clientes;
     private final ConsultarVeiculos veiculos;
+    private final RegistrarEmailDoCliente registrarEmail;
 
-    CadastroDeVeiculosImpl(ConsultarClientes clientes, ConsultarVeiculos veiculos) {
+    CadastroDeVeiculosImpl(ConsultarClientes clientes, ConsultarVeiculos veiculos,
+            RegistrarEmailDoCliente registrarEmail) {
         this.clientes = clientes;
         this.veiculos = veiculos;
+        this.registrarEmail = registrarEmail;
+    }
+
+    @Override
+    public void registrarEmail(String cpfCnpj, String email) {
+        registrarEmail.executar(cpfCnpj, email);
     }
 
     @Override

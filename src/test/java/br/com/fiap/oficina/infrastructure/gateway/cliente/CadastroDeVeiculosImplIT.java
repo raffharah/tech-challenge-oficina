@@ -64,6 +64,22 @@ class CadastroDeVeiculosImplIT {
     }
 
     @Test
+    void registraEmailNoClienteDoCpfCnpj() {
+        cadastro.registrarEmail("529.982.247-25", "Maria@Oficina.com");
+
+        assertThat(jdbc.queryForObject("select email from cliente where cpf_cnpj = '52998224725'", String.class))
+                .isEqualTo("maria@oficina.com");
+    }
+
+    @Test
+    void emailInvalidoLancaDomainExceptionSemGravar() {
+        assertThatThrownBy(() -> cadastro.registrarEmail("52998224725", "invalido"))
+                .isExactlyInstanceOf(DomainException.class).extracting("codigo").isEqualTo("EMAIL_INVALIDO");
+        assertThat(jdbc.queryForObject("select email from cliente where cpf_cnpj = '52998224725'", String.class))
+                .isNull();
+    }
+
+    @Test
     void normalizaCpfMascaradoParaSoDigitos() {
         assertThat(cadastro.normalizarCpfCnpj("529.982.247-25")).isEqualTo("52998224725");
     }

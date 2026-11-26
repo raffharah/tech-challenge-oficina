@@ -11,6 +11,7 @@ import br.com.fiap.oficina.domain.ordemservico.VeiculoIdentificado;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class IniciarDiagnosticoTest {
@@ -22,8 +23,7 @@ class IniciarDiagnosticoTest {
 
     @Test
     void iniciaDiagnosticoRegistrandoDataDoClock() {
-        Long ordemId = ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, "52998224725", "ABC1D23"),
-                Instant.parse("2026-01-10T10:00:00Z"))).getId();
+        Long ordemId = ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, "52998224725", "ABC1D23"), List.of(), List.of(), Instant.parse("2026-01-10T10:00:00Z"))).getId();
 
         OrdemServicoDTO dto = iniciar.executar(ordemId);
 

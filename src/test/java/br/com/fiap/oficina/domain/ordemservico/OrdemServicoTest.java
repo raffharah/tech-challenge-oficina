@@ -7,6 +7,7 @@ import br.com.fiap.oficina.domain.DomainException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class OrdemServicoTest {
@@ -24,7 +25,7 @@ class OrdemServicoTest {
     private final ItemCotado oleo = new ItemCotado(10L, "OLE-1", "Oleo 5W30", new BigDecimal("35.50"));
 
     private OrdemServico aberta() {
-        return OrdemServico.abrir(veiculo, ABERTURA);
+        return OrdemServico.abrir(veiculo, List.of(), List.of(), ABERTURA);
     }
 
     private OrdemServico emDiagnostico() {
@@ -44,6 +45,62 @@ class OrdemServicoTest {
         assertThat(ordem.getPlaca()).isEqualTo("ABC1D23");
         assertThat(ordem.getHistorico())
                 .containsExactly(new MudancaDeStatus(StatusOrdemServico.RECEBIDA, ABERTURA));
+    }
+
+    @Test
+    void aberturaComServicosEItensCopiaValoresEMantemTotalNulo() {
+        OrdemServico ordem = OrdemServico.abrir(veiculo, List.of(troca),
+                List.of(new ItemSolicitado(oleo, 2)), ABERTURA);
+
+        assertThat(ordem.getStatus()).isEqualTo(StatusOrdemServico.RECEBIDA);
+        assertThat(ordem.getServicos()).containsExactly(new ServicoDaOrdem(1L, "Troca de oleo", new BigDecimal("100.00")));
+        assertThat(ordem.getItens())
+                .containsExactly(new ItemDaOrdem(10L, "OLE-1", "Oleo 5W30", 2, new BigDecimal("35.50")));
+        assertThat(ordem.getTotal()).isNull();
+    }
+
+    @Test
+    void aberturaSomaQuantidadeDeItemRepetido() {
+        OrdemServico ordem = OrdemServico.abrir(veiculo, List.of(),
+                List.of(new ItemSolicitado(oleo, 2), new ItemSolicitado(oleo, 3)), ABERTURA);
+
+        assertThat(ordem.getItens()).extracting(ItemDaOrdem::quantidade).containsExactly(5);
+    }
+
+    @Test
+    void aberturaComServicoRepetidoLancaServicoJaIncluido() {
+        assertThatThrownBy(() -> OrdemServico.abrir(veiculo, List.of(troca, troca), List.of(), ABERTURA))
+                .isInstanceOf(DomainException.class).hasFieldOrPropertyWithValue("codigo", "SERVICO_JA_INCLUIDO");
+    }
+
+    @Test
+    void aberturaComQuantidadeZeroLancaQuantidadeInvalida() {
+        assertThatThrownBy(() -> OrdemServico.abrir(veiculo, List.of(), List.of(new ItemSolicitado(oleo, 0)), ABERTURA))
+                .isInstanceOf(DomainException.class).hasFieldOrPropertyWithValue("codigo", "QUANTIDADE_INVALIDA");
+    }
+
+    @Test
+    void recebidaComComponentesRejeitaInclusaoERemocao() {
+        OrdemServico ordem = OrdemServico.abrir(veiculo, List.of(troca), List.of(new ItemSolicitado(oleo, 1)),
+                ABERTURA);
+
+        assertThatThrownBy(() -> ordem.removerServico(1L)).isInstanceOf(DomainException.class)
+                .hasFieldOrPropertyWithValue("codigo", "ORDEM_FORA_DE_DIAGNOSTICO");
+        assertThatThrownBy(() -> ordem.removerItem(10L)).isInstanceOf(DomainException.class)
+                .hasFieldOrPropertyWithValue("codigo", "ORDEM_FORA_DE_DIAGNOSTICO");
+    }
+
+    @Test
+    void diagnosticoAlteraComponentesDaAbertura() {
+        OrdemServico ordem = OrdemServico.abrir(veiculo, List.of(troca), List.of(new ItemSolicitado(oleo, 1)),
+                ABERTURA);
+        ordem.iniciarDiagnostico(INICIO_DIAGNOSTICO);
+
+        ordem.incluirItem(oleo, 2);
+        ordem.removerServico(1L);
+
+        assertThat(ordem.getItens()).extracting(ItemDaOrdem::quantidade).containsExactly(3);
+        assertThat(ordem.getServicos()).isEmpty();
     }
 
     @Test

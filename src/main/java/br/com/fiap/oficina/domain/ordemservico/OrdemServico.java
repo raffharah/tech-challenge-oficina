@@ -35,10 +35,14 @@ public class OrdemServico {
         this.historico = new ArrayList<>(historico);
     }
 
-    public static OrdemServico abrir(VeiculoIdentificado veiculo, Instant agora) {
-        return new OrdemServico(null, veiculo.veiculoId(), veiculo.cpfCnpj(), veiculo.placa(),
+    public static OrdemServico abrir(VeiculoIdentificado veiculo, List<Servico> servicos,
+            List<ItemSolicitado> itens, Instant agora) {
+        OrdemServico ordem = new OrdemServico(null, veiculo.veiculoId(), veiculo.cpfCnpj(), veiculo.placa(),
                 StatusOrdemServico.RECEBIDA, null, List.of(), List.of(),
                 List.of(new MudancaDeStatus(StatusOrdemServico.RECEBIDA, agora)));
+        servicos.forEach(ordem::adicionarServico);
+        itens.forEach(i -> ordem.adicionarItem(i.item(), i.quantidade()));
+        return ordem;
     }
 
     public static OrdemServico restaurar(Long id, Long veiculoId, String cpfCnpj, String placa,
@@ -53,6 +57,10 @@ public class OrdemServico {
 
     public void incluirServico(Servico servico) {
         exigirEmDiagnostico();
+        adicionarServico(servico);
+    }
+
+    private void adicionarServico(Servico servico) {
         if (servicos.stream().anyMatch(s -> s.servicoId().equals(servico.getId()))) {
             throw new DomainException("SERVICO_JA_INCLUIDO", "Servico ja incluido na ordem de servico");
         }
@@ -66,6 +74,10 @@ public class OrdemServico {
 
     public void incluirItem(ItemCotado item, int quantidade) {
         exigirEmDiagnostico();
+        adicionarItem(item, quantidade);
+    }
+
+    private void adicionarItem(ItemCotado item, int quantidade) {
         if (quantidade <= 0) {
             throw new DomainException("QUANTIDADE_INVALIDA", "Quantidade deve ser maior que zero");
         }

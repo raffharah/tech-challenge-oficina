@@ -7,6 +7,7 @@ import br.com.fiap.oficina.domain.ordemservico.OrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.StatusOrdemServico;
 import br.com.fiap.oficina.domain.ordemservico.VeiculoIdentificado;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ListarOrdensServicoTest {
@@ -16,10 +17,8 @@ class ListarOrdensServicoTest {
 
     @Test
     void listaDaMaisAntigaParaAMaisNovaComCamposDoResumo() {
-        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, "52998224725", "ABC1D23"),
-                Instant.parse("2026-01-10T10:00:00Z")));
-        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(8L, "11144477735", "XYZ9K88"),
-                Instant.parse("2026-01-11T10:00:00Z")));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(7L, "52998224725", "ABC1D23"), List.of(), List.of(), Instant.parse("2026-01-10T10:00:00Z")));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(8L, "11144477735", "XYZ9K88"), List.of(), List.of(), Instant.parse("2026-01-11T10:00:00Z")));
 
         Pagina<OrdemServicoResumoDTO> pagina = listar.executar(0, 10);
 

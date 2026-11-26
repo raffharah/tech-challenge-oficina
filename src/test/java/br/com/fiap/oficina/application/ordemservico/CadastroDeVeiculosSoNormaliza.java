@@ -11,6 +11,11 @@ final class CadastroDeVeiculosSoNormaliza implements CadastroDeVeiculos {
     }
 
     @Override
+    public void registrarEmail(String cpfCnpj, String email) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String normalizarCpfCnpj(String cpfCnpj) {
         return cpfCnpj.replaceAll("\\D", "");
     }

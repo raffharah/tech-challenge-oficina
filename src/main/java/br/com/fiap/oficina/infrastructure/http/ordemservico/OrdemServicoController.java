@@ -76,18 +76,25 @@ public class OrdemServicoController {
     }
 
     @Operation(summary = "Abrir OS", description = """
-            Abre a OS para o veículo do cliente, identificados pelo CPF/CNPJ e pela placa já \
-            cadastrados. A OS nasce `RECEBIDA`; o diagnóstico começa em `POST /ordens-servico/{id}/diagnostico`.""")
+            Abre a OS para o veículo do cliente, identificados pelo CPF/CNPJ e pela placa já cadastrados, \
+            com os serviços e itens solicitados, e grava o e-mail informado no cliente. A OS nasce `RECEBIDA`; \
+            o diagnóstico começa em `POST /ordens-servico/{id}/diagnostico`.""")
     @ApiResponse(responseCode = "201", description = "OS aberta com status `RECEBIDA`.")
-    @ApiResponse(responseCode = "400", description = "Campo obrigatório ausente.")
-    @ApiResponse(responseCode = "404", description = "`CLIENTE_NAO_ENCONTRADO` ou `VEICULO_NAO_ENCONTRADO`.")
-    @ApiResponse(responseCode = "422",
-            description = "`CPF_CNPJ_INVALIDO`, `PLACA_INVALIDA` ou `VEICULO_DE_OUTRO_CLIENTE`.")
+    @ApiResponse(responseCode = "400", description = "Campo obrigatório ausente ou lista vazia.")
+    @ApiResponse(responseCode = "404", description = """
+            `CLIENTE_NAO_ENCONTRADO`, `VEICULO_NAO_ENCONTRADO`, `SERVICO_NAO_ENCONTRADO` ou \
+            `ITEM_NAO_ENCONTRADO`.""")
+    @ApiResponse(responseCode = "422", description = """
+            `CPF_CNPJ_INVALIDO`, `PLACA_INVALIDA`, `EMAIL_INVALIDO`, `QUANTIDADE_INVALIDA`, \
+            `SERVICO_JA_INCLUIDO` ou `VEICULO_DE_OUTRO_CLIENTE`.""")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     OrdemServicoDTO abrir(@Valid @RequestBody AbrirOrdemServicoRequest request) {
-        return abrir.executar(new AbrirOrdemServicoDTO(request.cpfCnpj(), request.placa()));
+        return abrir.executar(new AbrirOrdemServicoDTO(request.cpfCnpj(), request.email(), request.placa(),
+                request.servicos(),
+                request.itens().stream()
+                        .map(i -> new AbrirOrdemServicoDTO.ItemSolicitadoDTO(i.itemId(), i.quantidade())).toList()));
     }
 
     @Operation(summary = "Iniciar diagnóstico", description = """

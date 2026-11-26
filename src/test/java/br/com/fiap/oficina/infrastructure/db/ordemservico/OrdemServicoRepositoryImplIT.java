@@ -12,6 +12,7 @@ import br.com.fiap.oficina.domain.ordemservico.VeiculoIdentificado;
 import br.com.fiap.oficina.infrastructure.TestcontainersConfig;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ class OrdemServicoRepositoryImplIT {
     }
 
     private OrdemServico ordemCompleta() {
-        OrdemServico ordem = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA);
+        OrdemServico ordem = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), List.of(), List.of(), ABERTURA);
         ordem.iniciarDiagnostico(ABERTURA);
         ordem.incluirServico(new Servico(1L, "Troca de oleo", new BigDecimal("100.00")));
         ordem.incluirItem(new ItemCotado(1L, "OLE-1", "Oleo", new BigDecimal("35.50")), 2);
@@ -81,7 +82,7 @@ class OrdemServicoRepositoryImplIT {
 
     @Test
     void atualizaMantendoIdERemovendoComponente() {
-        OrdemServico aberta = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA);
+        OrdemServico aberta = OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), List.of(), List.of(), ABERTURA);
         aberta.iniciarDiagnostico(ABERTURA);
         OrdemServico salva = ordens.salvar(aberta);
         salva.incluirItem(new ItemCotado(1L, "OLE-1", "Oleo", new BigDecimal("35.50")), 2);
@@ -113,10 +114,10 @@ class OrdemServicoRepositoryImplIT {
     void listaPorPrioridadeDeStatusSemFinalizadasEEntreguesPaginado() {
         VeiculoIdentificado veiculo = new VeiculoIdentificado(1L, "52998224725", "ABC1D23");
         Instant t = ABERTURA;
-        OrdemServico recebida = ordens.salvar(OrdemServico.abrir(veiculo, t));
-        OrdemServico recebidaNova = ordens.salvar(OrdemServico.abrir(veiculo, t.plusSeconds(60)));
-        OrdemServico recebidaMesmaData = ordens.salvar(OrdemServico.abrir(veiculo, t.plusSeconds(60)));
-        OrdemServico diagnostico = OrdemServico.abrir(veiculo, t.plusSeconds(10));
+        OrdemServico recebida = ordens.salvar(OrdemServico.abrir(veiculo, List.of(), List.of(), t));
+        OrdemServico recebidaNova = ordens.salvar(OrdemServico.abrir(veiculo, List.of(), List.of(), t.plusSeconds(60)));
+        OrdemServico recebidaMesmaData = ordens.salvar(OrdemServico.abrir(veiculo, List.of(), List.of(), t.plusSeconds(60)));
+        OrdemServico diagnostico = OrdemServico.abrir(veiculo, List.of(), List.of(), t.plusSeconds(10));
         diagnostico.iniciarDiagnostico(t.plusSeconds(20));
         diagnostico = ordens.salvar(diagnostico);
         OrdemServico aguardando = ordens.salvar(ordemCompleta());
@@ -173,10 +174,9 @@ class OrdemServicoRepositoryImplIT {
     void listaPorCpfCnpjSoDoTitularPorAberturaDecrescente() {
         jdbc.update("insert into cliente (nome, cpf_cnpj) values ('Joao', '11144477735')");
         jdbc.update("insert into veiculo (placa, marca, modelo, ano, cliente_id) values ('XYZ9K88', 'VW', 'Gol', 2019, 2)");
-        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), ABERTURA));
-        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(2L, "11144477735", "XYZ9K88"), ABERTURA));
-        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"),
-                ABERTURA.plusSeconds(3600)));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), List.of(), List.of(), ABERTURA));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(2L, "11144477735", "XYZ9K88"), List.of(), List.of(), ABERTURA));
+        ordens.salvar(OrdemServico.abrir(new VeiculoIdentificado(1L, "52998224725", "ABC1D23"), List.of(), List.of(), ABERTURA.plusSeconds(3600)));
 
         var pagina = ordens.listarPorCpfCnpj("52998224725", 0, 20);
 

@@ -6,6 +6,7 @@ import br.com.fiap.oficina.application.cliente.CadastrarCliente;
 import br.com.fiap.oficina.application.cliente.CadastrarVeiculo;
 import br.com.fiap.oficina.application.cliente.ConsultarClientes;
 import br.com.fiap.oficina.application.cliente.ConsultarVeiculos;
+import br.com.fiap.oficina.application.cliente.RegistrarEmailDoCliente;
 import br.com.fiap.oficina.application.cliente.RemoverCliente;
 import br.com.fiap.oficina.application.cliente.RemoverVeiculo;
 import br.com.fiap.oficina.application.estoque.AtualizarItem;
@@ -66,6 +67,11 @@ public class BeanConfig {
     @Bean
     ConsultarClientes consultarClientes(ClienteRepository clientes) {
         return new ConsultarClientes(clientes);
+    }
+
+    @Bean
+    RegistrarEmailDoCliente registrarEmailDoCliente(ClienteRepository clientes) {
+        return new RegistrarEmailDoCliente(clientes);
     }
 
     @Bean
@@ -144,8 +150,9 @@ public class BeanConfig {
     }
 
     @Bean
-    AbrirOrdemServico abrirOrdemServico(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos, Clock clock) {
-        return new AbrirOrdemServico(ordens, veiculos, clock);
+    AbrirOrdemServico abrirOrdemServico(OrdemServicoRepository ordens, CadastroDeVeiculos veiculos,
+            ServicoRepository servicos, EstoqueDeItens estoque, Clock clock) {
+        return new AbrirOrdemServico(ordens, veiculos, servicos, estoque, clock);
     }
 
     @Bean
