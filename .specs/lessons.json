@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 2,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "surviving_mutant::teste de ordem commit consulta no banco usa conexao propria jdbctemplate do teste reusa a conexao da transacao na mesma thread do mockmvc",
+      "text": "Teste de ordem commit/consulta no banco usa conexão própria; JdbcTemplate do teste reusa a conexão da transação na mesma thread do MockMvc.",
+      "signal": "surviving_mutant",
+      "scope": "infrastructure/*IT",
+      "status": "candidate",
+      "features": [
+        "notificacao-status"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "NotificacaoDeStatusImplIT.java:117 (M3 envio imediato) (infrastructure/*IT)"
+      ],
+      "created": "2026-11-26T04:41:49Z",
+      "last_seen": "2026-11-26T04:41:49Z"
+    }
+  ]
+}
